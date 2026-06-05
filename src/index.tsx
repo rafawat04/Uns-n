@@ -1,7 +1,32 @@
 import { Hono } from 'hono'
 import { serveStatic } from 'hono/cloudflare-workers'
+import { getCurrentUser, login, logout, requireAuth, type SessionUser } from './auth'
+import { categories, feedSources, sources, type Article, type Category, type Locale } from './data'
+import { fetchFeedXml, ingestEnabledFeeds, ingestFeed, parseFeed } from './ingest'
+import {
+  renderCopyrightPage,
+  renderAdminPage,
+  renderLoginPage,
+  renderPrivacyPage,
+  renderPublisherPolicyPage,
+  renderSectionPage,
+  renderTermsPage
+} from './pages'
+import { findStoredArticle, listStoredArticles, saveArticle, type D1Database } from './storage'
 
-const app = new Hono()
+type AppEnv = {
+  Bindings: {
+    ADMIN_EMAIL?: string
+    ADMIN_PASSWORD?: string
+    SESSION_COOKIE_NAME?: string
+    DB?: D1Database
+  }
+  Variables: {
+    user: SessionUser
+  }
+}
+
+const app = new Hono<AppEnv>()
 app.use('/static/*', serveStatic({ root: './' }))
 
 // favicon — inline SVG as data URI to avoid 404
@@ -9,7 +34,313 @@ app.get('/favicon.ico', (c) => {
   return new Response(null, { status: 204 })
 })
 
+app.get('/terms', (c) => c.html(renderTermsPage()))
+app.get('/privacy', (c) => c.html(renderPrivacyPage()))
+app.get('/copyright', (c) => c.html(renderCopyrightPage()))
+app.get('/publishers', (c) => c.html(renderPublisherPolicyPage()))
+
+const normalizeLocale = (value: string | null): Locale => {
+  if (value === 'ja' || value === 'en') return value
+  return 'pt'
+}
+
+const normalizeCategory = (value: string | null): Category | undefined => {
+  const allowed = new Set<Category>(categories.map((category) => category.id))
+  return value && allowed.has(value as Category) ? (value as Category) : undefined
+}
+
+const publicArticle = (article: Article, locale: Locale) => ({
+  id: article.id,
+  slug: article.slug,
+  category: article.category,
+  sourceId: article.sourceId,
+  sourceName: article.sourceName,
+  url: article.url ?? null,
+  imageUrl: article.imageUrl ?? null,
+  publishedAt: article.publishedAt,
+  fetchedAt: article.fetchedAt ?? null,
+  originalLanguage: article.originalLanguage ?? null,
+  needsTranslation: article.needsTranslation ?? false,
+  importance: article.importance,
+  imageIcon: article.imageIcon,
+  tags: article.tags,
+  title: article.title[locale],
+  summary: article.summary[locale],
+  body: article.body[locale],
+  translations: {
+    pt: {
+      title: article.title.pt,
+      summary: article.summary.pt
+    },
+    en: {
+      title: article.title.en,
+      summary: article.summary.en
+    },
+    ja: {
+      title: article.title.ja,
+      summary: article.summary.ja
+    }
+  }
+})
+
+app.get('/api/health', (c) => {
+  return c.json({
+    ok: true,
+    service: 'unsn-news-backend',
+    timestamp: new Date().toISOString()
+  })
+})
+
+app.get('/api/categories', (c) => {
+  const locale = normalizeLocale(c.req.query('lang') ?? null)
+  return c.json({
+    data: categories.map((category) => ({
+      id: category.id,
+      label: category.label[locale]
+    }))
+  })
+})
+
+app.get('/api/sources', (c) => {
+  return c.json({ data: sources })
+})
+
+app.get('/api/feeds', (c) => {
+  return c.json({ data: feedSources })
+})
+
+app.get('/api/articles', async (c) => {
+  const locale = normalizeLocale(c.req.query('lang') ?? null)
+  const category = normalizeCategory(c.req.query('category') ?? null)
+  const query = (c.req.query('q') ?? '').trim().toLowerCase()
+  const allArticles = await listStoredArticles(c)
+
+  const filtered = allArticles
+    .filter((article) => !article.originalLanguage || article.originalLanguage === locale)
+    .filter((article) => !category || article.category === category)
+    .filter((article) => {
+      if (!query) return true
+
+      const searchable = [
+        article.title.pt,
+        article.title.ja,
+        article.summary.pt,
+        article.summary.ja,
+        article.sourceName,
+        ...article.tags
+      ]
+        .join(' ')
+        .toLowerCase()
+
+      return searchable.includes(query)
+    })
+    .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
+
+  return c.json({
+    data: filtered.map((article) => publicArticle(article, locale)),
+    meta: {
+      locale,
+      category: category ?? null,
+      query: query || null,
+      count: filtered.length
+    }
+  })
+})
+
+app.get('/api/articles/:slug', async (c) => {
+  const locale = normalizeLocale(c.req.query('lang') ?? null)
+  const article = await findStoredArticle(c, c.req.param('slug'))
+
+  if (!article) {
+    return c.json({ error: 'Article not found' }, 404)
+  }
+
+  return c.json({ data: publicArticle(article, locale) })
+})
+
+app.get('/section/:category', async (c) => {
+  const locale = normalizeLocale(c.req.query('lang') ?? null)
+  const category = normalizeCategory(c.req.param('category')) ?? 'top'
+  const allArticles = await listStoredArticles(c)
+  const sectionLabel = categories.find((item) => item.id === category)?.label[locale] ?? category
+
+  const filtered = allArticles
+    .filter((article) => !article.originalLanguage || article.originalLanguage === locale)
+    .filter((article) => category === 'media' || article.category === category)
+    .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
+
+  return c.html(
+    renderSectionPage({
+      category,
+      title: sectionLabel,
+      locale,
+      articles: filtered,
+      sources
+    })
+  )
+})
+
+app.get('/api/me', (c) => {
+  return c.json({ user: getCurrentUser(c) })
+})
+
+app.post('/api/auth/login', async (c) => {
+  const payload = await c.req.json<{ email?: string; password?: string }>().catch(() => null)
+  const user = payload?.email && payload?.password ? login(c, payload.email, payload.password) : null
+
+  if (!user) {
+    return c.json({ error: 'Invalid email or password' }, 401)
+  }
+
+  return c.json({ user })
+})
+
+app.post('/api/auth/logout', (c) => {
+  logout(c)
+  return c.json({ ok: true })
+})
+
+app.post('/api/admin/articles', requireAuth, async (c) => {
+  const payload = await c.req.json<Partial<Article>>().catch(() => null)
+
+  if (!payload?.slug || !payload.title?.pt || !payload.title?.ja || !payload.summary?.pt || !payload.summary?.ja) {
+    return c.json(
+      {
+        error:
+          'Missing required fields: slug, title.pt, title.ja, summary.pt, summary.ja'
+      },
+      400
+    )
+  }
+
+  const article: Article = {
+    id: `art-${Date.now()}`,
+    slug: payload.slug,
+    category: normalizeCategory(payload.category ?? null) ?? 'top',
+    sourceId: payload.sourceId ?? 'manual',
+    sourceName: payload.sourceName ?? 'UNS-N Editorial',
+    url: payload.url,
+    imageUrl: payload.imageUrl,
+    publishedAt: payload.publishedAt ?? new Date().toISOString(),
+    fetchedAt: payload.fetchedAt,
+    originalLanguage: payload.originalLanguage,
+    needsTranslation: payload.needsTranslation ?? false,
+    importance: payload.importance ?? 'normal',
+    imageIcon: payload.imageIcon ?? 'UN',
+    tags: payload.tags ?? [],
+    title: {
+      pt: payload.title.pt,
+      en: payload.title.en ?? payload.title.pt,
+      ja: payload.title.ja
+    },
+    summary: {
+      pt: payload.summary.pt,
+      en: payload.summary.en ?? payload.summary.pt,
+      ja: payload.summary.ja
+    },
+    body: {
+      pt: payload.body?.pt ?? payload.summary.pt,
+      en: payload.body?.en ?? payload.summary.en ?? payload.summary.pt,
+      ja: payload.body?.ja ?? payload.summary.ja
+    }
+  }
+
+  await saveArticle(c, article)
+
+  return c.json({ data: publicArticle(article, 'pt') }, 201)
+})
+
+app.get('/api/admin/feeds/:feedId/preview', requireAuth, async (c) => {
+  const feed = feedSources.find((item) => item.id === c.req.param('feedId'))
+
+  if (!feed) {
+    return c.json({ error: 'Feed not found' }, 404)
+  }
+
+  const xml = await fetchFeedXml(feed.url).catch((error) => null)
+
+  if (!xml) {
+    return c.json({ error: 'Feed preview failed' }, 502)
+  }
+
+  return c.json({
+    feed,
+    data: parseFeed(xml).slice(0, 10)
+  })
+})
+
+app.post('/api/admin/feeds/:feedId/ingest', requireAuth, async (c) => {
+  const feed = feedSources.find((item) => item.id === c.req.param('feedId'))
+
+  if (!feed) {
+    return c.json({ error: 'Feed not found' }, 404)
+  }
+
+  const existingArticles = await listStoredArticles(c)
+  const result = await ingestFeed(feed, 12, existingArticles, (article) => saveArticle(c, article))
+  return c.json({ data: result })
+})
+
+app.post('/api/admin/ingest', requireAuth, async (c) => {
+  const existingArticles = await listStoredArticles(c)
+  const results = await ingestEnabledFeeds(12, existingArticles, (article) => saveArticle(c, article))
+  return c.json({ data: results })
+})
+
+app.get('/admin', async (c) => {
+  const user = getCurrentUser(c)
+
+  if (!user) {
+    return c.redirect('/login')
+  }
+
+  const allArticles = await listStoredArticles(c)
+  return c.html(renderAdminPage(user, feedSources, [], allArticles.length))
+})
+
+app.post('/admin/ingest', async (c) => {
+  const user = getCurrentUser(c)
+
+  if (!user) {
+    return c.redirect('/login')
+  }
+
+  const existingArticles = await listStoredArticles(c)
+  const results = await ingestEnabledFeeds(12, existingArticles, (article) => saveArticle(c, article))
+  const allArticles = await listStoredArticles(c)
+
+  return c.html(renderAdminPage(user, feedSources, results, allArticles.length))
+})
+
+app.get('/login', (c) => {
+  if (getCurrentUser(c)) {
+    return c.redirect('/admin')
+  }
+
+  return c.html(renderLoginPage())
+})
+
+app.post('/login', async (c) => {
+  const form = await c.req.formData()
+  const email = String(form.get('email') ?? '')
+  const password = String(form.get('password') ?? '')
+  const user = login(c, email, password)
+
+  if (!user) {
+    return c.html(renderLoginPage('Email ou senha invalidos.'), 401)
+  }
+
+  return c.redirect('/admin')
+})
+
+app.post('/logout', (c) => {
+  logout(c)
+  return c.redirect('/login')
+})
+
 app.get('/', (c) => {
+  const user = getCurrentUser(c)
+
   return c.html(`<!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -131,6 +462,13 @@ img{display:block;max-width:100%}
 }
 .lang-btn.active{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(0,0,0,.15)}
 .lang-btn:hover:not(.active){background:var(--chip-hover);color:var(--text)}
+.admin-nav-link{
+  height:30px;padding:0 12px;border-radius:16px;
+  display:inline-flex;align-items:center;justify-content:center;
+  background:var(--blue);color:#fff;font-size:12px;font-weight:800;
+  flex-shrink:0;
+}
+.admin-nav-link:hover{background:#1557b0}
 
 /* ─────────────────────────────────────────────
    TOPIC TABS  (Google News "For You / Japan / World…")
@@ -235,7 +573,9 @@ img{display:block;max-width:100%}
   object-fit:cover;background:var(--chip-bg);
   display:flex;align-items:center;justify-content:center;
   font-size:36px;flex-shrink:0;
+  overflow:hidden;
 }
+.cluster-hero-img img{width:100%;height:100%;object-fit:cover}
 
 .ch-source{
   font-size:11px;font-weight:600;color:var(--text-2);
@@ -511,6 +851,50 @@ img{display:block;max-width:100%}
 @keyframes ticker{0%{transform:translateX(0)}100%{transform:translateX(-50%)}}
 
 /* ─────────────────────────────────────────────
+   LIVE FEED FROM SAFE AGGREGATION
+───────────────────────────────────────────── */
+.live-feed-band{
+  background:#fff;
+  border-radius:var(--radius);
+  box-shadow:var(--shadow);
+  overflow:hidden;
+  margin-bottom:16px;
+}
+.live-feed-head{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  padding:14px 16px;border-bottom:1px solid var(--border-light);
+}
+.live-feed-title{font-size:13px;font-weight:800;color:var(--text);letter-spacing:.2px}
+.live-feed-meta{font-size:11px;color:var(--text-3)}
+.live-feed-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--border-light)}
+.topic-feed-list{
+  display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
+  margin:0 0 16px;
+}
+.live-card{
+  background:#fff;padding:12px;display:grid;grid-template-columns:92px 1fr;gap:12px;
+  min-height:116px;
+  border-radius:var(--radius);box-shadow:var(--shadow);
+}
+.live-card:hover .live-title{color:var(--blue)}
+.live-thumb{
+  width:92px;height:92px;border-radius:6px;background:var(--chip-bg);
+  display:flex;align-items:center;justify-content:center;overflow:hidden;
+  font-size:22px;font-weight:800;color:var(--text-3);
+}
+.live-thumb img{width:100%;height:100%;object-fit:cover}
+.live-source{font-size:10px;font-weight:800;color:var(--text-2);margin-bottom:4px}
+.live-title{font-size:13px;font-weight:700;line-height:1.35;transition:color .15s}
+.live-summary{font-size:11.5px;color:var(--text-2);line-height:1.5;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.live-actions{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-top:8px}
+.live-time{font-size:10px;color:var(--text-3)}
+.original-link{font-size:11px;font-weight:800;color:var(--blue);white-space:nowrap}
+.aggregator-note{font-size:10.5px;color:var(--text-3);padding:10px 16px;background:#fafafa;border-top:1px solid var(--border-light)}
+.prototype-static{display:none}
+.sec-head[id]{scroll-margin-top:112px}
+.section-featured{margin-bottom:12px}
+
+/* ─────────────────────────────────────────────
    FOOTER
 ───────────────────────────────────────────── */
 footer{
@@ -549,6 +933,7 @@ footer{
   .top-nav-inner{gap:8px}
   .search-wrap{display:none}
   .card-grid-2,.card-grid-3{grid-template-columns:1fr}
+  .live-feed-list,.topic-feed-list{grid-template-columns:1fr}
   .footer-row{flex-direction:column;gap:20px}
 }
   </style>
@@ -575,10 +960,11 @@ footer{
     </div>
 
     <div class="lang-sw">
-      <button class="lang-btn" onclick="setLang('pt')">PT</button>
-      <button class="lang-btn active" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" onclick="setLang('ja')">やさしい</button>
+      <button class="lang-btn active" onclick="setLang('pt')">PT</button>
+      <button class="lang-btn" onclick="setLang('en')">EN</button>
+      <button class="lang-btn" onclick="setLang('ja')">日本語</button>
     </div>
+    <a class="admin-nav-link" href="${user ? '/admin' : '/login'}">${user ? 'Admin' : 'Login'}</a>
   </div>
 </nav>
 
@@ -652,113 +1038,41 @@ footer{
 ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ -->
 <main>
 
+  <section class="live-feed-band" aria-live="polite">
+    <div class="live-feed-head">
+      <div>
+        <div class="live-feed-title">Live Feed · ニュースリンク</div>
+        <div class="live-feed-meta">Headlines, source attribution and original article links</div>
+      </div>
+      <button class="sec-more" onclick="loadLiveFeed()">Atualizar</button>
+    </div>
+    <div class="live-feed-list" id="live-feed-list"></div>
+    <div class="aggregator-note">
+      UNS→N mostra metadados e resumos curtos para descoberta. O artigo completo abre sempre no site original.
+    </div>
+  </section>
+
   <!-- ────────────────────────────
        TOP STORIES  CLUSTER
   ──────────────────────────────── -->
   <div class="sec-head">
     <span class="sec-title">トップニュース</span>
-    <span class="sec-more">すべて見る →</span>
+    <a class="sec-more" href="/section/top?lang=pt" data-section-more="top">すべて見る →</a>
   </div>
-
-  <!-- Cluster 1: 在留カード統合 (big story) -->
-  <div class="cluster" id="top">
-    <div class="cluster-hero">
-      <div class="cluster-hero-text">
-        <div class="ch-source">
-          <span class="ch-source-dot" style="background:#1a73e8">入</span>
-          出入国在留管理庁 / Fragomen
-        </div>
-        <div class="ch-title">在留カード＋マイナンバーが1枚に — 新「特定在留カード」6月14日スタート</div>
-        <div class="ch-lead">外国人在留者が持つ2枚のカードが統合。次回更新から自動的に新カードが発行。入管局1か所で手続き完結へ。</div>
-        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-          <span class="chip chip-red">⚠ 要確認</span>
-          <span class="chip chip-blue">行政</span>
-          <span class="chip chip-blue">在留</span>
-        </div>
-        <div class="lang-snip">
-          <div class="lang-snip-label">🇧🇷 Português</div>
-          A partir de 14 de junho de 2026, o Japão lançará o novo "Cartão de Residência Especificado", unificando o Zairyu Card e o My Number Card. Os cartões atuais continuam válidos até o vencimento. Fonte: Fragomen, Mar 2026.
-        </div>
-        <div class="ch-time">2026年6月 · 施行</div>
-      </div>
-      <div class="cluster-hero-img">🪪</div>
-    </div>
-    <div class="cluster-related">
-      <div class="cluster-rel-item">
-        <div class="cri-text">
-          <div class="cri-source">デジタル庁</div>
-          <div class="cri-title">マイナンバーカードの電子証明書：有効期限と更新手続きまとめ</div>
-        </div>
-        <div class="cri-img">📱</div>
-      </div>
-      <div class="cluster-rel-item">
-        <div class="cri-text">
-          <div class="cri-source">GaijinPot Blog · Jan 2026</div>
-          <div class="cri-title">2026年に変わる15の法律 — 外国人が知るべき変更点まとめ</div>
-        </div>
-        <div class="cri-img">📋</div>
-      </div>
-    </div>
-    <div class="cluster-more">
-      関連記事をもっと見る（3件）
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-    </div>
-  </div>
-
-  <!-- Cluster 2: 労働基準法 -->
-  <div class="cluster">
-    <div class="cluster-hero">
-      <div class="cluster-hero-text">
-        <div class="ch-source">
-          <span class="ch-source-dot" style="background:#d93025">労</span>
-          朝日新聞 / 厚生労働省
-        </div>
-        <div class="ch-title">労働基準法40年ぶり大改正 — 外国人就労者への多言語説明を義務化へ</div>
-        <div class="ch-lead">AI・リモートワーク・ギグ経済への対応を目的とした大改正が国会審議入り。残業計算の見直しや休暇強化も。</div>
-        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-          <span class="chip chip-amber">審議中</span>
-          <span class="chip">労働法</span>
-          <span class="chip">外国人</span>
-        </div>
-        <div class="lang-snip">
-          <div class="lang-snip-label">🇧🇷 Português</div>
-          O Japão prepara a primeira grande reforma da Lei de Normas do Trabalho em 40 anos. Mudanças: revisão de horas extras, novos direitos de descanso e obrigatoriedade de explicação em múltiplos idiomas para trabalhadores estrangeiros.
-        </div>
-        <div class="ch-time">2026年2月〜 · 国会審議中</div>
-      </div>
-      <div class="cluster-hero-img">⚖️</div>
-    </div>
-    <div class="cluster-related">
-      <div class="cluster-rel-item">
-        <div class="cri-text">
-          <div class="cri-source">Paul Hastings LLP · Feb 2026</div>
-          <div class="cri-title">Japan prepares first major Labour Standards Act overhaul in 40 years</div>
-        </div>
-        <div class="cri-img">📄</div>
-      </div>
-      <div class="cluster-rel-item">
-        <div class="cri-text">
-          <div class="cri-source">厚生労働省</div>
-          <div class="cri-title">技能実習制度→育成就労制度への完全移行（2027年めど）</div>
-        </div>
-        <div class="cri-img">🏭</div>
-      </div>
-    </div>
-    <div class="cluster-more">
-      関連記事をもっと見る（5件）
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-    </div>
-  </div>
+  <div id="featured-clusters"></div>
+  <div class="topic-feed-list" data-topic-feed="top"></div>
 
   <!-- ────────────────────────────
        BUSINESS & TECH  (card grid)
   ──────────────────────────────── -->
   <div class="sec-head" id="business" style="margin-top:8px">
     <span class="sec-title">ビジネス・テクノロジー</span>
-    <span class="sec-more">すべて見る →</span>
+    <a class="sec-more" href="/section/business?lang=pt" data-section-more="business">すべて見る →</a>
   </div>
+  <div class="section-featured" data-section-featured="business"></div>
+  <div class="topic-feed-list" data-topic-feed="business"></div>
 
-  <div class="card-grid-3">
+  <div class="card-grid-3 prototype-static">
     <div class="card news-card">
       <div class="nc-img">🏭</div>
       <div class="nc-source">
@@ -810,8 +1124,9 @@ footer{
   ──────────────────────────────── -->
   <div class="sec-head" id="media" style="margin-top:8px">
     <span class="sec-title">メディアをフォロー</span>
-    <span class="sec-more">一覧を見る →</span>
+    <a class="sec-more" href="/section/media?lang=pt" data-section-more="media">一覧を見る →</a>
   </div>
+  <div class="section-featured" data-section-featured="media"></div>
 
   <!-- 全国紙・経済紙 -->
   <div class="widget" style="margin-bottom:10px">
@@ -924,10 +1239,12 @@ footer{
   ──────────────────────────────── -->
   <div class="sec-head" id="global" style="margin-top:8px">
     <span class="sec-title">🇧🇷 ブラジル・南米 グローバルフィード</span>
-    <span class="sec-more">すべて見る →</span>
+    <a class="sec-more" href="/section/global?lang=pt" data-section-more="global">すべて見る →</a>
   </div>
+  <div class="section-featured" data-section-featured="global"></div>
+  <div class="topic-feed-list" data-topic-feed="global"></div>
 
-  <div class="cluster">
+  <div class="cluster prototype-static">
     <div class="cluster-hero">
       <div class="cluster-hero-text">
         <div class="ch-source">
@@ -976,10 +1293,12 @@ footer{
   ──────────────────────────────── -->
   <div class="sec-head" id="life" style="margin-top:8px">
     <span class="sec-title">生活・行政・ビザ</span>
-    <span class="sec-more">すべて見る →</span>
+    <a class="sec-more" href="/section/life?lang=pt" data-section-more="life">すべて見る →</a>
   </div>
+  <div class="section-featured" data-section-featured="life"></div>
+  <div class="topic-feed-list" data-topic-feed="life"></div>
 
-  <div class="admin-cluster">
+  <div class="admin-cluster prototype-static">
 
     <div class="admin-item">
       <div class="ai-head">
@@ -1051,7 +1370,7 @@ footer{
   ──────────────────────────────── -->
   <div class="sec-head" id="admin" style="margin-top:8px">
     <span class="sec-title">🏛 行政窓口・自治体</span>
-    <span class="sec-more">すべて見る →</span>
+    <a class="sec-more" href="/section/admin?lang=pt" data-section-more="admin">すべて見る →</a>
   </div>
 
   <div class="widget" style="margin-bottom:10px">
@@ -1272,7 +1591,7 @@ footer{
         UNS→Nは全記事を3言語でお届けすることを目指しています。
       </div>
       <div class="lang-pills">
-        <span class="lang-pill">🇯🇵 やさしい日本語</span>
+        <span class="lang-pill">🇯🇵 日本語</span>
         <span class="lang-pill">🇧🇷 Português</span>
         <span class="lang-pill">🇺🇸 English</span>
       </div>
@@ -1317,8 +1636,10 @@ footer{
         <div class="footer-links">
           <a href="#" class="footer-link">サービス概要</a>
           <a href="#" class="footer-link">パートナー募集</a>
-          <a href="#" class="footer-link">プライバシーポリシー</a>
-          <a href="#" class="footer-link">お問い合わせ</a>
+          <a href="/privacy" class="footer-link">プライバシーポリシー</a>
+          <a href="/terms" class="footer-link">利用規約</a>
+          <a href="/copyright" class="footer-link">Copyright / Removal</a>
+          <a href="/publishers" class="footer-link">Publisher Policy</a>
         </div>
       </div>
     </div>
@@ -1330,15 +1651,203 @@ footer{
 </footer>
 
 <script>
-// ── Lang switcher
-function setLang(lang){
-  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
-  const map={pt:'PT',en:'EN',ja:'やさしい'};
-  document.querySelectorAll('.lang-btn').forEach(b=>{
-    if(b.textContent.trim()===map[lang])b.classList.add('active');
+const params=new URLSearchParams(window.location.search);
+let currentLang=(function(lang){return lang==='ja'||lang==='en'?lang:'pt';})(params.get('lang'));
+
+function escapeHtml(value){
+  return String(value||'').replace(/[&<>"']/g,function(ch){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
   });
-  const msgs={pt:'🇧🇷 Modo Português ativado!',en:'🇺🇸 English mode activated!',ja:'🇯🇵 やさしい日本語モードになりました！'};
-  toast(msgs[lang]);
+}
+
+function timeAgo(dateValue){
+  const time=new Date(dateValue).getTime();
+  if(!time)return '';
+  const diff=Math.max(0,Date.now()-time);
+  const minutes=Math.floor(diff/60000);
+  if(minutes<60)return minutes+' min';
+  const hours=Math.floor(minutes/60);
+  if(hours<24)return hours+' h';
+  return Math.floor(hours/24)+' d';
+}
+
+function feedCardHtml(item){
+  const image=item.imageUrl?'<img src="'+escapeHtml(item.imageUrl)+'" alt=""/>':escapeHtml(item.imageIcon||'UN');
+  const summary=item.summary&&item.summary!==item.title?'<div class="live-summary">'+escapeHtml(item.summary)+'</div>':'';
+  const link=item.url
+    ? '<a class="original-link" href="'+escapeHtml(item.url)+'" target="_blank" rel="noopener noreferrer">Original ↗</a>'
+    : '<span class="live-time">UNS-N</span>';
+
+  return '<article class="live-card">'+
+    '<div class="live-thumb">'+image+'</div>'+
+    '<div>'+
+      '<div class="live-source">'+escapeHtml(item.sourceName)+'</div>'+
+      '<div class="live-title">'+escapeHtml(item.title)+'</div>'+
+      summary+
+      '<div class="live-actions">'+
+        '<span class="live-time">'+escapeHtml(timeAgo(item.publishedAt))+'</span>'+
+        link+
+      '</div>'+
+    '</div>'+
+  '</article>';
+}
+
+function featuredClusterHtml(item){
+  const image=item.imageUrl?'<img src="'+escapeHtml(item.imageUrl)+'" alt=""/>':escapeHtml(item.imageIcon||'UN');
+  const tags=(item.tags||[]).slice(0,3).map(function(tag){
+    return '<span class="chip chip-blue">'+escapeHtml(tag)+'</span>';
+  }).join('');
+  const note=currentLang==='ja'
+    ? 'UNS→Nは見出し・短い要約・出典リンクのみを表示します。全文は配信元でお読みください。'
+    : currentLang==='en'
+      ? 'UNS-N shows headlines, short summaries and source links. Read the full story on the original site.'
+      : 'UNS-N mostra titulo, resumo curto e link da fonte. Leia o texto completo no site original.';
+
+  return '<div class="cluster">'+
+    '<a class="cluster-hero" href="'+escapeHtml(item.url||'#')+'" target="_blank" rel="noopener noreferrer">'+
+      '<div class="cluster-hero-text">'+
+        '<div class="ch-source">'+
+          '<span class="ch-source-dot" style="background:#1a73e8">'+escapeHtml((item.sourceName||'U').slice(0,1))+'</span>'+
+          escapeHtml(item.sourceName||'UNS-N')+
+        '</div>'+
+        '<div class="ch-title">'+escapeHtml(item.title)+'</div>'+
+        '<div class="ch-lead">'+escapeHtml(item.summary||'')+'</div>'+
+        '<div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">'+tags+'</div>'+
+        '<div class="lang-snip">'+
+          '<div class="lang-snip-label">'+(currentLang==='ja'?'出典リンク':'Fonte original')+'</div>'+
+          escapeHtml(note)+
+        '</div>'+
+        '<div class="ch-time">'+escapeHtml(timeAgo(item.publishedAt))+' · Original ↗</div>'+
+      '</div>'+
+      '<div class="cluster-hero-img">'+image+'</div>'+
+    '</a>'+
+  '</div>';
+}
+
+function emptyFeedHtml(category){
+  const messages={
+    top:{pt:'Nenhuma noticia em portugues no Top ainda.',en:'No English top stories yet.',ja:'トップの日本語記事はまだありません。'},
+    business:{pt:'Nenhuma noticia de negocios em portugues ainda.',en:'No English business stories yet.',ja:'ビジネスの日本語記事はまだありません。'},
+    global:{pt:'Nenhuma noticia Brasil/global em portugues ainda.',en:'No English Brazil/global stories yet.',ja:'ブラジル・グローバルの日本語記事はまだありません。'},
+    life:{pt:'Nenhuma noticia de vida/admin em portugues ainda.',en:'No English life/admin stories yet.',ja:'生活・行政の日本語記事はまだありません。'}
+  };
+  const msg=(messages[category]||messages.top)[currentLang]||messages.top.pt;
+  const hint={
+    pt:'Use /admin para importar feeds em portugues, como NHK World Radio Japan Portugues.',
+    en:'Use /admin to import English feeds, such as Nikkei Asia.',
+    ja:'Adminで日本語フィードをインポートしてください。'
+  }[currentLang];
+  return '<div class="live-card"><div class="live-thumb">UN</div><div><div class="live-source">UNS-N</div><div class="live-title">'+escapeHtml(msg)+'</div><div class="live-summary">'+escapeHtml(hint)+'</div></div></div>';
+}
+
+async function loadLiveFeed(){
+  const target=document.getElementById('live-feed-list');
+  if(!target)return;
+  target.innerHTML='<div class="live-card"><div class="live-thumb">...</div><div><div class="live-source">UNS-N</div><div class="live-title">Carregando noticias...</div></div></div>';
+  try{
+    const res=await fetch('/api/articles?lang='+encodeURIComponent(currentLang));
+    const payload=await res.json();
+    const items=(payload.data||[]).filter(function(item){return item.url;}).slice(0,4);
+    if(items.length===0){
+      target.innerHTML='<div class="live-card"><div class="live-thumb">UN</div><div><div class="live-source">UNS-N</div><div class="live-title">Nenhuma noticia importada ainda.</div><div class="live-summary">Use a rota protegida /api/admin/ingest para importar feeds RSS configurados.</div></div></div>';
+      return;
+    }
+    target.innerHTML=items.map(feedCardHtml).join('');
+  }catch(err){
+    target.innerHTML='<div class="live-card"><div class="live-thumb">!</div><div><div class="live-source">UNS-N</div><div class="live-title">Nao foi possivel carregar o feed.</div></div></div>';
+  }
+}
+
+async function loadFeaturedStories(){
+  const target=document.getElementById('featured-clusters');
+  if(!target)return;
+  target.innerHTML='<div class="cluster"><div class="cluster-hero"><div class="cluster-hero-text"><div class="ch-source">UNS-N</div><div class="ch-title">Carregando destaques...</div></div><div class="cluster-hero-img">...</div></div></div>';
+  try{
+    const res=await fetch('/api/articles?lang='+encodeURIComponent(currentLang));
+    const payload=await res.json();
+    const items=(payload.data||[]).filter(function(item){return item.url;}).slice(0,2);
+    if(items.length===0){
+      target.innerHTML='<div class="cluster"><div class="cluster-hero"><div class="cluster-hero-text"><div class="ch-source">UNS-N</div><div class="ch-title">Nenhuma noticia importada ainda.</div><div class="ch-lead">Entre no Admin e importe os feeds para preencher os destaques automaticamente.</div></div><div class="cluster-hero-img">UN</div></div></div>';
+      return;
+    }
+    target.innerHTML=items.map(featuredClusterHtml).join('');
+  }catch(err){
+    target.innerHTML='<div class="cluster"><div class="cluster-hero"><div class="cluster-hero-text"><div class="ch-source">UNS-N</div><div class="ch-title">Nao foi possivel carregar os destaques.</div></div><div class="cluster-hero-img">!</div></div></div>';
+  }
+}
+
+async function loadSectionFeatured(section, category){
+  const target=document.querySelector('[data-section-featured="'+section+'"]');
+  if(!target)return;
+  target.innerHTML='<div class="cluster"><div class="cluster-hero"><div class="cluster-hero-text"><div class="ch-source">UNS-N</div><div class="ch-title">Carregando destaque...</div></div><div class="cluster-hero-img">...</div></div></div>';
+  try{
+    const url=category
+      ? '/api/articles?lang='+encodeURIComponent(currentLang)+'&category='+encodeURIComponent(category)
+      : '/api/articles?lang='+encodeURIComponent(currentLang);
+    const res=await fetch(url);
+    const payload=await res.json();
+    const item=(payload.data||[]).filter(function(article){return article.url;})[0];
+    if(!item){
+      const title={pt:'Ainda nao ha noticias nesta secao.',en:'No stories in this section yet.',ja:'このセクションの記事はまだありません。'}[currentLang];
+      const lead={pt:'Importe feeds em portugues no Admin para preencher este destaque.',en:'Import English feeds in Admin to fill this featured card.',ja:'Adminでこの言語のフィードをインポートすると、ここに大きなカードが表示されます。'}[currentLang];
+      target.innerHTML='<div class="cluster"><div class="cluster-hero"><div class="cluster-hero-text"><div class="ch-source">UNS-N</div><div class="ch-title">'+escapeHtml(title)+'</div><div class="ch-lead">'+escapeHtml(lead)+'</div></div><div class="cluster-hero-img">UN</div></div></div>';
+      return;
+    }
+    target.innerHTML=featuredClusterHtml(item);
+  }catch(err){
+    target.innerHTML='<div class="cluster"><div class="cluster-hero"><div class="cluster-hero-text"><div class="ch-source">UNS-N</div><div class="ch-title">Nao foi possivel carregar este destaque.</div></div><div class="cluster-hero-img">!</div></div></div>';
+  }
+}
+
+async function loadTopicFeed(category){
+  const target=document.querySelector('[data-topic-feed="'+category+'"]');
+  if(!target)return;
+  target.innerHTML='<div class="live-card"><div class="live-thumb">...</div><div><div class="live-source">UNS-N</div><div class="live-title">Carregando...</div></div></div>';
+  try{
+    const res=await fetch('/api/articles?lang='+encodeURIComponent(currentLang)+'&category='+encodeURIComponent(category));
+    const payload=await res.json();
+    const items=(payload.data||[]).slice(0,4);
+    target.innerHTML=items.length?items.map(feedCardHtml).join(''):emptyFeedHtml(category);
+  }catch(err){
+    target.innerHTML='<div class="live-card"><div class="live-thumb">!</div><div><div class="live-source">UNS-N</div><div class="live-title">Nao foi possivel carregar esta categoria.</div></div></div>';
+  }
+}
+
+// ── Lang switcher
+function updateSectionLinks(){
+  document.querySelectorAll('[data-section-more]').forEach(function(link){
+    const category=link.getAttribute('data-section-more');
+    if(category)link.setAttribute('href','/section/'+encodeURIComponent(category)+'?lang='+encodeURIComponent(currentLang));
+  });
+}
+
+function syncLangButtons(){
+  document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
+  const map={pt:'PT',en:'EN',ja:'日本語'};
+  document.querySelectorAll('.lang-btn').forEach(b=>{
+    if(b.textContent.trim()===map[currentLang])b.classList.add('active');
+  });
+}
+
+function loadAllFeeds(){
+  syncLangButtons();
+  updateSectionLinks();
+  loadLiveFeed();
+  loadFeaturedStories();
+  loadSectionFeatured('business','business');
+  loadSectionFeatured('global','global');
+  loadSectionFeatured('life','life');
+  loadSectionFeatured('media',null);
+  ['top','business','global','life'].forEach(loadTopicFeed);
+}
+loadAllFeeds();
+
+function setLang(lang){
+  currentLang=lang==='ja'||lang==='en'?lang:'pt';
+  syncLangButtons();
+  const msgs={pt:'Modo Português ativado.',en:'English mode activated.',ja:'日本語モードになりました。'};
+  toast(msgs[currentLang]);
+  loadAllFeeds();
 }
 
 function toast(msg){
@@ -1362,7 +1871,11 @@ function setTab(el,id){
   el.classList.add('active');
   if(id==='top'){window.scrollTo({top:0,behavior:'smooth'});return;}
   const sec=document.getElementById(id);
-  if(sec)sec.scrollIntoView({behavior:'smooth',block:'start'});
+  if(sec){
+    const stickyOffset=112;
+    const top=sec.getBoundingClientRect().top+window.pageYOffset-stickyOffset;
+    window.scrollTo({top:Math.max(0,top),behavior:'smooth'});
+  }
 }
 
 // ── Highlight tab on scroll
