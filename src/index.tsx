@@ -572,7 +572,7 @@ img{display:block;max-width:100%}
   width:180px;height:108px;border-radius:6px;
   object-fit:cover;background:var(--chip-bg);
   display:flex;align-items:center;justify-content:center;
-  font-size:36px;flex-shrink:0;
+  font-size:24px;font-weight:900;color:var(--text-3);letter-spacing:.4px;flex-shrink:0;
   overflow:hidden;
 }
 .cluster-hero-img img{width:100%;height:100%;object-fit:cover}
@@ -615,7 +615,8 @@ img{display:block;max-width:100%}
 }
 .cri-img{
   width:72px;height:48px;border-radius:4px;background:var(--chip-bg);
-  flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:20px;
+  flex-shrink:0;display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;color:var(--text-3);letter-spacing:.3px;
 }
 .cluster-more{
   padding:10px 16px;
@@ -638,7 +639,7 @@ img{display:block;max-width:100%}
   width:100%;height:110px;border-radius:5px;
   background:var(--chip-bg);margin-bottom:10px;
   display:flex;align-items:center;justify-content:center;
-  font-size:32px;overflow:hidden;
+  font-size:18px;font-weight:900;color:var(--text-3);letter-spacing:.4px;overflow:hidden;
 }
 .nc-source{font-size:10px;font-weight:700;color:var(--text-2);margin-bottom:4px;display:flex;align-items:center;gap:4px}
 .nc-title{font-size:13.5px;font-weight:600;line-height:1.35;margin-bottom:5px}
@@ -657,7 +658,8 @@ img{display:block;max-width:100%}
 .hcard-img{
   width:80px;height:56px;border-radius:4px;
   background:var(--chip-bg);flex-shrink:0;
-  display:flex;align-items:center;justify-content:center;font-size:22px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:13px;font-weight:900;color:var(--text-3);letter-spacing:.3px;
 }
 .hcard-body{flex:1;min-width:0}
 .hcard-source{font-size:10px;font-weight:700;color:var(--text-2);margin-bottom:3px}
@@ -744,7 +746,11 @@ img{display:block;max-width:100%}
   border-bottom:1px solid var(--border-light);
   display:flex;align-items:center;gap:6px;
 }
-.widget-head-icon{font-size:16px}
+.widget-head-icon{
+  min-width:34px;height:18px;border-radius:4px;background:var(--chip-bg);
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:0 6px;font-size:9px;font-weight:900;color:var(--text-3);letter-spacing:.4px;
+}
 
 /* Mini story list */
 .mini-story{
@@ -777,7 +783,11 @@ img{display:block;max-width:100%}
   text-align:center;
 }
 .ql-item:hover{background:var(--chip-bg)}
-.ql-icon{font-size:22px}
+.ql-icon{
+  min-width:36px;height:28px;border-radius:5px;background:var(--chip-bg);
+  display:inline-flex;align-items:center;justify-content:center;
+  padding:0 6px;font-size:10px;font-weight:900;color:var(--text-3);letter-spacing:.2px;
+}
 .ql-label{font-size:11px;font-weight:600;color:var(--text);line-height:1.3}
 .ql-sub{font-size:10px;color:var(--text-3)}
 
@@ -806,7 +816,7 @@ img{display:block;max-width:100%}
 .ai-icon{
   width:34px;height:34px;border-radius:8px;
   display:flex;align-items:center;justify-content:center;
-  font-size:16px;flex-shrink:0;
+  font-size:10px;font-weight:900;color:var(--text-2);letter-spacing:.3px;flex-shrink:0;
 }
 .ai-badge{
   font-size:9px;font-weight:700;letter-spacing:.8px;
@@ -1004,25 +1014,10 @@ footer{
 <div class="ticker" aria-live="polite">
   <div class="ticker-label">速報</div>
   <div style="overflow:hidden;flex:1">
-    <div class="ticker-track" aria-hidden="true">
-      <span class="ticker-item">🪪 特定在留カード：6月14日より発行開始（在留＋マイナ統合）</span>
+    <div class="ticker-track" id="breaking-ticker-track" aria-hidden="true">
+      <span class="ticker-item">UNS-N · Carregando noticias de hoje...</span>
       <span class="ticker-item">・</span>
-      <span class="ticker-item">🇧🇷🇯🇵 日本・メルコスールEPA交渉スタート（2026年5月26日）</span>
-      <span class="ticker-item">・</span>
-      <span class="ticker-item">⚖️ 労働基準法 40年ぶり大改正案が国会審議入り</span>
-      <span class="ticker-item">・</span>
-      <span class="ticker-item">🏭 スマート製造市場2034年に3兆円へ（CAGR 15.2%）</span>
-      <span class="ticker-item">・</span>
-      <span class="ticker-item">🛂 特定技能2号：対象分野拡大・家族帯同・更新無制限</span>
-      <span class="ticker-item">・</span>
-      <span class="ticker-item">🌿 EU・メルコスール協定発効 — ブラジル再生エネが急成長</span>
-      <span class="ticker-item">・</span>
-      <!-- duplicate for seamless loop -->
-      <span class="ticker-item">🪪 特定在留カード：6月14日より発行開始（在留＋マイナ統合）</span>
-      <span class="ticker-item">・</span>
-      <span class="ticker-item">🇧🇷🇯🇵 日本・メルコスールEPA交渉スタート（2026年5月26日）</span>
-      <span class="ticker-item">・</span>
-      <span class="ticker-item">⚖️ 労働基準法 40年ぶり大改正案が国会審議入り</span>
+      <span class="ticker-item">UNS-N · Carregando noticias de hoje...</span>
       <span class="ticker-item">・</span>
     </div>
   </div>
@@ -1074,7 +1069,7 @@ footer{
 
   <div class="card-grid-3 prototype-static">
     <div class="card news-card">
-      <div class="nc-img">🏭</div>
+      <div class="nc-img">IND</div>
       <div class="nc-source">
         <span class="ch-source-dot" style="background:#e37400;font-size:8px">IMARC</span>
         IMARC Research
@@ -1089,7 +1084,7 @@ footer{
     </div>
 
     <div class="card news-card">
-      <div class="nc-img">🚀</div>
+      <div class="nc-img">TC</div>
       <div class="nc-source">
         <span class="ch-source-dot" style="background:#1a73e8;font-size:8px">TC</span>
         TechCrunch / 東京都
@@ -1104,7 +1099,7 @@ footer{
     </div>
 
     <div class="card news-card">
-      <div class="nc-img">🤖</div>
+      <div class="nc-img">AUTO</div>
       <div class="nc-source">
         <span class="ch-source-dot" style="background:#137333;font-size:8px">JR</span>
         JR Automation
@@ -1131,7 +1126,7 @@ footer{
   <!-- 全国紙・経済紙 -->
   <div class="widget" style="margin-bottom:10px">
     <div class="widget-head">
-      <span class="widget-head-icon">🗞</span> 日本の主要紙・経済紙
+      <span class="widget-head-icon">MEDIA</span> 日本の主要紙・経済紙
     </div>
     <div style="padding:14px 16px 10px">
       <div class="source-pill-row">
@@ -1202,7 +1197,7 @@ footer{
   <!-- ブラジル・ポルトガル語メディア -->
   <div class="widget" style="margin-bottom:10px">
     <div class="widget-head">
-      <span class="widget-head-icon">🇧🇷</span> ブラジル・ポルトガル語メディア
+      <span class="widget-head-icon">PT</span> ブラジル・ポルトガル語メディア
     </div>
     <div style="padding:14px 16px 10px">
       <div class="source-pill-row">
@@ -1238,7 +1233,7 @@ footer{
        GLOBAL FEED
   ──────────────────────────────── -->
   <div class="sec-head" id="global" style="margin-top:8px">
-    <span class="sec-title">🇧🇷 ブラジル・南米 グローバルフィード</span>
+    <span class="sec-title">ブラジル・南米 グローバルフィード</span>
     <a class="sec-more" href="/section/global?lang=pt" data-section-more="global">すべて見る →</a>
   </div>
   <div class="section-featured" data-section-featured="global"></div>
@@ -1256,15 +1251,15 @@ footer{
         <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
           <span class="chip chip-green">通商</span>
           <span class="chip">EPA</span>
-          <span class="chip chip-blue">🇧🇷 Brazil</span>
+          <span class="chip chip-blue">Brazil</span>
         </div>
         <div class="lang-snip">
-          <div class="lang-snip-label">🇯🇵 日本語サマリー（職場で使える）</div>
+          <div class="lang-snip-label">日本語サマリー（職場で使える）</div>
           日本とブラジルを含む南米4か国（メルコスール）が経済連携協定の交渉を開始しました。日本はブラジルから石油・農産物の輸入増加を、ブラジルは日本製自動車の関税引き下げを目指します。ポルトガル語が話せる専門家の価値が日本の商社・エネルギー業界でさらに高まります。
         </div>
         <div class="ch-time">2026年5月26日 · Reuters</div>
       </div>
-      <div class="cluster-hero-img">🇧🇷🇯🇵</div>
+      <div class="cluster-hero-img">BR-JP</div>
     </div>
     <div class="cluster-related">
       <div class="cluster-rel-item">
@@ -1272,14 +1267,14 @@ footer{
           <div class="cri-source">Kyodo News · May 18, 2026</div>
           <div class="cri-title">ブラジル外相「日本への石油輸出拡大の準備ができている」エネルギー安保で急接近</div>
         </div>
-        <div class="cri-img">⚡</div>
+        <div class="cri-img">EN</div>
       </div>
       <div class="cluster-rel-item">
         <div class="cri-text">
           <div class="cri-source">EU Trade / EY · May 2026</div>
           <div class="cri-title">EU・メルコスール協定発効 — ブラジルの再生エネルギー産業が急成長</div>
         </div>
-        <div class="cri-img">🌿</div>
+        <div class="cri-img">ESG</div>
       </div>
     </div>
     <div class="cluster-more">
@@ -1302,9 +1297,9 @@ footer{
 
     <div class="admin-item">
       <div class="ai-head">
-        <div class="ai-icon" style="background:#fce8e6">🪪</div>
+        <div class="ai-icon" style="background:#fce8e6">ID</div>
         <div>
-          <span class="ai-badge badge-red">⚠ 6月14日施行</span>
+          <span class="ai-badge badge-red">6月14日施行</span>
           <div class="ai-title">在留カード＋マイナンバー統合 — 新「特定在留カード」</div>
           <div class="ai-title-en">New Specified Residence Card · Jun 14, 2026</div>
         </div>
@@ -1323,7 +1318,7 @@ footer{
 
     <div class="admin-item">
       <div class="ai-head">
-        <div class="ai-icon" style="background:#fef7e0">⚖️</div>
+        <div class="ai-icon" style="background:#fef7e0">LAW</div>
         <div>
           <span class="ai-badge badge-amber">国会審議中</span>
           <div class="ai-title">労働基準法 大改正（40年ぶり）</div>
@@ -1344,7 +1339,7 @@ footer{
 
     <div class="admin-item">
       <div class="ai-head">
-        <div class="ai-icon" style="background:#e6f4ea">🛂</div>
+        <div class="ai-icon" style="background:#e6f4ea">SSW</div>
         <div>
           <span class="ai-badge badge-green">拡大中</span>
           <div class="ai-title">特定技能ビザ（SSW）2026年最新動向</div>
@@ -1369,40 +1364,40 @@ footer{
        GOVERNMENT / MUNICIPALITY LINKS
   ──────────────────────────────── -->
   <div class="sec-head" id="admin" style="margin-top:8px">
-    <span class="sec-title">🏛 行政窓口・自治体</span>
+    <span class="sec-title">行政窓口・自治体</span>
     <a class="sec-more" href="/section/admin?lang=pt" data-section-more="admin">すべて見る →</a>
   </div>
 
   <div class="widget" style="margin-bottom:10px">
-    <div class="widget-head"><span class="widget-head-icon">🏛</span> 主要行政窓口（公式）</div>
+    <div class="widget-head"><span class="widget-head-icon">GOV</span> 主要行政窓口（公式）</div>
     <div style="padding:14px 16px 10px">
       <div class="source-pill-row">
         <a href="https://www.moj.go.jp/isa/" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#1a73e8">🛂</span>
+          <span class="source-pill-icon" style="background:#1a73e8">ISA</span>
           出入国在留管理庁
         </a>
         <a href="https://www.mhlw.go.jp/english/" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#166534">🏥</span>
+          <span class="source-pill-icon" style="background:#166534">MHLW</span>
           厚生労働省
         </a>
         <a href="https://www.nta.go.jp/english/" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#b45309">💴</span>
+          <span class="source-pill-icon" style="background:#b45309">TAX</span>
           国税庁（税務）
         </a>
         <a href="https://www.digital.go.jp/en/policies/mynumber/" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#5b21b6">🪪</span>
+          <span class="source-pill-icon" style="background:#5b21b6">ID</span>
           デジタル庁（マイナ）
         </a>
         <a href="https://www.nenkin.go.jp/international/" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#991b1b">👴</span>
+          <span class="source-pill-icon" style="background:#991b1b">PEN</span>
           日本年金機構
         </a>
         <a href="https://www.hellowork.mhlw.go.jp" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#c2410c">💼</span>
+          <span class="source-pill-icon" style="background:#c2410c">JOB</span>
           ハローワーク
         </a>
         <a href="https://www.ssw.go.jp/en/" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#0369a1">🛂</span>
+          <span class="source-pill-icon" style="background:#0369a1">SSW</span>
           特定技能SSWポータル
         </a>
       </div>
@@ -1410,39 +1405,39 @@ footer{
   </div>
 
   <div class="widget" style="margin-bottom:16px">
-    <div class="widget-head"><span class="widget-head-icon">🏙</span> 主要都市・自治体（外国人向け窓口）</div>
+    <div class="widget-head"><span class="widget-head-icon">CITY</span> 主要都市・自治体（外国人向け窓口）</div>
     <div style="padding:14px 16px 10px">
       <div class="source-pill-row">
         <a href="https://www.tokyo-icc.jp" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#1e40af">🗼</span>
+          <span class="source-pill-icon" style="background:#1e40af">TKY</span>
           東京都国際交流委員会
         </a>
         <a href="https://www.city.hamamatsu.shizuoka.jp/foreign/" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#b45309">🏭</span>
+          <span class="source-pill-icon" style="background:#b45309">HM</span>
           浜松市国際課
         </a>
         <a href="https://www.city.toyohashi.lg.jp/foreigners" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#166534">🏘</span>
+          <span class="source-pill-icon" style="background:#166534">TYH</span>
           豊橋市外国人支援
         </a>
         <a href="https://www.pref.aichi.jp/soshiki/tabunka/" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#991b1b">🚗</span>
+          <span class="source-pill-icon" style="background:#991b1b">AIC</span>
           愛知県多文化共生
         </a>
         <a href="https://www.pref.shizuoka.jp/kurashikankyo/tabunka/" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#4c1d95">🗻</span>
+          <span class="source-pill-icon" style="background:#4c1d95">SZK</span>
           静岡県多文化共生
         </a>
         <a href="https://www.city.nagoya.jp/en/category/828-0-0-0-0-0-0-0-0-0.html" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#c2410c">🏯</span>
+          <span class="source-pill-icon" style="background:#c2410c">NGY</span>
           名古屋市国際課
         </a>
         <a href="https://www.city.toyota.aichi.jp/multilingual/" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#0369a1">🏎</span>
+          <span class="source-pill-icon" style="background:#0369a1">TYT</span>
           豊田市多文化共生
         </a>
         <a href="https://www.city.oizumi.gunma.jp/0000000466.html" target="_blank" rel="noopener" class="source-pill">
-          <span class="source-pill-icon" style="background:#065f46">🌾</span>
+          <span class="source-pill-icon" style="background:#065f46">OIZ</span>
           大泉町（群馬）
         </a>
       </div>
@@ -1458,35 +1453,35 @@ footer{
 
   <!-- Quick Access -->
   <div class="widget">
-    <div class="widget-head"><span class="widget-head-icon">⚡</span> クイックアクセス</div>
+    <div class="widget-head"><span class="widget-head-icon">LINKS</span> クイックアクセス</div>
     <div class="ql-grid">
       <a href="https://www.moj.go.jp/isa/" target="_blank" rel="noopener" class="ql-item">
-        <span class="ql-icon">🛂</span>
+        <span class="ql-icon">ISA</span>
         <span class="ql-label">入管庁</span>
         <span class="ql-sub">ビザ・在留</span>
       </a>
       <a href="https://www3.nhk.or.jp/news/easy/" target="_blank" rel="noopener" class="ql-item">
-        <span class="ql-icon">📺</span>
+        <span class="ql-icon">NHK</span>
         <span class="ql-label">NHK やさしい</span>
         <span class="ql-sub">易しい日本語</span>
       </a>
       <a href="https://www.nta.go.jp/english/" target="_blank" rel="noopener" class="ql-item">
-        <span class="ql-icon">💴</span>
+        <span class="ql-icon">TAX</span>
         <span class="ql-label">国税庁</span>
         <span class="ql-sub">税金・申告</span>
       </a>
       <a href="https://www.nenkin.go.jp/international/" target="_blank" rel="noopener" class="ql-item">
-        <span class="ql-icon">👴</span>
+        <span class="ql-icon">PEN</span>
         <span class="ql-label">年金機構</span>
         <span class="ql-sub">年金・保険</span>
       </a>
       <a href="https://www.ssw.go.jp/en/" target="_blank" rel="noopener" class="ql-item">
-        <span class="ql-icon">📋</span>
+        <span class="ql-icon">SSW</span>
         <span class="ql-label">特定技能SSW</span>
         <span class="ql-sub">就労ビザ</span>
       </a>
       <a href="https://nhkworld.nhk.or.jp/pt/" target="_blank" rel="noopener" class="ql-item">
-        <span class="ql-icon">🇧🇷</span>
+        <span class="ql-icon">PT</span>
         <span class="ql-label">NHK Brasil</span>
         <span class="ql-sub">Português</span>
       </a>
@@ -1495,7 +1490,7 @@ footer{
 
   <!-- 今週の注目 -->
   <div class="widget">
-    <div class="widget-head"><span class="widget-head-icon">🔥</span> 今週の注目</div>
+    <div class="widget-head"><span class="widget-head-icon">RANK</span> 今週の注目</div>
     <div class="mini-story">
       <div class="ms-num">1</div>
       <div class="ms-body">
@@ -1540,10 +1535,10 @@ footer{
 
   <!-- 求人トレンド -->
   <div class="widget">
-    <div class="widget-head"><span class="widget-head-icon">💼</span> 求人トレンド 2026</div>
+    <div class="widget-head"><span class="widget-head-icon">JOBS</span> 求人トレンド 2026</div>
     <div style="padding:10px 16px">
       <div class="hcard" style="box-shadow:none;border:1px solid var(--border);margin-bottom:8px;border-radius:6px">
-        <div class="hcard-img">🤖</div>
+        <div class="hcard-img">DX</div>
         <div class="hcard-body">
           <div class="hcard-source" style="color:var(--red);font-weight:700">需要急増 +42%</div>
           <div class="hcard-title">製造DXエンジニア</div>
@@ -1556,7 +1551,7 @@ footer{
         </div>
       </div>
       <div class="hcard" style="box-shadow:none;border:1px solid var(--border);margin-bottom:8px;border-radius:6px">
-        <div class="hcard-img">🌐</div>
+        <div class="hcard-img">PT</div>
         <div class="hcard-body">
           <div class="hcard-source" style="color:var(--red);font-weight:700">需要急増 +38%</div>
           <div class="hcard-title">海外事業開拓（PT語）</div>
@@ -1568,7 +1563,7 @@ footer{
         </div>
       </div>
       <div class="hcard" style="box-shadow:none;border:1px solid var(--border);border-radius:6px">
-        <div class="hcard-img">🏗️</div>
+        <div class="hcard-img">PM</div>
         <div class="hcard-body">
           <div class="hcard-source" style="color:var(--red);font-weight:700">最高需要 +55%</div>
           <div class="hcard-title">建設DX PM</div>
@@ -1585,15 +1580,15 @@ footer{
 
   <!-- 言語設定 -->
   <div class="widget">
-    <div class="widget-head"><span class="widget-head-icon">🌐</span> 3言語対応</div>
+    <div class="widget-head"><span class="widget-head-icon">LANG</span> 3言語対応</div>
     <div class="lang-widget-body">
       <div style="font-size:12px;color:var(--text-2);line-height:1.65">
         UNS→Nは全記事を3言語でお届けすることを目指しています。
       </div>
       <div class="lang-pills">
-        <span class="lang-pill">🇯🇵 日本語</span>
-        <span class="lang-pill">🇧🇷 Português</span>
-        <span class="lang-pill">🇺🇸 English</span>
+        <span class="lang-pill">JP 日本語</span>
+        <span class="lang-pill">PT Português</span>
+        <span class="lang-pill">EN English</span>
       </div>
     </div>
   </div>
@@ -1645,7 +1640,7 @@ footer{
     </div>
     <div class="footer-bottom">
       <span>© 2026 UNS→N（アンシーン） — Concept Prototype</span>
-      <span>🇧🇷 Nikkei Brasileiro no Japão · 🇯🇵 在日外国人コミュニティ</span>
+      <span>Nikkei Brasileiro no Japão · 在日外国人コミュニティ</span>
     </div>
   </div>
 </footer>
@@ -1669,6 +1664,70 @@ function timeAgo(dateValue){
   const hours=Math.floor(minutes/60);
   if(hours<24)return hours+' h';
   return Math.floor(hours/24)+' d';
+}
+
+function isToday(dateValue){
+  const date=new Date(dateValue);
+  if(!date.getTime())return false;
+  const now=new Date();
+  return date.getFullYear()===now.getFullYear()&&
+    date.getMonth()===now.getMonth()&&
+    date.getDate()===now.getDate();
+}
+
+function categoryLabel(category){
+  const labels={
+    top:'TOP',
+    business:'BUS',
+    life:'LIFE',
+    global:'BR-JP',
+    media:'MEDIA',
+    admin:'GOV'
+  };
+  return labels[category]||'NEWS';
+}
+
+function breakingEmptyText(){
+  return {
+    pt:'UNS-N · Nenhuma noticia de hoje importada ainda',
+    en:'UNS-N · No imported breaking updates yet today',
+    ja:'UNS-N · 本日の速報はまだインポートされていません'
+  }[currentLang];
+}
+
+function tickerItemsHtml(items){
+  if(!items.length){
+    const text=breakingEmptyText();
+    return '<span class="ticker-item">'+escapeHtml(text)+'</span><span class="ticker-item">・</span>'+
+      '<span class="ticker-item">'+escapeHtml(text)+'</span><span class="ticker-item">・</span>';
+  }
+
+  const entries=items.concat(items);
+  return entries.map(function(item){
+    return '<span class="ticker-item">'+escapeHtml(categoryLabel(item.category))+' · '+escapeHtml(item.title)+'</span>'+
+      '<span class="ticker-item">・</span>';
+  }).join('');
+}
+
+async function loadBreakingTicker(){
+  const target=document.getElementById('breaking-ticker-track');
+  if(!target)return;
+  try{
+    const res=await fetch('/api/articles?lang='+encodeURIComponent(currentLang));
+    const payload=await res.json();
+    const all=(payload.data||[]).filter(function(item){return item.url;});
+    const todays=all.filter(function(item){return isToday(item.publishedAt);});
+    const items=(todays.length?todays:all).slice(0,8);
+    target.innerHTML=tickerItemsHtml(items);
+  }catch(err){
+    const fallback={
+      pt:'UNS-N · Nao foi possivel carregar o ticker',
+      en:'UNS-N · Could not load ticker updates',
+      ja:'UNS-N · 速報を読み込めませんでした'
+    }[currentLang];
+    target.innerHTML='<span class="ticker-item">'+escapeHtml(fallback)+'</span><span class="ticker-item">・</span>'+
+      '<span class="ticker-item">'+escapeHtml(fallback)+'</span><span class="ticker-item">・</span>';
+  }
 }
 
 function feedCardHtml(item){
@@ -1832,6 +1891,7 @@ function syncLangButtons(){
 function loadAllFeeds(){
   syncLangButtons();
   updateSectionLinks();
+  loadBreakingTicker();
   loadLiveFeed();
   loadFeaturedStories();
   loadSectionFeatured('business','business');
