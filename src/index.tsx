@@ -11,7 +11,7 @@ app.get('/', (c) => {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>GlobalNexus Japan — Bridge Your Career, Empower Your Future</title>
+  <title>UNS→N（アンシーン） — Bridge Your Career, Empower Your Future</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
@@ -358,7 +358,7 @@ app.get('/', (c) => {
     .impact-high { background: linear-gradient(90deg, #FF4500, #FF8C00); }
     .impact-med { background: linear-gradient(90deg, #FFD700, #FF8C00); }
 
-    /* ─── Section 4: Nexus Academy ─── */
+    /* ─── Section 4: UNSEEN Academy ─── */
     .academy-section { background: rgba(0,0,0,0.2); }
     .academy-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 56px; }
     .video-card { padding: 0; overflow: hidden; }
@@ -535,9 +535,9 @@ app.get('/', (c) => {
 <nav>
   <div class="nav-inner">
     <a href="#" class="logo">
-      <div class="logo-icon">GN</div>
+      <div class="logo-icon" style="font-size:9px;letter-spacing:-0.5px;font-weight:900;">UN→N</div>
       <div>
-        <div class="logo-text">GlobalNexus Japan</div>
+        <div class="logo-text">UNS→N <span style="font-size:12px;font-weight:400;color:var(--muted);">アンシーン</span></div>
         <div class="logo-sub">Global Talent Media Platform</div>
       </div>
     </a>
@@ -545,7 +545,7 @@ app.get('/', (c) => {
       <a href="#news" class="nav-link">Business News</a>
       <a href="#admin" class="nav-link">Life in Japan</a>
       <a href="#global" class="nav-link">Global Feed</a>
-      <a href="#academy" class="nav-link">Nexus Academy</a>
+      <a href="#academy" class="nav-link">UNSEEN Academy</a>
     </div>
     <div style="display:flex;align-items:center;gap:16px;">
       <div class="lang-switcher">
@@ -592,8 +592,8 @@ app.get('/', (c) => {
     </div>
 
     <h1 class="hero-title animate-in delay-1">
-      <span class="gradient-text">GlobalNexus</span><br/>
-      <span style="color:white;">Japan</span>
+      <span class="gradient-text">UNS→N</span><br/>
+      <span style="color:white;font-size:clamp(20px,3.5vw,42px);font-weight:600;letter-spacing:0px;">アンシーン</span>
     </h1>
 
     <div class="hero-catchphrase animate-in delay-2">
@@ -649,7 +649,7 @@ app.get('/', (c) => {
       </a>
       <a href="#academy" class="btn-secondary">
         <i class="fas fa-play-circle"></i>
-        Nexus Academy
+        UNSEEN Academy
       </a>
       <a href="#admin" class="btn-secondary">
         <i class="fas fa-id-card"></i>
@@ -1160,7 +1160,7 @@ app.get('/', (c) => {
         <div>
           <div class="section-eyebrow" style="color:#FF8C00;margin-bottom:8px;">
             <div class="dot" style="background:#FF4500;"></div>
-            Job Trend Highlights — 2026
+            UNS→N Job Trend Highlights — 2026
           </div>
           <h3 class="jobs-title">外国人タレント向けキャリアトレンド <span class="gradient-text">Top Jobs 2026</span></h3>
         </div>
@@ -1249,7 +1249,7 @@ app.get('/', (c) => {
         <div>
           <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#FF8C00;margin-bottom:10px;">Platform Vision — Beta Launch Q3 2026</div>
           <h3 style="font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px;">Ready to accelerate<br>your career in Japan?</h3>
-          <p style="font-size:14px;color:var(--muted);max-width:480px;line-height:1.6;">GlobalNexus Japan is building the definitive media and learning platform for global talents navigating Japan's business landscape. Join the beta waitlist today.</p>
+          <p style="font-size:14px;color:var(--muted);max-width:480px;line-height:1.6;">UNS→N（アンシーン）は、日本で活躍するグローバル人材のための次世代ビジネス・キャリアメディアです。ベータ版の参加登録を受け付けています。</p>
         </div>
         <div style="display:flex;flex-direction:column;gap:12px;min-width:220px;">
           <a href="#" class="btn-primary" style="justify-content:center;">
@@ -1272,13 +1272,13 @@ app.get('/', (c) => {
     <div class="footer-top">
       <div>
         <a href="#" class="logo" style="margin-bottom:0;">
-          <div class="logo-icon">GN</div>
+          <div class="logo-icon" style="font-size:9px;letter-spacing:-0.5px;font-weight:900;">UN→N</div>
           <div>
-            <div class="logo-text">GlobalNexus Japan</div>
+            <div class="logo-text">UNS→N <span style="font-size:12px;font-weight:400;color:var(--muted);">アンシーン</span></div>
             <div class="logo-sub">Global Talent Media Platform</div>
           </div>
         </a>
-        <p class="footer-brand-desc">The definitive business and career media platform for Nikkei Brazilians and global professionals thriving in Japan. Inspired by NewsPicks and PIVOT, localized for global talents.</p>
+        <p class="footer-brand-desc">UNS→N（アンシーン）— 日本のビジネス・製造現場で活躍する日系ブラジル人・外国人プロフェッショナルのための次世代メディアプラットフォーム。NewsPicks / PIVOT インスパイア。</p>
         <div style="display:flex;gap:12px;margin-top:20px;">
           <a href="#" style="width:34px;height:34px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.color='white';this.style.background='rgba(255,255,255,0.12)';" onmouseout="this.style.color='#6B7A99';this.style.background='rgba(255,255,255,0.06)';"><i class="fab fa-twitter"></i></a>
           <a href="#" style="width:34px;height:34px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.color='white';this.style.background='rgba(255,255,255,0.12)';" onmouseout="this.style.color='#6B7A99';this.style.background='rgba(255,255,255,0.06)';"><i class="fab fa-linkedin"></i></a>
@@ -1293,7 +1293,7 @@ app.get('/', (c) => {
           <a href="#news" class="footer-link">Business News</a>
           <a href="#admin" class="footer-link">Life in Japan</a>
           <a href="#global" class="footer-link">Global Feed</a>
-          <a href="#academy" class="footer-link">Nexus Academy</a>
+          <a href="#academy" class="footer-link">UNSEEN Academy</a>
           <a href="#" class="footer-link">Job Board</a>
         </div>
       </div>
@@ -1312,7 +1312,7 @@ app.get('/', (c) => {
       <div>
         <div class="footer-col-title">Company</div>
         <div class="footer-links">
-          <a href="#" class="footer-link">About GlobalNexus</a>
+          <a href="#" class="footer-link">About UNS→N</a>
           <a href="#" class="footer-link">Our Mission</a>
           <a href="#" class="footer-link">Partner with Us</a>
           <a href="#" class="footer-link">Privacy Policy</a>
@@ -1322,7 +1322,7 @@ app.get('/', (c) => {
     </div>
 
     <div class="footer-bottom">
-      <div>© 2026 GlobalNexus Japan — Concept Prototype. All rights reserved.</div>
+      <div>© 2026 UNS→N（アンシーン） — Concept Prototype. All rights reserved.</div>
       <div style="display:flex;gap:16px;align-items:center;">
         <span>🇧🇷 Comunidade Nikkei</span>
         <span style="color:var(--border);">·</span>
