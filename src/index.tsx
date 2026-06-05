@@ -11,1381 +11,1465 @@ app.get('/', (c) => {
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>UNS→N（アンシーン） — Bridge Your Career, Empower Your Future</title>
+  <title>UNS→N（アンシーン） — 日本で働く、世界とつながる</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@6.5.0/css/all.min.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Noto+Sans+JP:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Noto+Sans+JP:wght@300;400;500;600;700;900&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --primary: #0A0F1E;
-      --accent: #FF4500;
-      --accent2: #00C2CB;
-      --accent3: #FFD700;
-      --surface: #111827;
-      --surface2: #1A2235;
-      --text: #E8EDF5;
-      --muted: #6B7A99;
-      --border: rgba(255,255,255,0.07);
+      --ink:        #0D0D0D;
+      --ink-2:      #3A3A3A;
+      --ink-3:      #767676;
+      --ink-4:      #ABABAB;
+      --border:     #E4E4E4;
+      --border-2:   #F0F0F0;
+      --surface:    #FAFAFA;
+      --white:      #FFFFFF;
+      --accent:     #D94F00;   /* 赤橙 — 新聞的な赤 */
+      --accent-sub: #1A56A0;   /* 深い青 */
+      --tag-bg:     #F3F3F3;
     }
+
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    html { scroll-behavior: smooth; }
+    html { scroll-behavior: smooth; font-size: 15px; }
+
     body {
-      background-color: var(--primary);
-      color: var(--text);
+      background: var(--white);
+      color: var(--ink);
       font-family: 'Inter', 'Noto Sans JP', sans-serif;
-      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* ─── Scrollbar ─── */
-    ::-webkit-scrollbar { width: 6px; }
-    ::-webkit-scrollbar-track { background: var(--primary); }
-    ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.15); border-radius: 3px; }
+    /* ── Scrollbar ── */
+    ::-webkit-scrollbar { width: 5px; }
+    ::-webkit-scrollbar-track { background: var(--white); }
+    ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 4px; }
 
-    /* ─── Utility ─── */
-    .gradient-text {
-      background: linear-gradient(135deg, #FF4500, #FF8C00, #FFD700);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .gradient-text-cyan {
-      background: linear-gradient(135deg, #00C2CB, #0080FF);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
-    .glass-card {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid var(--border);
-      backdrop-filter: blur(12px);
-      -webkit-backdrop-filter: blur(12px);
-      border-radius: 16px;
-      transition: all 0.3s ease;
-    }
-    .glass-card:hover {
-      background: rgba(255,255,255,0.07);
-      border-color: rgba(255,69,0,0.3);
-      transform: translateY(-3px);
-      box-shadow: 0 20px 60px rgba(255,69,0,0.12);
-    }
-    .glass-card-cyan:hover {
-      border-color: rgba(0,194,203,0.35);
-      box-shadow: 0 20px 60px rgba(0,194,203,0.1);
-    }
-    .glass-card-gold:hover {
-      border-color: rgba(255,215,0,0.35);
-      box-shadow: 0 20px 60px rgba(255,215,0,0.1);
-    }
+    /* ── Utility ── */
+    a { text-decoration: none; color: inherit; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .sr-only { position:absolute; width:1px; height:1px; overflow:hidden; clip:rect(0,0,0,0); }
 
-    /* ─── Nav ─── */
+    /* ── NAV ── */
     nav {
-      position: fixed; top: 0; width: 100%; z-index: 100;
-      background: rgba(10,15,30,0.85);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      position: sticky; top: 0; z-index: 200;
+      background: var(--white);
       border-bottom: 1px solid var(--border);
     }
-    .nav-inner {
-      max-width: 1280px;
-      margin: 0 auto;
-      padding: 0 24px;
+    .nav-top {
       display: flex; align-items: center; justify-content: space-between;
-      height: 64px;
+      height: 56px;
     }
-    .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; }
-    .logo-icon {
-      width: 36px; height: 36px;
-      background: linear-gradient(135deg, #FF4500, #FF8C00);
-      border-radius: 8px;
-      display: flex; align-items: center; justify-content: center;
-      font-weight: 900; font-size: 14px; color: white;
+    .logo {
+      display: flex; align-items: baseline; gap: 6px;
     }
-    .logo-text { font-weight: 800; font-size: 17px; letter-spacing: -0.3px; color: white; }
-    .logo-sub { font-size: 10px; color: var(--muted); letter-spacing: 1.5px; text-transform: uppercase; }
-
-    /* Language switcher */
+    .logo-mark {
+      font-size: 18px; font-weight: 800; letter-spacing: -0.5px;
+      color: var(--ink);
+      border-bottom: 2.5px solid var(--accent);
+      padding-bottom: 1px;
+      line-height: 1;
+    }
+    .logo-kana {
+      font-size: 11px; font-weight: 500; color: var(--ink-3);
+      font-family: 'Noto Sans JP', sans-serif;
+      letter-spacing: 1px;
+    }
+    .nav-right {
+      display: flex; align-items: center; gap: 20px;
+    }
     .lang-switcher {
-      display: flex; gap: 4px;
-      background: rgba(255,255,255,0.06);
+      display: flex; gap: 2px;
       border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 4px;
+      border-radius: 6px; padding: 3px;
     }
     .lang-btn {
-      padding: 5px 14px;
-      border-radius: 5px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: all 0.2s;
-      border: none;
-      background: transparent;
-      color: var(--muted);
+      padding: 4px 12px; border-radius: 4px;
+      font-size: 11px; font-weight: 600;
+      cursor: pointer; border: none;
+      background: transparent; color: var(--ink-3);
+      letter-spacing: 0.3px; transition: all 0.15s;
+    }
+    .lang-btn.active { background: var(--ink); color: white; }
+    .lang-btn:hover:not(.active) { background: var(--border-2); color: var(--ink); }
+
+    /* NAV sub-bar (categories) */
+    .nav-sub {
+      border-top: 1px solid var(--border-2);
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .nav-sub::-webkit-scrollbar { display: none; }
+    .nav-sub-inner {
+      display: flex; align-items: center; gap: 0;
+      height: 40px; white-space: nowrap;
+    }
+    .nav-cat {
+      padding: 0 16px; height: 100%;
+      display: flex; align-items: center;
+      font-size: 12px; font-weight: 600;
+      color: var(--ink-3); cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: all 0.15s; flex-shrink: 0;
       letter-spacing: 0.3px;
     }
-    .lang-btn.active {
-      background: linear-gradient(135deg, #FF4500, #FF8C00);
+    .nav-cat:hover { color: var(--ink); border-bottom-color: var(--ink); }
+    .nav-cat.active { color: var(--accent); border-bottom-color: var(--accent); }
+    .nav-cat-divider { width: 1px; height: 14px; background: var(--border); flex-shrink: 0; }
+
+    /* ── HERO / TODAY'S EDITION ── */
+    .edition-bar {
+      background: var(--ink);
       color: white;
+      padding: 8px 0;
     }
-    .lang-btn:hover:not(.active) { color: white; background: rgba(255,255,255,0.06); }
+    .edition-bar-inner {
+      display: flex; align-items: center; justify-content: space-between;
+      font-size: 11px; letter-spacing: 0.5px;
+    }
+    .edition-date { font-weight: 600; opacity: 0.9; }
+    .edition-langs {
+      display: flex; gap: 16px; font-size: 10px; opacity: 0.6;
+    }
 
-    /* Nav links */
-    .nav-links { display: flex; gap: 24px; align-items: center; }
-    .nav-link {
-      color: var(--muted); font-size: 13px; font-weight: 500;
-      text-decoration: none; transition: color 0.2s;
-      letter-spacing: 0.2px;
-    }
-    .nav-link:hover { color: white; }
-    .nav-cta {
-      background: linear-gradient(135deg, #FF4500, #FF8C00);
-      color: white; padding: 8px 20px; border-radius: 8px;
-      font-size: 13px; font-weight: 600; text-decoration: none;
-      transition: opacity 0.2s; letter-spacing: 0.2px;
-    }
-    .nav-cta:hover { opacity: 0.88; }
-
-    /* ─── Hero ─── */
-    .hero {
-      min-height: 100vh;
+    /* Breaking ticker */
+    .ticker-bar {
+      background: var(--accent);
+      color: white;
       display: flex; align-items: center;
-      padding: 120px 24px 80px;
-      position: relative;
-      overflow: hidden;
+      overflow: hidden; height: 34px;
     }
-    .hero-bg {
-      position: absolute; inset: 0;
-      background: radial-gradient(ellipse 80% 60% at 50% 30%,
-        rgba(255,69,0,0.12) 0%, transparent 70%),
-        radial-gradient(ellipse 60% 50% at 80% 70%,
-        rgba(0,194,203,0.08) 0%, transparent 60%),
-        radial-gradient(ellipse 40% 40% at 20% 80%,
-        rgba(255,215,0,0.05) 0%, transparent 50%);
-    }
-    .hero-grid {
-      position: absolute; inset: 0;
-      background-image:
-        linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
-      background-size: 60px 60px;
-      mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black, transparent);
-    }
-    .hero-inner { max-width: 1280px; margin: 0 auto; width: 100%; position: relative; z-index: 1; }
-
-    .hero-badge {
-      display: inline-flex; align-items: center; gap: 8px;
-      background: rgba(255,69,0,0.12); border: 1px solid rgba(255,69,0,0.3);
-      color: #FF8C00; padding: 6px 16px; border-radius: 100px;
-      font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-      margin-bottom: 28px;
-    }
-    .hero-title {
-      font-size: clamp(42px, 7vw, 88px);
-      font-weight: 900;
-      line-height: 1.0;
-      letter-spacing: -2px;
-      margin-bottom: 32px;
-    }
-    .hero-catchphrase {
-      display: flex; flex-direction: column; gap: 8px;
-      margin-bottom: 48px;
-    }
-    .catch-item {
-      display: flex; align-items: center; gap: 12px;
-    }
-    .catch-flag {
-      width: 28px; height: 20px;
-      border-radius: 4px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 12px;
-      flex-shrink: 0;
-      border: 1px solid rgba(255,255,255,0.1);
-    }
-    .catch-text { font-size: clamp(13px, 1.8vw, 17px); font-weight: 500; color: rgba(255,255,255,0.8); }
-    .catch-text strong { font-weight: 700; color: white; }
-
-    .hero-actions { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 72px; }
-    .btn-primary {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: linear-gradient(135deg, #FF4500, #FF8C00);
-      color: white; padding: 14px 28px; border-radius: 10px;
-      font-size: 15px; font-weight: 700; text-decoration: none;
-      transition: all 0.3s; letter-spacing: 0.2px;
-      box-shadow: 0 8px 32px rgba(255,69,0,0.35);
-    }
-    .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 12px 40px rgba(255,69,0,0.45); }
-    .btn-secondary {
-      display: inline-flex; align-items: center; gap: 10px;
-      background: rgba(255,255,255,0.06); border: 1px solid rgba(255,255,255,0.12);
-      color: white; padding: 14px 28px; border-radius: 10px;
-      font-size: 15px; font-weight: 600; text-decoration: none;
-      transition: all 0.3s;
-    }
-    .btn-secondary:hover { background: rgba(255,255,255,0.1); transform: translateY(-2px); }
-
-    /* Stats bar */
-    .stats-bar {
-      display: grid; grid-template-columns: repeat(4, 1fr);
-      gap: 1px;
-      background: var(--border);
-      border: 1px solid var(--border);
-      border-radius: 16px; overflow: hidden;
-    }
-    .stat-item {
-      background: rgba(255,255,255,0.03);
-      padding: 24px 28px;
-      transition: background 0.2s;
-    }
-    .stat-item:hover { background: rgba(255,255,255,0.06); }
-    .stat-number { font-size: 32px; font-weight: 800; letter-spacing: -1px; margin-bottom: 4px; }
-    .stat-label { font-size: 12px; color: var(--muted); font-weight: 500; letter-spacing: 0.3px; }
-
-    /* ─── Sections common ─── */
-    .section { padding: 96px 24px; position: relative; }
-    .section-inner { max-width: 1280px; margin: 0 auto; }
-    .section-header { margin-bottom: 56px; }
-    .section-eyebrow {
-      display: inline-flex; align-items: center; gap: 8px;
-      font-size: 11px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase;
-      margin-bottom: 16px;
-    }
-    .dot { width: 6px; height: 6px; border-radius: 50%; flex-shrink: 0; }
-    .section-title { font-size: clamp(28px, 4vw, 42px); font-weight: 800; letter-spacing: -1px; margin-bottom: 12px; }
-    .section-desc { font-size: 16px; color: var(--muted); line-height: 1.6; max-width: 600px; }
-
-    /* ─── Section 1: News ─── */
-    .news-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-    .news-card { padding: 28px; }
-    .news-card-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 16px; }
-    .news-tags { display: flex; gap: 8px; flex-wrap: wrap; }
-    .tag {
-      font-size: 10px; font-weight: 700; letter-spacing: 1.2px; text-transform: uppercase;
-      padding: 4px 10px; border-radius: 100px;
-    }
-    .tag-red { background: rgba(255,69,0,0.15); color: #FF8C00; border: 1px solid rgba(255,69,0,0.25); }
-    .tag-cyan { background: rgba(0,194,203,0.12); color: #00C2CB; border: 1px solid rgba(0,194,203,0.25); }
-    .tag-gold { background: rgba(255,215,0,0.12); color: #FFD700; border: 1px solid rgba(255,215,0,0.25); }
-    .tag-purple { background: rgba(150,80,255,0.12); color: #b47fff; border: 1px solid rgba(150,80,255,0.25); }
-    .news-date { font-size: 11px; color: var(--muted); }
-    .news-headline { font-size: 18px; font-weight: 700; line-height: 1.35; margin-bottom: 20px; letter-spacing: -0.3px; }
-    .news-lang-block { margin-bottom: 14px; }
-    .lang-label {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase;
-      color: var(--muted); margin-bottom: 6px;
-    }
-    .lang-content-ja { font-size: 14px; line-height: 1.7; color: rgba(255,255,255,0.85); font-family: 'Noto Sans JP', sans-serif; }
-    .lang-content-pt { font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.7); }
-    .lang-content-en { font-size: 13px; line-height: 1.6; color: rgba(255,255,255,0.7); }
-    .news-divider { height: 1px; background: var(--border); margin: 14px 0; }
-    .read-more {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 12px; font-weight: 600; color: #FF8C00;
-      margin-top: 8px; cursor: pointer; transition: gap 0.2s;
-    }
-    .read-more:hover { gap: 10px; }
-
-    /* Featured news full-width */
-    .news-featured { grid-column: 1 / -1; display: flex; gap: 32px; }
-    .news-featured-content { flex: 1; }
-    .news-featured-visual {
-      width: 320px; flex-shrink: 0;
-      background: linear-gradient(135deg, rgba(255,69,0,0.08), rgba(255,215,0,0.06));
-      border: 1px solid rgba(255,69,0,0.2);
-      border-radius: 12px;
-      display: flex; align-items: center; justify-content: center;
-      flex-direction: column; gap: 12px; padding: 32px;
-      position: relative; overflow: hidden;
-    }
-    .visual-icon { font-size: 48px; margin-bottom: 8px; }
-    .visual-stat { font-size: 36px; font-weight: 900; letter-spacing: -2px; }
-    .visual-label { font-size: 11px; color: var(--muted); text-align: center; line-height: 1.4; }
-
-    /* ─── Section 2: Admin Cards ─── */
-    .admin-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
-    .admin-card { padding: 32px; }
-    .admin-icon {
-      width: 52px; height: 52px;
-      border-radius: 14px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 22px; margin-bottom: 20px;
-    }
-    .admin-card-title { font-size: 18px; font-weight: 700; margin-bottom: 8px; line-height: 1.3; }
-    .admin-urgency {
-      display: inline-flex; align-items: center; gap: 6px;
-      font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-      padding: 3px 10px; border-radius: 100px;
-      margin-bottom: 16px;
-    }
-    .urgency-red { background: rgba(255,60,60,0.12); color: #FF6B6B; border: 1px solid rgba(255,60,60,0.25); }
-    .urgency-orange { background: rgba(255,150,0,0.12); color: #FFB74D; border: 1px solid rgba(255,150,0,0.25); }
-    .urgency-green { background: rgba(0,200,100,0.12); color: #4CAF50; border: 1px solid rgba(0,200,100,0.25); }
-    .admin-body { font-size: 13px; color: rgba(255,255,255,0.72); line-height: 1.7; }
-    .admin-checklist { list-style: none; margin-top: 16px; display: flex; flex-direction: column; gap: 8px; }
-    .admin-checklist li {
-      display: flex; align-items: flex-start; gap: 8px;
-      font-size: 12px; color: rgba(255,255,255,0.65); line-height: 1.5;
-    }
-    .check-icon { color: #4CAF50; font-size: 11px; margin-top: 2px; flex-shrink: 0; }
-    .alert-icon { color: #FFB74D; font-size: 11px; margin-top: 2px; flex-shrink: 0; }
-    .admin-date-badge {
-      display: flex; align-items: center; gap: 8px;
-      background: rgba(255,255,255,0.04); border: 1px solid var(--border);
-      border-radius: 8px; padding: 10px 14px; margin-top: 16px;
-    }
-    .admin-date-text { font-size: 12px; color: var(--muted); }
-    .admin-date-val { font-size: 13px; font-weight: 700; color: white; }
-
-    /* ─── Section 3: Global Feed ─── */
-    .feed-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; }
-    .feed-card { padding: 28px; }
-    .feed-flag-row { display: flex; align-items: center; gap: 10px; margin-bottom: 16px; }
-    .flag-emoji { font-size: 24px; }
-    .flag-country { font-size: 12px; font-weight: 600; color: var(--muted); letter-spacing: 0.5px; }
-    .feed-headline { font-size: 17px; font-weight: 700; line-height: 1.35; margin-bottom: 14px; letter-spacing: -0.2px; }
-    .feed-jp-summary {
-      background: rgba(0,194,203,0.06);
-      border-left: 3px solid #00C2CB;
-      border-radius: 0 8px 8px 0;
-      padding: 12px 16px; margin-bottom: 16px;
-    }
-    .feed-jp-label { font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; color: #00C2CB; margin-bottom: 4px; }
-    .feed-jp-text { font-size: 13px; line-height: 1.65; color: rgba(255,255,255,0.8); font-family: 'Noto Sans JP', sans-serif; }
-    .feed-impact { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--muted); }
-    .impact-bar { height: 3px; border-radius: 3px; flex: 1; }
-    .impact-high { background: linear-gradient(90deg, #FF4500, #FF8C00); }
-    .impact-med { background: linear-gradient(90deg, #FFD700, #FF8C00); }
-
-    /* ─── Section 4: UNSEEN Academy ─── */
-    .academy-section { background: rgba(0,0,0,0.2); }
-    .academy-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 24px; margin-bottom: 56px; }
-    .video-card { padding: 0; overflow: hidden; }
-    .video-thumb {
-      position: relative; height: 180px;
-      display: flex; align-items: center; justify-content: center;
-      overflow: hidden;
-    }
-    .play-btn {
-      width: 52px; height: 52px;
-      background: rgba(255,255,255,0.95);
-      border-radius: 50%;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 18px; color: #FF4500;
-      position: relative; z-index: 1;
-      transition: transform 0.3s;
-      box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-    }
-    .video-card:hover .play-btn { transform: scale(1.1); }
-    .video-duration {
-      position: absolute; bottom: 12px; right: 12px;
-      background: rgba(0,0,0,0.75); color: white;
-      font-size: 11px; font-weight: 600; padding: 3px 8px; border-radius: 4px;
-    }
-    .video-ep {
-      position: absolute; top: 12px; left: 12px;
-      font-size: 10px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
-      padding: 3px 10px; border-radius: 100px; z-index: 1;
-    }
-    .video-body { padding: 20px 24px 24px; }
-    .video-series { font-size: 10px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 6px; }
-    .video-title { font-size: 16px; font-weight: 700; line-height: 1.35; margin-bottom: 10px; letter-spacing: -0.2px; }
-    .video-desc { font-size: 12px; color: rgba(255,255,255,0.6); line-height: 1.6; margin-bottom: 14px; }
-    .video-meta { display: flex; align-items: center; gap: 12px; font-size: 11px; color: var(--muted); }
-    .video-meta-item { display: flex; align-items: center; gap: 4px; }
-
-    /* Jobs */
-    .jobs-section { margin-top: 0; }
-    .jobs-header { margin-bottom: 28px; }
-    .jobs-title { font-size: 22px; font-weight: 700; }
-    .jobs-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
-    .job-card {
-      padding: 24px;
-      background: rgba(255,255,255,0.03);
-      border: 1px solid var(--border);
-      border-radius: 14px;
-      transition: all 0.3s;
-    }
-    .job-card:hover { background: rgba(255,255,255,0.06); transform: translateY(-2px); }
-    .job-icon-row { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
-    .job-icon { font-size: 28px; }
-    .job-growth {
-      display: flex; align-items: center; gap: 4px;
-      font-size: 12px; font-weight: 700; color: #4CAF50;
-    }
-    .job-title { font-size: 16px; font-weight: 700; margin-bottom: 6px; }
-    .job-subtitle { font-size: 12px; color: var(--muted); margin-bottom: 14px; line-height: 1.5; }
-    .job-salary {
-      font-size: 13px; font-weight: 600; color: #FFD700; margin-bottom: 10px;
-    }
-    .job-skills { display: flex; flex-wrap: wrap; gap: 6px; }
-    .skill-chip {
-      font-size: 10px; font-weight: 600; padding: 3px 8px; border-radius: 4px;
-      background: rgba(255,255,255,0.06); color: rgba(255,255,255,0.7);
-    }
-
-    /* ─── Ticker ─── */
-    .ticker-wrap {
-      background: rgba(255,69,0,0.08);
-      border-top: 1px solid rgba(255,69,0,0.2);
-      border-bottom: 1px solid rgba(255,69,0,0.2);
-      padding: 12px 0;
-      overflow: hidden;
-    }
-    .ticker-inner { display: flex; align-items: center; white-space: nowrap; }
     .ticker-label {
-      background: linear-gradient(135deg, #FF4500, #FF8C00);
-      color: white; font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
-      padding: 4px 12px; border-radius: 4px; margin-right: 24px;
-      flex-shrink: 0;
-    }
-    .ticker-track {
-      display: flex; gap: 48px;
-      animation: ticker 35s linear infinite;
+      background: rgba(0,0,0,0.25);
+      font-size: 10px; font-weight: 800; letter-spacing: 2px;
+      padding: 0 14px; height: 100%;
+      display: flex; align-items: center; flex-shrink: 0;
       white-space: nowrap;
     }
-    .ticker-item { font-size: 12px; font-weight: 500; color: rgba(255,255,255,0.75); display: flex; align-items: center; gap: 12px; }
-    .ticker-sep { color: rgba(255,69,0,0.5); font-size: 18px; line-height: 1; }
+    .ticker-scroll { overflow: hidden; flex: 1; }
+    .ticker-track {
+      display: flex; gap: 60px;
+      animation: ticker 40s linear infinite;
+      white-space: nowrap;
+    }
+    .ticker-item { font-size: 12px; font-weight: 500; opacity: 0.95; }
     @keyframes ticker {
-      0% { transform: translateX(0); }
+      0%   { transform: translateX(0); }
       100% { transform: translateX(-50%); }
     }
 
-    /* ─── Footer ─── */
-    footer {
-      background: rgba(0,0,0,0.4);
-      border-top: 1px solid var(--border);
-      padding: 64px 24px 32px;
+    /* ── MAIN GRID LAYOUT ── */
+    .page-layout {
+      display: grid;
+      grid-template-columns: 1fr 320px;
+      gap: 0;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 24px;
     }
-    .footer-inner { max-width: 1280px; margin: 0 auto; }
-    .footer-top { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 48px; margin-bottom: 48px; }
-    .footer-brand-desc { font-size: 13px; color: var(--muted); line-height: 1.7; margin-top: 16px; max-width: 280px; }
-    .footer-col-title { font-size: 12px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: white; margin-bottom: 16px; }
-    .footer-links { display: flex; flex-direction: column; gap: 10px; }
-    .footer-link { font-size: 13px; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+
+    .main-col { padding: 32px 32px 32px 0; border-right: 1px solid var(--border); }
+    .side-col { padding: 32px 0 32px 28px; }
+
+    /* ── SECTION HEADERS ── */
+    .section-head {
+      display: flex; align-items: center; gap: 10px;
+      margin-bottom: 20px;
+      padding-bottom: 10px;
+      border-bottom: 2px solid var(--ink);
+    }
+    .section-head-label {
+      font-size: 13px; font-weight: 800;
+      letter-spacing: 1.5px; text-transform: uppercase;
+      color: var(--ink);
+    }
+    .section-head-sub {
+      font-size: 11px; color: var(--ink-3);
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+    .section-head-line { flex: 1; height: 1px; background: var(--border); }
+
+    .section-head-accent {
+      border-bottom-color: var(--accent);
+    }
+    .section-head-accent .section-head-label { color: var(--accent); }
+
+    .section-head-blue {
+      border-bottom-color: var(--accent-sub);
+    }
+    .section-head-blue .section-head-label { color: var(--accent-sub); }
+
+    /* ── TOP STORY ── */
+    .top-story {
+      padding-bottom: 24px;
+      margin-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+    .top-story-category {
+      font-size: 10px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--accent);
+      margin-bottom: 10px;
+      display: flex; align-items: center; gap: 8px;
+    }
+    .top-story-category::after {
+      content: ''; flex: none;
+      display: inline-block; width: 24px; height: 1.5px;
+      background: var(--accent); vertical-align: middle;
+    }
+    .top-story h1 {
+      font-size: 26px; font-weight: 800;
+      line-height: 1.25; letter-spacing: -0.5px;
+      color: var(--ink); margin-bottom: 10px;
+    }
+    .top-story-meta {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 11px; color: var(--ink-3); margin-bottom: 14px;
+    }
+    .top-story-meta-dot { width: 3px; height: 3px; border-radius: 50%; background: var(--ink-4); }
+    .top-story-body { font-size: 14px; line-height: 1.75; color: var(--ink-2); }
+
+    .lang-block { margin-top: 14px; padding-top: 12px; border-top: 1px dashed var(--border); }
+    .lang-tag {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 10px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--ink-4);
+      margin-bottom: 6px;
+    }
+    .lang-tag-flag { font-size: 13px; }
+    .lang-text-ja { font-family: 'Noto Sans JP', sans-serif; font-size: 13.5px; line-height: 1.8; color: var(--ink-2); }
+    .lang-text-pt { font-size: 13px; line-height: 1.7; color: var(--ink-2); }
+    .lang-text-en { font-size: 13px; line-height: 1.7; color: var(--ink-2); }
+
+    /* ── NEWS CARD (list) ── */
+    .news-list { display: flex; flex-direction: column; gap: 0; }
+    .news-item {
+      display: grid; grid-template-columns: 1fr auto;
+      gap: 16px; align-items: start;
+      padding: 18px 0;
+      border-bottom: 1px solid var(--border-2);
+      cursor: pointer;
+      transition: background 0.1s;
+    }
+    .news-item:last-child { border-bottom: none; }
+    .news-item:hover { background: var(--surface); margin: 0 -12px; padding-left: 12px; padding-right: 12px; }
+    .news-item-cat {
+      font-size: 10px; font-weight: 700; letter-spacing: 1.5px;
+      text-transform: uppercase; margin-bottom: 5px;
+    }
+    .news-item-title {
+      font-size: 15px; font-weight: 700;
+      line-height: 1.35; color: var(--ink); margin-bottom: 6px;
+      letter-spacing: -0.2px;
+    }
+    .news-item-lead {
+      font-size: 12.5px; color: var(--ink-3); line-height: 1.6;
+      margin-bottom: 6px;
+    }
+    .news-item-meta {
+      font-size: 11px; color: var(--ink-4);
+      display: flex; align-items: center; gap: 8px;
+    }
+    .news-item-source {
+      font-weight: 600; color: var(--ink-3);
+    }
+    .news-item-num {
+      font-size: 32px; font-weight: 900; color: var(--border);
+      line-height: 1; user-select: none; align-self: center;
+      min-width: 36px; text-align: right;
+    }
+
+    /* ── MEDIA SOURCE GRID ── */
+    .source-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+    .source-card {
+      display: flex; align-items: center; gap: 10px;
+      padding: 10px 12px;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.15s;
+      background: var(--white);
+    }
+    .source-card:hover {
+      border-color: var(--ink);
+      background: var(--surface);
+      transform: translateY(-1px);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
+    }
+    .source-icon {
+      width: 32px; height: 32px; border-radius: 6px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 14px; flex-shrink: 0;
+      font-weight: 900;
+    }
+    .source-info { min-width: 0; }
+    .source-name {
+      font-size: 12px; font-weight: 700; color: var(--ink);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+    .source-lang { font-size: 10px; color: var(--ink-4); letter-spacing: 0.3px; }
+    .source-arrow {
+      margin-left: auto; font-size: 10px; color: var(--ink-4); flex-shrink: 0;
+    }
+    .source-grid-full { grid-template-columns: 1fr; }
+    .source-grid-3 { grid-template-columns: 1fr 1fr 1fr; }
+
+    /* ── GUIDE CARD ── */
+    .guide-card {
+      border: 1px solid var(--border);
+      border-radius: 10px; overflow: hidden;
+      margin-bottom: 12px; transition: box-shadow 0.15s;
+      background: var(--white);
+    }
+    .guide-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+    .guide-card-head {
+      padding: 14px 16px 12px;
+      border-bottom: 1px solid var(--border-2);
+      display: flex; align-items: flex-start; gap: 12px;
+    }
+    .guide-card-icon {
+      width: 38px; height: 38px; border-radius: 8px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+    }
+    .guide-card-title {
+      font-size: 13px; font-weight: 700; color: var(--ink); line-height: 1.35;
+      margin-bottom: 3px;
+    }
+    .guide-card-title-en {
+      font-size: 11px; color: var(--ink-3); font-weight: 500;
+    }
+    .guide-badge {
+      display: inline-flex; align-items: center; gap: 4px;
+      font-size: 9px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; padding: 2px 8px;
+      border-radius: 100px; margin-bottom: 8px;
+    }
+    .badge-red    { background: #FEE2E2; color: #B91C1C; }
+    .badge-orange { background: #FEF3C7; color: #92400E; }
+    .badge-green  { background: #D1FAE5; color: #065F46; }
+    .badge-blue   { background: #DBEAFE; color: #1D4ED8; }
+    .guide-card-body { padding: 12px 16px; font-size: 12px; color: var(--ink-2); line-height: 1.7; }
+    .guide-list { list-style: none; display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+    .guide-list li {
+      display: flex; align-items: flex-start; gap: 7px;
+      font-size: 11.5px; color: var(--ink-2);
+    }
+    .guide-list-dot {
+      width: 5px; height: 5px; border-radius: 50%;
+      flex-shrink: 0; margin-top: 5px;
+    }
+    .guide-source {
+      padding: 8px 16px;
+      font-size: 10px; color: var(--ink-4);
+      border-top: 1px solid var(--border-2);
+      background: var(--surface);
+    }
+
+    /* ── GLOBAL FEED ITEM ── */
+    .global-item {
+      padding: 16px 0;
+      border-bottom: 1px solid var(--border-2);
+    }
+    .global-item:last-child { border-bottom: none; }
+    .global-item-flag {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 8px;
+    }
+    .global-item-country { font-size: 11px; font-weight: 700; color: var(--ink-3); letter-spacing: 0.3px; }
+    .global-item-title { font-size: 14px; font-weight: 700; color: var(--ink); line-height: 1.35; margin-bottom: 8px; }
+    .global-jp-summary {
+      background: #F0F4FF; border-left: 3px solid var(--accent-sub);
+      padding: 10px 12px; border-radius: 0 6px 6px 0; margin-bottom: 8px;
+    }
+    .global-jp-label {
+      font-size: 9px; font-weight: 700; letter-spacing: 1px;
+      text-transform: uppercase; color: var(--accent-sub); margin-bottom: 4px;
+    }
+    .global-jp-text {
+      font-size: 12.5px; line-height: 1.7; color: var(--ink-2);
+      font-family: 'Noto Sans JP', sans-serif;
+    }
+    .global-source { font-size: 11px; color: var(--ink-4); }
+
+    /* ── SIDEBAR components ── */
+    .side-section { margin-bottom: 36px; }
+
+    /* Quick Access grid */
+    .quick-grid {
+      display: grid; grid-template-columns: 1fr 1fr;
+      gap: 6px;
+    }
+    .quick-btn {
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      gap: 5px; padding: 12px 8px;
+      border: 1px solid var(--border); border-radius: 8px;
+      cursor: pointer; transition: all 0.15s; background: var(--white);
+      text-align: center;
+    }
+    .quick-btn:hover { border-color: var(--ink); background: var(--surface); }
+    .quick-btn-icon { font-size: 20px; }
+    .quick-btn-label { font-size: 10px; font-weight: 700; color: var(--ink); line-height: 1.3; }
+    .quick-btn-sub { font-size: 9px; color: var(--ink-4); }
+
+    /* Sidebar news mini */
+    .mini-news-item {
+      display: flex; gap: 10px; align-items: flex-start;
+      padding: 10px 0; border-bottom: 1px solid var(--border-2);
+    }
+    .mini-news-item:last-child { border-bottom: none; }
+    .mini-news-num {
+      font-size: 18px; font-weight: 900; color: var(--border);
+      line-height: 1; flex-shrink: 0; width: 20px; text-align: center;
+    }
+    .mini-news-title { font-size: 12.5px; font-weight: 600; color: var(--ink); line-height: 1.4; }
+    .mini-news-src { font-size: 10px; color: var(--ink-4); margin-top: 2px; }
+
+    /* Jobs snippet (sidebar) */
+    .job-snippet {
+      padding: 12px 14px;
+      border: 1px solid var(--border); border-radius: 8px;
+      margin-bottom: 8px; transition: all 0.15s; background: var(--white);
+    }
+    .job-snippet:hover { border-color: var(--ink-2); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
+    .job-snippet-title { font-size: 13px; font-weight: 700; color: var(--ink); margin-bottom: 4px; }
+    .job-snippet-company { font-size: 11px; color: var(--ink-3); margin-bottom: 6px; }
+    .job-snippet-tags { display: flex; flex-wrap: wrap; gap: 4px; }
+    .job-tag {
+      font-size: 10px; font-weight: 600; padding: 2px 7px;
+      border-radius: 4px; background: var(--tag-bg); color: var(--ink-3);
+    }
+    .job-tag-hot { background: #FEF3C7; color: #92400E; }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--ink);
+      color: rgba(255,255,255,0.6);
+      padding: 40px 0 24px;
+      margin-top: 48px;
+    }
+    .footer-inner { max-width: 1200px; margin: 0 auto; padding: 0 24px; }
+    .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; margin-bottom: 32px; }
+    .footer-logo-mark { font-size: 20px; font-weight: 800; color: white; border-bottom: 2px solid var(--accent); display: inline-block; padding-bottom: 2px; margin-bottom: 10px; }
+    .footer-desc { font-size: 12px; line-height: 1.7; max-width: 260px; }
+    .footer-col-title { font-size: 11px; font-weight: 700; letter-spacing: 1.5px; text-transform: uppercase; color: white; margin-bottom: 14px; }
+    .footer-links { display: flex; flex-direction: column; gap: 8px; }
+    .footer-link { font-size: 12px; color: rgba(255,255,255,0.5); transition: color 0.15s; }
     .footer-link:hover { color: white; }
     .footer-bottom {
-      border-top: 1px solid var(--border); padding-top: 24px;
+      border-top: 1px solid rgba(255,255,255,0.1); padding-top: 20px;
       display: flex; align-items: center; justify-content: space-between;
-      font-size: 12px; color: var(--muted);
+      font-size: 11px;
     }
 
-    /* ─── Divider with glow ─── */
-    .section-divider {
-      height: 1px;
-      background: linear-gradient(90deg, transparent, rgba(255,69,0,0.3), rgba(0,194,203,0.3), transparent);
-      margin: 0 24px;
+    /* ── Tags ── */
+    .tag {
+      display: inline-block;
+      font-size: 10px; font-weight: 700; letter-spacing: 0.8px;
+      text-transform: uppercase; padding: 2px 8px; border-radius: 3px;
+    }
+    .tag-red    { background: #FEE2E2; color: #B91C1C; }
+    .tag-blue   { background: #DBEAFE; color: #1D4ED8; }
+    .tag-green  { background: #D1FAE5; color: #065F46; }
+    .tag-amber  { background: #FEF3C7; color: #92400E; }
+    .tag-slate  { background: var(--tag-bg); color: var(--ink-3); }
+    .tag-accent { background: var(--ink); color: white; }
+
+    /* ── Dividers ── */
+    hr { border: none; border-top: 1px solid var(--border); }
+
+    /* ── Responsive ── */
+    @media (max-width: 960px) {
+      .page-layout { grid-template-columns: 1fr; padding: 0 16px; }
+      .main-col { padding: 24px 0; border-right: none; }
+      .side-col { padding: 0 0 24px; border-top: 1px solid var(--border); }
+      .source-grid-3 { grid-template-columns: 1fr 1fr; }
+      .footer-grid { grid-template-columns: 1fr 1fr; }
+    }
+    @media (max-width: 600px) {
+      .nav-right .lang-switcher { display: none; }
+      .source-grid { grid-template-columns: 1fr; }
+      .footer-grid { grid-template-columns: 1fr; gap: 24px; }
+      .footer-bottom { flex-direction: column; gap: 6px; text-align: center; }
     }
 
-    /* ─── responsive ─── */
-    @media (max-width: 1024px) {
-      .news-grid { grid-template-columns: 1fr; }
-      .news-featured { flex-direction: column; }
-      .news-featured-visual { width: 100%; height: 180px; }
-      .admin-grid { grid-template-columns: 1fr; }
-      .feed-grid { grid-template-columns: 1fr; }
-      .academy-grid { grid-template-columns: 1fr; }
-      .jobs-grid { grid-template-columns: 1fr; }
-      .footer-top { grid-template-columns: 1fr 1fr; }
-      .stats-bar { grid-template-columns: 1fr 1fr; }
-      .nav-links { display: none; }
+    /* ── Animations ── */
+    @keyframes fadeUp {
+      from { opacity:0; transform:translateY(10px); }
+      to   { opacity:1; transform:translateY(0); }
     }
-    @media (max-width: 640px) {
-      .hero { padding: 100px 16px 60px; }
-      .hero-actions { flex-direction: column; }
-      .stats-bar { grid-template-columns: 1fr 1fr; }
-      .footer-top { grid-template-columns: 1fr; }
-      .footer-bottom { flex-direction: column; gap: 8px; text-align: center; }
-    }
-
-    /* ─── Section color accents ─── */
-    .section-bg-1 {
-      background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(255,69,0,0.05), transparent);
-    }
-    .section-bg-2 {
-      background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(0,194,203,0.05), transparent);
-    }
-    .section-bg-3 {
-      background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(255,215,0,0.04), transparent);
-    }
-    .section-bg-4 {
-      background: radial-gradient(ellipse 80% 40% at 50% 0%, rgba(150,80,255,0.05), transparent);
-    }
-
-    /* Progress pill */
-    .progress-pill { height: 3px; border-radius: 3px; background: rgba(255,255,255,0.08); overflow: hidden; margin-top: 12px; }
-    .progress-fill { height: 100%; border-radius: 3px; background: linear-gradient(90deg, #FF4500, #FFD700); }
-
-    /* Animate in */
-    @keyframes fadeInUp {
-      from { opacity: 0; transform: translateY(24px); }
-      to { opacity: 1; transform: translateY(0); }
-    }
-    .animate-in { animation: fadeInUp 0.6s ease forwards; }
-    .delay-1 { animation-delay: 0.1s; opacity: 0; }
-    .delay-2 { animation-delay: 0.2s; opacity: 0; }
-    .delay-3 { animation-delay: 0.3s; opacity: 0; }
-    .delay-4 { animation-delay: 0.4s; opacity: 0; }
+    .fade-in { animation: fadeUp 0.4s ease both; }
+    .delay-1 { animation-delay: 0.05s; }
+    .delay-2 { animation-delay: 0.1s; }
+    .delay-3 { animation-delay: 0.15s; }
   </style>
 </head>
 <body>
 
-<!-- ═══════════════════════════════════════ NAVBAR ═══════════════════════════════════════ -->
+<!-- ═══════════════ NAV ═══════════════ -->
 <nav>
-  <div class="nav-inner">
-    <a href="#" class="logo">
-      <div class="logo-icon" style="font-size:9px;letter-spacing:-0.5px;font-weight:900;">UN→N</div>
-      <div>
-        <div class="logo-text">UNS→N <span style="font-size:12px;font-weight:400;color:var(--muted);">アンシーン</span></div>
-        <div class="logo-sub">Global Talent Media Platform</div>
+  <div class="container">
+    <div class="nav-top">
+      <div class="logo">
+        <span class="logo-mark">UNS→N</span>
+        <span class="logo-kana">アンシーン</span>
       </div>
-    </a>
-    <div class="nav-links">
-      <a href="#news" class="nav-link">Business News</a>
-      <a href="#admin" class="nav-link">Life in Japan</a>
-      <a href="#global" class="nav-link">Global Feed</a>
-      <a href="#academy" class="nav-link">UNSEEN Academy</a>
+      <div class="nav-right">
+        <div class="lang-switcher">
+          <button class="lang-btn" onclick="setLang('pt')">PT</button>
+          <button class="lang-btn active" onclick="setLang('en')">EN</button>
+          <button class="lang-btn" onclick="setLang('ja')">やさしい</button>
+        </div>
+      </div>
     </div>
-    <div style="display:flex;align-items:center;gap:16px;">
-      <div class="lang-switcher">
-        <button class="lang-btn" onclick="setLang('pt')">PT</button>
-        <button class="lang-btn active" onclick="setLang('en')">EN</button>
-        <button class="lang-btn" onclick="setLang('ja')">やさしい</button>
+  </div>
+  <div class="nav-sub">
+    <div class="container">
+      <div class="nav-sub-inner">
+        <span class="nav-cat active">全て</span>
+        <div class="nav-cat-divider"></div>
+        <span class="nav-cat" onclick="scrollToSection('business')">ビジネス</span>
+        <div class="nav-cat-divider"></div>
+        <span class="nav-cat" onclick="scrollToSection('life')">生活・行政</span>
+        <div class="nav-cat-divider"></div>
+        <span class="nav-cat" onclick="scrollToSection('global')">ブラジル・南米</span>
+        <div class="nav-cat-divider"></div>
+        <span class="nav-cat" onclick="scrollToSection('sources')">メディア一覧</span>
+        <div class="nav-cat-divider"></div>
+        <span class="nav-cat" onclick="scrollToSection('municipality')">自治体情報</span>
       </div>
-      <a href="#academy" class="nav-cta">Join Beta</a>
     </div>
   </div>
 </nav>
 
-<!-- ══════════════════════════════════════ TICKER ══════════════════════════════════════ -->
-<div style="margin-top:64px;" class="ticker-wrap">
-  <div class="ticker-inner" style="padding:0 24px;">
-    <div class="ticker-label">LIVE</div>
-    <div class="ticker-track" id="ticker">
-      <span class="ticker-item">🏭 スマート製造市場：2034年に3兆円規模へ（CAGR 15.2%）<span class="ticker-sep">·</span></span>
-      <span class="ticker-item">📋 在留カード＋マイナンバー統合カード：2026年6月14日より発行開始<span class="ticker-sep">·</span></span>
-      <span class="ticker-item">🇧🇷🇯🇵 日本・メルコスール EPA交渉開始（2026年5月26日）<span class="ticker-sep">·</span></span>
-      <span class="ticker-item">🤖 産業用ロボット世界市場：2,210億ドル突破（2026年Q1）<span class="ticker-sep">·</span></span>
-      <span class="ticker-item">🚀 SusHi Tech Tokyo 2026：AI・ロボ・宇宙 スタートアップが集結<span class="ticker-sep">·</span></span>
-      <span class="ticker-item">💼 特定技能2号：家族帯同可・更新無制限 — 対象分野拡大<span class="ticker-sep">·</span></span>
-      <span class="ticker-item">🌐 労働基準法：40年ぶりの大改正案が審議入り（2026年）<span class="ticker-sep">·</span></span>
-      <!-- duplicate for seamless loop -->
-      <span class="ticker-item">🏭 スマート製造市場：2034年に3兆円規模へ（CAGR 15.2%）<span class="ticker-sep">·</span></span>
-      <span class="ticker-item">📋 在留カード＋マイナンバー統合カード：2026年6月14日より発行開始<span class="ticker-sep">·</span></span>
-      <span class="ticker-item">🇧🇷🇯🇵 日本・メルコスール EPA交渉開始（2026年5月26日）<span class="ticker-sep">·</span></span>
-      <span class="ticker-item">🤖 産業用ロボット世界市場：2,210億ドル突破（2026年Q1）<span class="ticker-sep">·</span></span>
-      <span class="ticker-item">🚀 SusHi Tech Tokyo 2026：AI・ロボ・宇宙 スタートアップが集結<span class="ticker-sep">·</span></span>
+<!-- EDITION BAR -->
+<div class="edition-bar">
+  <div class="container">
+    <div class="edition-bar-inner">
+      <span class="edition-date">2026年6月5日（木） — 今日のブリーフィング</span>
+      <span class="edition-langs">Português · English · やさしい日本語</span>
     </div>
   </div>
 </div>
 
-<!-- ═══════════════════════════════════════ HERO ═══════════════════════════════════════ -->
-<section class="hero">
-  <div class="hero-bg"></div>
-  <div class="hero-grid"></div>
-  <div class="hero-inner">
-
-    <div class="hero-badge animate-in">
-      <i class="fas fa-globe"></i>
-      Nikkei Brazilian × Global Talents × Japan Business Media
-    </div>
-
-    <h1 class="hero-title animate-in delay-1">
-      <span class="gradient-text">UNS→N</span><br/>
-      <span style="color:white;font-size:clamp(20px,3.5vw,42px);font-weight:600;letter-spacing:0px;">アンシーン</span>
-    </h1>
-
-    <div class="hero-catchphrase animate-in delay-2">
-      <div class="catch-item">
-        <div class="catch-flag" style="background:linear-gradient(90deg,#009C3B 33%,#FFDF00 33%,#FFDF00 67%,#002776 67%);">
-          <span style="font-size:8px;color:transparent;">BR</span>
-        </div>
-        <span class="catch-text"><strong>Construa sua carreira. Transforme seu futuro no Japão.</strong></span>
-      </div>
-      <div class="catch-item">
-        <div class="catch-flag" style="background:linear-gradient(180deg,#B22234 33%,#fff 33%,#fff 67%,#B22234 67%);">
-          <span style="font-size:8px;color:transparent;">US</span>
-        </div>
-        <span class="catch-text"><strong>Bridge Your Career. Empower Your Future in Japan.</strong></span>
-      </div>
-      <div class="catch-item">
-        <div class="catch-flag" style="background:linear-gradient(180deg,#fff 33%,#DC143C 33%,#DC143C 67%,#fff 67%);">
-          <span style="font-size:8px;color:transparent;">JP</span>
-        </div>
-        <span class="catch-text" style="font-family:'Noto Sans JP',sans-serif;"><strong>日本で働く。自分の未来を開く。やさしい日本語でわかる、世界とつながるニュース。</strong></span>
-      </div>
-    </div>
-
-    <!-- Language UI Concept Callout -->
-    <div class="animate-in delay-2" style="
-      background: rgba(0,194,203,0.08);
-      border: 1px dashed rgba(0,194,203,0.35);
-      border-radius: 12px;
-      padding: 16px 20px;
-      margin-bottom: 40px;
-      display: inline-flex;
-      align-items: center;
-      gap: 16px;
-      max-width: 660px;
-    ">
-      <i class="fas fa-language" style="color:#00C2CB;font-size:20px;flex-shrink:0;"></i>
-      <div>
-        <div style="font-size:11px;font-weight:700;letter-spacing:1.2px;color:#00C2CB;text-transform:uppercase;margin-bottom:4px;">Multi-Language Switcher UI Concept</div>
-        <div style="font-size:13px;color:rgba(255,255,255,0.75);">
-          Every article available in
-          <span style="font-weight:700;color:white;">Português</span> ·
-          <span style="font-weight:700;color:white;">English</span> ·
-          <span style="font-weight:700;color:white;font-family:'Noto Sans JP',sans-serif;">やさしい日本語</span>
-          — switch instantly with one tap, no page reload.
-        </div>
-      </div>
-    </div>
-
-    <div class="hero-actions animate-in delay-3">
-      <a href="#news" class="btn-primary">
-        <i class="fas fa-newspaper"></i>
-        Today's Business Briefing
-      </a>
-      <a href="#academy" class="btn-secondary">
-        <i class="fas fa-play-circle"></i>
-        UNSEEN Academy
-      </a>
-      <a href="#admin" class="btn-secondary">
-        <i class="fas fa-id-card"></i>
-        Life Essentials
-      </a>
-    </div>
-
-    <!-- Stats Bar -->
-    <div class="stats-bar animate-in delay-4">
-      <div class="stat-item">
-        <div class="stat-number gradient-text">3.2M+</div>
-        <div class="stat-label">Foreign Residents in Japan (2026)</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number gradient-text-cyan">210K</div>
-        <div class="stat-label">Nikkei Brazilian Community</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" style="color:#FFD700;">¥30T</div>
-        <div class="stat-label">Smart Manufacturing Market by 2034</div>
-      </div>
-      <div class="stat-item">
-        <div class="stat-number" style="color:#b47fff;">48</div>
-        <div class="stat-label">Countries Represented in Japan Workforce</div>
-      </div>
-    </div>
-
-  </div>
-</section>
-
-<div class="section-divider"></div>
-
-<!-- ═══════════════════════════════ SECTION 1: BUSINESS NEWS ═══════════════════════════════ -->
-<section class="section section-bg-1" id="news">
-  <div class="section-inner">
-    <div class="section-header">
-      <div class="section-eyebrow" style="color:#FF8C00;">
-        <div class="dot" style="background:#FF4500;"></div>
-        Section 01
-      </div>
-      <h2 class="section-title">Japan Business &amp; Tech <span class="gradient-text">Trends</span></h2>
-      <p class="section-desc">最新のビジネス・製造・テクノロジーニュースを、やさしい日本語・ポルトガル語・英語でお届けします。</p>
-    </div>
-
-    <div class="news-grid">
-
-      <!-- FEATURED: Smart Manufacturing -->
-      <article class="glass-card news-card news-featured">
-        <div class="news-featured-content">
-          <div class="news-card-header">
-            <div class="news-tags">
-              <span class="tag tag-red">Manufacturing</span>
-              <span class="tag tag-gold">DX</span>
-              <span class="tag tag-cyan">Smart Factory</span>
-            </div>
-            <span class="news-date">June 2026 · Source: IMARC Research / METI</span>
-          </div>
-          <h3 class="news-headline">日本のスマート製造ソフトウェア市場、2034年に3兆円規模へ — 製造DX革命が加速<br><small style="font-size:14px;font-weight:500;color:var(--muted);">Japan's Smart Manufacturing Software Market Set to Reach ¥30 Trillion by 2034</small></h3>
-
-          <div class="news-lang-block">
-            <div class="lang-label"><span style="font-size:16px;">🇯🇵</span> やさしい日本語</div>
-            <p class="lang-content-ja">日本の工場で、コンピューターやAIを使った新しいシステムが増えています。今は8,400億円の市場ですが、2034年には3兆円になると予想されています。毎年15.2%ずつ大きくなっています。外国人エンジニアにとって、大きなチャンスです。</p>
-          </div>
-          <div class="news-divider"></div>
-          <div class="news-lang-block">
-            <div class="lang-label"><span style="font-size:16px;">🇧🇷</span> Português</div>
-            <p class="lang-content-pt">O mercado de software para manufatura inteligente no Japão, avaliado em US$ 8,4 bilhões em 2025, deve atingir US$ 30 bilhões até 2034, crescendo a uma CAGR de 15,18%. Fábricas japonesas estão acelerando a adoção de IA, IoT industrial e gêmeos digitais — abrindo uma demanda enorme por engenheiros bilíngues com expertise em automação.</p>
-          </div>
-          <div class="news-divider"></div>
-          <div class="news-lang-block">
-            <div class="lang-label"><span style="font-size:16px;">🇺🇸</span> English</div>
-            <p class="lang-content-en">Japan's smart manufacturing software market is projected to grow from USD 8.4B (2025) to USD 30B by 2034 at a CAGR of 15.18%. Driven by AI-powered quality control, industrial IoT deployment, and the government's Society 5.0 agenda, this transformation is creating unprecedented demand for multilingual engineers and tech managers across Japan's manufacturing belt.</p>
-          </div>
-          <span class="read-more">Full Analysis <i class="fas fa-arrow-right" style="font-size:11px;"></i></span>
-        </div>
-        <div class="news-featured-visual">
-          <div style="position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,69,0,0.06),rgba(255,215,0,0.04));border-radius:12px;"></div>
-          <div class="visual-icon">🏭</div>
-          <div class="visual-stat gradient-text">¥30T</div>
-          <div class="visual-label">Smart Manufacturing<br>Market by 2034</div>
-          <div style="width:100%;margin-top:8px;">
-            <div style="display:flex;justify-content:space-between;font-size:11px;color:var(--muted);margin-bottom:4px;"><span>2025</span><span>2034</span></div>
-            <div class="progress-pill"><div class="progress-fill" style="width:28%;"></div></div>
-            <div style="font-size:10px;color:var(--muted);margin-top:6px;text-align:center;">CAGR 15.18% per year</div>
-          </div>
-          <div style="display:flex;gap:12px;margin-top:8px;">
-            <div style="text-align:center;">
-              <div style="font-size:14px;font-weight:700;color:#FF8C00;">¥8.4B</div>
-              <div style="font-size:10px;color:var(--muted);">2025 Base</div>
-            </div>
-            <div style="text-align:center;">
-              <div style="font-size:14px;font-weight:700;color:#4CAF50;">+257%</div>
-              <div style="font-size:10px;color:var(--muted);">Growth</div>
-            </div>
-          </div>
-        </div>
-      </article>
-
-      <!-- News Card 2: Japan Startup -->
-      <article class="glass-card glass-card-cyan news-card">
-        <div class="news-card-header">
-          <div class="news-tags">
-            <span class="tag tag-cyan">Startup</span>
-            <span class="tag tag-purple">Deep Tech</span>
-          </div>
-          <span class="news-date">May 2026 · SusHi Tech Tokyo</span>
-        </div>
-        <h3 class="news-headline">SusHi Tech Tokyo 2026：AI・ロボット・宇宙テックで日本スタートアップが世界へ</h3>
-
-        <div class="news-lang-block">
-          <div class="lang-label"><span style="font-size:16px;">🇯🇵</span> やさしい日本語</div>
-          <p class="lang-content-ja">2026年4月に東京で大きなイベントがありました。日本のスタートアップ（新しい会社）が世界に向けて発表しました。テーマはAI、ロボット、地震などへの強さ、そして宇宙技術の4つです。TechCrunchも参加しました。</p>
-        </div>
-        <div class="news-divider"></div>
-        <div class="news-lang-block">
-          <div class="lang-label"><span style="font-size:16px;">🇧🇷</span> Português</div>
-          <p class="lang-content-pt">O SusHi Tech Tokyo 2026 (abril/2026) consolidou o Japão como hub global de inovação. Foco em 4 domínios: IA, Robótica, Resiliência e Entretenimento. O governo japonês tem um plano quinquenal com meta de ¥10 trilhões em startups, criando demanda por talentos bilíngues em gestão de inovação.</p>
-        </div>
-        <div class="news-divider"></div>
-        <div class="news-lang-block">
-          <div class="lang-label"><span style="font-size:16px;">🇺🇸</span> English</div>
-          <p class="lang-content-en">SusHi Tech Tokyo 2026 (Apr 27–29) brought together 500+ global startups across AI, Robotics, Resilience & Entertainment. Japan's government five-year plan targets ¥10 trillion in startup investment, with Tokyo positioning itself as Asia's premier deep-tech hub competing directly with Silicon Valley.</p>
-        </div>
-        <span class="read-more">Read More <i class="fas fa-arrow-right" style="font-size:11px;"></i></span>
-      </article>
-
-      <!-- News Card 3: Labor Standards Reform -->
-      <article class="glass-card glass-card-gold news-card">
-        <div class="news-card-header">
-          <div class="news-tags">
-            <span class="tag tag-gold">Labor Law</span>
-            <span class="tag tag-red">Urgent</span>
-          </div>
-          <span class="news-date">Feb 2026 · Paul Hastings / MHLW</span>
-        </div>
-        <h3 class="news-headline">労働基準法40年ぶりの大改正へ — 外国人労働者の権利と働き方が大きく変わる</h3>
-
-        <div class="news-lang-block">
-          <div class="lang-label"><span style="font-size:16px;">🇯🇵</span> やさしい日本語</div>
-          <p class="lang-content-ja">日本の「働くルール」（労働基準法）が40年ぶりに大きく変わります。2026年に審議が始まりました。残業の計算方法や休みのルールが新しくなります。外国人も同じルールで守られます。</p>
-        </div>
-        <div class="news-divider"></div>
-        <div class="news-lang-block">
-          <div class="lang-label"><span style="font-size:16px;">🇧🇷</span> Português</div>
-          <p class="lang-content-pt">O Japão está preparando a primeira grande reforma da Lei de Normas do Trabalho em quase 40 anos, com previsão para 2026. As mudanças incluem revisão dos cálculos de horas extras, novos direitos de descanso e proteções fortalecidas para trabalhadores estrangeiros em todos os setores.</p>
-        </div>
-        <div class="news-divider"></div>
-        <div class="news-lang-block">
-          <div class="lang-label"><span style="font-size:16px;">🇺🇸</span> English</div>
-          <p class="lang-content-en">Japan's first major overhaul of the Labour Standards Act in nearly 40 years entered parliamentary review in 2026. Targeting rapid shifts in remote work, AI-augmented roles, and gig economy growth, the reform strengthens overtime calculations and rest entitlements — applicable equally to all foreign workers.</p>
-        </div>
-        <span class="read-more">Read More <i class="fas fa-arrow-right" style="font-size:11px;"></i></span>
-      </article>
-
-      <!-- News Card 4: Industrial Automation -->
-      <article class="glass-card news-card">
-        <div class="news-card-header">
-          <div class="news-tags">
-            <span class="tag tag-red">Automation</span>
-            <span class="tag tag-cyan">AI / Robotics</span>
-          </div>
-          <span class="news-date">Mar 2026 · JR Automation / LinkedIn</span>
-        </div>
-        <h3 class="news-headline">2026年の製造自動化トレンド：AIロボット・デジタルツイン・協働ロボットが製造現場を変革</h3>
-
-        <div class="news-lang-block">
-          <div class="lang-label"><span style="font-size:16px;">🇯🇵</span> やさしい日本語</div>
-          <p class="lang-content-ja">工場でAIやロボットを使う会社が増えています。「デジタルツイン」という技術で、コンピューターの中に工場を作り、問題を前もって見つけられます。人間とロボットが一緒に働く「協働ロボット」も広がっています。</p>
-        </div>
-        <div class="news-divider"></div>
-        <div class="news-lang-block">
-          <div class="lang-label"><span style="font-size:16px;">🇧🇷</span> Português</div>
-          <p class="lang-content-pt">O mercado global de automação industrial ultrapassou US$ 221 bilhões em 2026. Os principais trends: robôs colaborativos (cobots) com IA, gêmeos digitais para manutenção preditiva, e sistemas de controle adaptativo. Para engenheiros brasileiros no Japão, dominar essas tecnologias é o diferencial competitivo do momento.</p>
-        </div>
-        <div class="news-divider"></div>
-        <div class="news-lang-block">
-          <div class="lang-label"><span style="font-size:16px;">🇺🇸</span> English</div>
-          <p class="lang-content-en">The global industrial automation market surpassed USD 221B in 2026. Key trends: AI-driven collaborative robotics enabling safer human-machine interaction, digital twin adoption for predictive maintenance, and flexible automation systems that adapt to demand fluctuations — critical skills for foreign engineers in Japan's manufacturing sector.</p>
-        </div>
-        <span class="read-more">Read More <i class="fas fa-arrow-right" style="font-size:11px;"></i></span>
-      </article>
-
+<!-- TICKER -->
+<div class="ticker-bar">
+  <div class="ticker-label">速報</div>
+  <div class="ticker-scroll">
+    <div class="ticker-track" id="ticker">
+      <span class="ticker-item">在留カード＋マイナ統合「特定在留カード」6月14日より発行開始</span>
+      <span class="ticker-item">　·　</span>
+      <span class="ticker-item">日本・メルコスールEPA交渉スタート（5月26日）</span>
+      <span class="ticker-item">　·　</span>
+      <span class="ticker-item">労働基準法40年ぶり大改正案が国会審議入り</span>
+      <span class="ticker-item">　·　</span>
+      <span class="ticker-item">スマート製造市場、2034年に3兆円へ（CAGR 15.2%）</span>
+      <span class="ticker-item">　·　</span>
+      <span class="ticker-item">特定技能2号 対象分野さらに拡大、家族帯同・更新無制限</span>
+      <span class="ticker-item">　·　</span>
+      <span class="ticker-item">EU・メルコスール協定発効 — ブラジル再生エネルギー産業が急成長</span>
+      <span class="ticker-item">　·　</span>
+      <!-- dup for loop -->
+      <span class="ticker-item">在留カード＋マイナ統合「特定在留カード」6月14日より発行開始</span>
+      <span class="ticker-item">　·　</span>
+      <span class="ticker-item">日本・メルコスールEPA交渉スタート（5月26日）</span>
+      <span class="ticker-item">　·　</span>
+      <span class="ticker-item">労働基準法40年ぶり大改正案が国会審議入り</span>
+      <span class="ticker-item">　·　</span>
+      <span class="ticker-item">スマート製造市場、2034年に3兆円へ（CAGR 15.2%）</span>
+      <span class="ticker-item">　·　</span>
     </div>
   </div>
-</section>
+</div>
 
-<div class="section-divider" style="background:linear-gradient(90deg,transparent,rgba(0,194,203,0.3),rgba(255,215,0,0.2),transparent);"></div>
+<!-- ═══════════════ MAIN LAYOUT ═══════════════ -->
+<div class="page-layout">
 
-<!-- ═══════════════════════════════ SECTION 2: LIFE & ADMIN ═══════════════════════════════ -->
-<section class="section section-bg-2" id="admin">
-  <div class="section-inner">
-    <div class="section-header">
-      <div class="section-eyebrow" style="color:#00C2CB;">
-        <div class="dot" style="background:#00C2CB;"></div>
-        Section 02
+  <!-- ━━━━━━━━━━━━━━━ MAIN COLUMN ━━━━━━━━━━━━━━━ -->
+  <main class="main-col">
+
+    <!-- ── TOP STORY ── -->
+    <section class="top-story fade-in" id="business">
+      <div class="top-story-category">特集 · ビジネス</div>
+      <h1>在留カードとマイナンバーが1枚に統合<br><span style="font-size:18px;font-weight:600;color:var(--ink-2);">2026年6月14日、新「特定在留カード」発行開始</span></h1>
+      <div class="top-story-meta">
+        <span class="news-item-source">出典：法務省入管庁 / Fragomen</span>
+        <span class="top-story-meta-dot"></span>
+        <span>2026年6月 施行</span>
+        <span class="top-story-meta-dot"></span>
+        <span class="tag tag-red">要確認</span>
+        <span class="tag tag-blue">行政</span>
       </div>
-      <h2 class="section-title">Life, Visa &amp; Administrative <span class="gradient-text-cyan">Essentials</span></h2>
-      <p class="section-desc">在日外国人のための最新行政・ビザ情報。2026年の重要な変更点をわかりやすくまとめました。</p>
+
+      <div class="lang-block">
+        <div class="lang-tag"><span class="lang-tag-flag">🇯🇵</span> やさしい日本語</div>
+        <p class="lang-text-ja">日本政府は2026年6月14日から、在留カードとマイナンバーカードを1枚にまとめた「特定在留カード」の発行を始めます。今持っているカードは有効期限まで使えます。新しくカードをもらうとき（ビザ更新など）から、統合カードに変わります。手続きは入管局1か所でできるようになります。</p>
+      </div>
+      <div class="lang-block">
+        <div class="lang-tag"><span class="lang-tag-flag">🇧🇷</span> Português</div>
+        <p class="lang-text-pt">A partir de 14 de junho de 2026, o Japão lançará o novo "Cartão de Residência Especificado", que unifica o Residence Card (Zairyu Card) e o My Number Card em um único documento. Os cartões atuais continuam válidos até o vencimento. A mudança entra em vigor na próxima renovação de visto ou emissão. Procedimentos administrativos poderão ser feitos em um único balcão da Agência de Serviços de Imigração.</p>
+      </div>
+      <div class="lang-block">
+        <div class="lang-tag"><span class="lang-tag-flag">🇺🇸</span> English</div>
+        <p class="lang-text-en">Effective June 14, 2026, Japan introduces the "Specified Residence Card" — a single document combining the current Residence Card and My Number Card. Existing cards remain valid until expiry. The integrated card will be issued upon next renewal. All administrative procedures are consolidated at a single Immigration Services Agency counter. Source: Fragomen, Mar 4 2026.</p>
+      </div>
+    </section>
+
+    <!-- ── BUSINESS NEWS LIST ── -->
+    <div class="section-head">
+      <span class="section-head-label">ビジネス・テクノロジー</span>
+      <span class="section-head-sub">Business & Tech</span>
+      <div class="section-head-line"></div>
     </div>
 
-    <div class="admin-grid">
+    <div class="news-list fade-in delay-1">
 
-      <!-- Card 1: New Residence Card -->
-      <div class="glass-card glass-card-cyan admin-card">
-        <div class="admin-icon" style="background:rgba(0,194,203,0.12);border:1px solid rgba(0,194,203,0.25);">
-          🪪
-        </div>
-        <div class="urgency-red admin-urgency">
-          <i class="fas fa-exclamation-circle" style="font-size:10px;"></i>
-          Action Required — June 14, 2026
-        </div>
-        <h3 class="admin-card-title">在留カード＋マイナンバー統合<br><small style="font-size:12px;font-weight:400;color:var(--muted);">New "Specified Residence Card" Launch</small></h3>
-        <p class="admin-body">日本政府は2026年6月14日から、在留カードとマイナンバーカードを1枚に統合した「特定在留カード」の発行を開始します。手続きの簡略化と行政DXの一環です。</p>
-
-        <ul class="admin-checklist">
-          <li><span class="check-icon"><i class="fas fa-check-circle"></i></span>現在の在留カード・マイナカードは有効期限まで引き続き利用可能</li>
-          <li><span class="check-icon"><i class="fas fa-check-circle"></i></span>新規取得・更新時に統合カードが自動発行される</li>
-          <li><span class="alert-icon"><i class="fas fa-exclamation-triangle"></i></span>ICチップに医療・保険データが連携される（オプトアウト可）</li>
-          <li><span class="check-icon"><i class="fas fa-check-circle"></i></span>管轄窓口が入管局1ヵ所に一本化される</li>
-        </ul>
-
-        <div class="admin-date-badge">
-          <i class="fas fa-calendar-alt" style="color:#00C2CB;font-size:14px;"></i>
-          <div>
-            <div class="admin-date-text">施行日 / Launch Date</div>
-            <div class="admin-date-val">June 14, 2026 (令和8年6月14日)</div>
-          </div>
-        </div>
-
-        <div style="margin-top:14px;padding:10px 14px;background:rgba(0,194,203,0.06);border-radius:8px;border:1px solid rgba(0,194,203,0.15);">
-          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#00C2CB;margin-bottom:4px;">Fonte / Source</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.6);">Immigration Services Agency of Japan · Fragomen (Mar 4, 2026)</div>
-        </div>
-      </div>
-
-      <!-- Card 2: Labour Standards Reform -->
-      <div class="glass-card glass-card-gold admin-card">
-        <div class="admin-icon" style="background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.2);">
-          ⚖️
-        </div>
-        <div class="urgency-orange admin-urgency">
-          <i class="fas fa-hourglass-half" style="font-size:10px;"></i>
-          In Review — Monitor Closely
-        </div>
-        <h3 class="admin-card-title">労働基準法 大改正（40年ぶり）<br><small style="font-size:12px;font-weight:400;color:var(--muted);">Major Labour Standards Act Overhaul 2026</small></h3>
-        <p class="admin-body">AIやリモートワーク、ギグエコノミーへの対応を目的とした労働基準法の大幅改正が2026年に審議入り。外国人労働者の権利保護条項も強化される見通しです。</p>
-
-        <ul class="admin-checklist">
-          <li><span class="alert-icon"><i class="fas fa-exclamation-triangle"></i></span>残業代計算ルールの見直し（裁量労働制の対象拡大）</li>
-          <li><span class="check-icon"><i class="fas fa-check-circle"></i></span>年次有給休暇の取得義務強化（最低10日→14日案）</li>
-          <li><span class="check-icon"><i class="fas fa-check-circle"></i></span>外国人労働者への就業規則・多言語説明義務化へ</li>
-          <li><span class="alert-icon"><i class="fas fa-exclamation-triangle"></i></span>技能実習制度廃止→育成就労制度への完全移行（2027年めど）</li>
-        </ul>
-
-        <div class="admin-date-badge">
-          <i class="fas fa-gavel" style="color:#FFD700;font-size:14px;"></i>
-          <div>
-            <div class="admin-date-text">審議状況 / Status</div>
-            <div class="admin-date-val">国会審議中 — 2026年通常国会</div>
-          </div>
-        </div>
-
-        <div style="margin-top:14px;padding:10px 14px;background:rgba(255,215,0,0.05);border-radius:8px;border:1px solid rgba(255,215,0,0.15);">
-          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#FFD700;margin-bottom:4px;">Fonte / Source</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.6);">Paul Hastings LLP Japan Practice (Feb 2026) · MHLW</div>
-        </div>
-      </div>
-
-      <!-- Card 3: Tokutei Ginou SSW -->
-      <div class="glass-card admin-card">
-        <div class="admin-icon" style="background:rgba(150,80,255,0.1);border:1px solid rgba(150,80,255,0.2);">
-          🛂
-        </div>
-        <div class="urgency-green admin-urgency">
-          <i class="fas fa-check-circle" style="font-size:10px;"></i>
-          Active — Expanded Categories
-        </div>
-        <h3 class="admin-card-title">特定技能ビザ（SSW）アップデート 2026<br><small style="font-size:12px;font-weight:400;color:var(--muted);">Specified Skilled Worker Visa — 2026 Updates</small></h3>
-        <p class="admin-body">特定技能1号・2号ビザに関する重要なアップデート。2号の対象分野が拡大され、永続的な在留・家族呼び寄せが可能になりました。ブラジル人コミュニティにとって大きなチャンスです。</p>
-
-        <ul class="admin-checklist">
-          <li><span class="check-icon"><i class="fas fa-check-circle"></i></span>SSW 1号：最長5年、単身のみ（製造・飲食・建設など16分野）</li>
-          <li><span class="check-icon"><i class="fas fa-check-circle"></i></span>SSW 2号：更新無制限 + 家族帯同可（永住への道）</li>
-          <li><span class="alert-icon"><i class="fas fa-exclamation-triangle"></i></span>2月時点で飲食分野の外国人枠が限界近くに到達（46,000人）</li>
-          <li><span class="check-icon"><i class="fas fa-check-circle"></i></span>ポルトガル語対応の試験センターが名古屋・浜松に増設</li>
-        </ul>
-
-        <div class="admin-date-badge">
-          <i class="fas fa-users" style="color:#b47fff;font-size:14px;"></i>
-          <div>
-            <div class="admin-date-text">対象在留人数 / Foreign Workers (SSW)</div>
-            <div class="admin-date-val">約 46,000人（飲食分野）2026年2月時点</div>
-          </div>
-        </div>
-
-        <div style="margin-top:14px;padding:10px 14px;background:rgba(150,80,255,0.06);border-radius:8px;border:1px solid rgba(150,80,255,0.15);">
-          <div style="font-size:10px;font-weight:700;letter-spacing:1px;color:#b47fff;margin-bottom:4px;">Fonte / Source</div>
-          <div style="font-size:11px;color:rgba(255,255,255,0.6);">Global Law Experts (May 2026) · MOFA SSW Portal · GaijinPot (Jan 2026)</div>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<div class="section-divider" style="background:linear-gradient(90deg,transparent,rgba(255,215,0,0.3),rgba(255,69,0,0.2),transparent);"></div>
-
-<!-- ═══════════════════════════════ SECTION 3: GLOBAL FEED ═══════════════════════════════ -->
-<section class="section section-bg-3" id="global">
-  <div class="section-inner">
-    <div class="section-header">
-      <div class="section-eyebrow" style="color:#FFD700;">
-        <div class="dot" style="background:#FFD700;"></div>
-        Section 03
-      </div>
-      <h2 class="section-title">Home Country Insights — <span style="background:linear-gradient(135deg,#FFD700,#FF8C00);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Global Feed</span></h2>
-      <p class="section-desc">ブラジル・南米の最新ビジネスニュースを日本語でお届け。日本の職場で活かせる国際情報です。</p>
-    </div>
-
-    <div class="feed-grid">
-
-      <!-- Feed 1: Japan-Mercosur EPA -->
-      <div class="glass-card glass-card-gold feed-card">
-        <div class="feed-flag-row">
-          <span class="flag-emoji">🇧🇷🇯🇵</span>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:white;">Brazil × Japan</div>
-            <div class="flag-country">Reuters / Nikkei Asia · May 26, 2026</div>
-          </div>
-          <div style="margin-left:auto;"><span class="tag tag-gold">Trade</span></div>
-        </div>
-        <h3 class="feed-headline">日本・メルコスール EPA交渉が正式スタート — ブラジル人財の日本でのキャリアに新たな追い風</h3>
-
-        <div class="feed-jp-summary">
-          <div class="feed-jp-label">🇯🇵 日本語サマリー（職場で使える）</div>
-          <p class="feed-jp-text">2026年5月26日、日本と南米の経済連合「メルコスール」（ブラジル・アルゼンチン・ウルグアイ・パラグアイ）が経済連携協定（EPA）の交渉を開始しました。日本はブラジルから石油・農産物の輸入拡大を、ブラジルは自動車などの日本製品の関税削減を目指します。この協定が結ばれると、両国間のビジネスが増え、ポルトガル語話者の価値が日本の職場でさらに高まる見通しです。</p>
-        </div>
-
-        <div style="margin-bottom:12px;">
-          <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:6px;">Summary (EN): </div>
-          <p style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6;">Japan formally launched EPA trade talks with Mercosur (May 26, 2026), seeking expanded oil/agricultural imports. For Japanese companies, Portuguese-speaking professionals bridge this growing bilateral relationship.</p>
-        </div>
-
-        <div class="feed-impact">
-          <span>Impact Level</span>
-          <div class="impact-bar impact-high"></div>
-          <span style="font-size:11px;color:#FF8C00;font-weight:700;">HIGH</span>
-        </div>
-      </div>
-
-      <!-- Feed 2: Brazil Oil Exports -->
-      <div class="glass-card feed-card">
-        <div class="feed-flag-row">
-          <span class="flag-emoji">🇧🇷⚡</span>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:white;">Brazil Energy</div>
-            <div class="flag-country">Kyodo News · May 18–20, 2026</div>
-          </div>
-          <div style="margin-left:auto;"><span class="tag tag-red">Energy</span></div>
-        </div>
-        <h3 class="feed-headline">ブラジル、日本への石油輸出拡大を表明 — エネルギー安全保障で日ブラジル関係が急接近</h3>
-
-        <div class="feed-jp-summary">
-          <div class="feed-jp-label">🇯🇵 日本語サマリー（職場で使える）</div>
-          <p class="feed-jp-text">2026年5月18日、日本とブラジルの外務大臣が会談しました。ブラジルは「日本へもっと石油を輸出する準備ができている」と発表しました。日本はロシアからのエネルギー供給を減らしたいため、ブラジルからの石油を重視しています。また、経済安全保障や先端技術の分野でも両国の協力が深まっています。ポルトガル語ができる専門家への需要が、日本のエネルギー・商社セクターで高まっています。</p>
-        </div>
-
-        <div style="margin-bottom:12px;">
-          <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:6px;">Summary (EN): </div>
-          <p style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6;">Brazil's Foreign Minister confirmed readiness to boost crude oil exports to Japan (May 2026), deepening strategic ties amid energy security concerns. Japan-Brazil foreign ministers agreed to strengthen economic and defense cooperation frameworks.</p>
-        </div>
-
-        <div class="feed-impact">
-          <span>Impact Level</span>
-          <div class="impact-bar impact-high"></div>
-          <span style="font-size:11px;color:#FF8C00;font-weight:700;">HIGH</span>
-        </div>
-      </div>
-
-      <!-- Feed 3: EU-Mercosur & Brazil Economic Growth -->
-      <div class="glass-card feed-card">
-        <div class="feed-flag-row">
-          <span class="flag-emoji">🌎📈</span>
-          <div>
-            <div style="font-size:13px;font-weight:700;color:white;">South America</div>
-            <div class="flag-country">EY / LinkedIn · May 2026</div>
-          </div>
-          <div style="margin-left:auto;"><span class="tag tag-cyan">Economy</span></div>
-        </div>
-        <h3 class="feed-headline">EU・メルコスール貿易協定が発効 — ブラジル再生エネルギー産業の急成長が世界市場を牽引</h3>
-
-        <div class="feed-jp-summary">
-          <div class="feed-jp-label">🇯🇵 日本語サマリー（職場で使える）</div>
-          <p class="feed-jp-text">2026年5月、EUとメルコスール（ブラジルが中心）の貿易協定が正式に発効しました。7億2,000万人の消費者市場が生まれ、関税の90%以上が撤廃されます。ブラジルは特に再生可能エネルギー（太陽光・風力）や農業テクノロジー分野で急成長しています。日本企業はブラジルの成長市場への参入機会を模索しており、両国を橋渡しできる人材の価値が高まっています。</p>
-        </div>
-
-        <div style="margin-bottom:12px;">
-          <div style="font-size:12px;font-weight:600;color:rgba(255,255,255,0.8);margin-bottom:6px;">Summary (EN): </div>
-          <p style="font-size:12px;color:rgba(255,255,255,0.6);line-height:1.6;">The EU-Mercosur trade deal went live in May 2026, eliminating 90%+ tariffs for 720M consumers. Brazil's renewable energy sector surged, creating investment opportunities for Japanese companies seeking green portfolio diversification in South America.</p>
-        </div>
-
-        <div class="feed-impact">
-          <span>Impact Level</span>
-          <div class="impact-bar impact-med"></div>
-          <span style="font-size:11px;color:#FFD700;font-weight:700;">MEDIUM-HIGH</span>
-        </div>
-      </div>
-
-    </div>
-  </div>
-</section>
-
-<div class="section-divider" style="background:linear-gradient(90deg,transparent,rgba(150,80,255,0.3),rgba(0,194,203,0.2),transparent);"></div>
-
-<!-- ═══════════════════════════════ SECTION 4: NEXUS ACADEMY ═══════════════════════════════ -->
-<section class="section section-bg-4 academy-section" id="academy">
-  <div class="section-inner">
-    <div class="section-header">
-      <div class="section-eyebrow" style="color:#b47fff;">
-        <div class="dot" style="background:#b47fff;"></div>
-        Section 04 — Platform Vision
-      </div>
-      <h2 class="section-title">Nexus <span style="background:linear-gradient(135deg,#b47fff,#00C2CB);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">Academy</span></h2>
-      <p class="section-desc">PIVOT × NewsPicks インスパイアの動画学習プラットフォーム。日本のビジネス・製造現場で即戦力になるためのコンテンツ。</p>
-    </div>
-
-    <!-- Video Series -->
-    <div class="academy-grid">
-
-      <!-- Video 1 -->
-      <div class="glass-card video-card">
-        <div class="video-thumb" style="background:linear-gradient(135deg,#1a0a2e,#2d0f54,rgba(150,80,255,0.2));">
-          <div class="play-btn"><i class="fas fa-play" style="margin-left:3px;"></i></div>
-          <div class="video-ep" style="background:rgba(150,80,255,0.3);color:#b47fff;border:1px solid rgba(150,80,255,0.4);">Series 01 · EP 12</div>
-          <div class="video-duration">28:45</div>
-          <!-- decorative -->
-          <div style="position:absolute;bottom:20px;left:20px;right:20px;display:flex;gap:4px;">
-            <div style="height:2px;flex:1;background:rgba(150,80,255,0.4);border-radius:2px;"></div>
-            <div style="height:2px;flex:3;background:rgba(255,255,255,0.15);border-radius:2px;"></div>
-          </div>
-          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:60px;opacity:0.08;">🤝</div>
-        </div>
-        <div class="video-body">
-          <div class="video-series">Mastering Japanese Business Culture</div>
-          <h4 class="video-title">Mastering Japanese Business Etiquette for Engineers</h4>
-          <p class="video-desc">根回し・ホウレンソウ・会議の作法から名刺交換まで。製造・エンジニアリング現場で即使える日本式ビジネスマナー完全ガイド。(Completo em PT/EN)</p>
-          <div class="video-meta">
-            <span class="video-meta-item"><i class="fas fa-eye"></i> 24.8K views</span>
-            <span class="video-meta-item"><i class="fas fa-clock"></i> 28 min</span>
-            <span class="video-meta-item"><i class="fas fa-star" style="color:#FFD700;"></i> 4.9</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Video 2 -->
-      <div class="glass-card video-card">
-        <div class="video-thumb" style="background:linear-gradient(135deg,#001a1a,#003344,rgba(0,194,203,0.2));">
-          <div class="play-btn"><i class="fas fa-play" style="margin-left:3px;"></i></div>
-          <div class="video-ep" style="background:rgba(0,194,203,0.2);color:#00C2CB;border:1px solid rgba(0,194,203,0.35);">Series 02 · EP 8</div>
-          <div class="video-duration">35:20</div>
-          <div style="position:absolute;bottom:20px;left:20px;right:20px;display:flex;gap:4px;">
-            <div style="height:2px;flex:2;background:rgba(0,194,203,0.5);border-radius:2px;"></div>
-            <div style="height:2px;flex:2;background:rgba(255,255,255,0.15);border-radius:2px;"></div>
-          </div>
-          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:60px;opacity:0.08;">🔧</div>
-        </div>
-        <div class="video-body">
-          <div class="video-series">Career Transition Series</div>
-          <h4 class="video-title">Career Transition: From Manufacturing to Tech Management</h4>
-          <p class="video-desc">製造ライン → プロジェクトマネージャー → DXリード。外国人エンジニアが日本でキャリアアップを実現するロードマップを現役マネージャーが解説。</p>
-          <div class="video-meta">
-            <span class="video-meta-item"><i class="fas fa-eye"></i> 18.3K views</span>
-            <span class="video-meta-item"><i class="fas fa-clock"></i> 35 min</span>
-            <span class="video-meta-item"><i class="fas fa-star" style="color:#FFD700;"></i> 4.8</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Video 3 -->
-      <div class="glass-card video-card">
-        <div class="video-thumb" style="background:linear-gradient(135deg,#1a1000,#332200,rgba(255,140,0,0.2));">
-          <div class="play-btn"><i class="fas fa-play" style="margin-left:3px;"></i></div>
-          <div class="video-ep" style="background:rgba(255,140,0,0.2);color:#FF8C00;border:1px solid rgba(255,140,0,0.35);">Series 03 · EP 5</div>
-          <div class="video-duration">22:10</div>
-          <div style="position:absolute;bottom:20px;left:20px;right:20px;display:flex;gap:4px;">
-            <div style="height:2px;flex:1;background:rgba(255,140,0,0.5);border-radius:2px;"></div>
-            <div style="height:2px;flex:3;background:rgba(255,255,255,0.15);border-radius:2px;"></div>
-          </div>
-          <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:60px;opacity:0.08;">💰</div>
-        </div>
-        <div class="video-body">
-          <div class="video-series">Financial Literacy in Japan</div>
-          <h4 class="video-title">Smart Money: Tax, NISA &amp; Pension for Foreign Residents</h4>
-          <p class="video-desc">確定申告・NISAの活用・国民年金と厚生年金の違い・ブラジルへの送金節税術まで。在日外国人のためのマネー完全ガイド（日本語・PT・EN）</p>
-          <div class="video-meta">
-            <span class="video-meta-item"><i class="fas fa-eye"></i> 31.2K views</span>
-            <span class="video-meta-item"><i class="fas fa-clock"></i> 22 min</span>
-            <span class="video-meta-item"><i class="fas fa-star" style="color:#FFD700;"></i> 4.95</span>
-          </div>
-        </div>
-      </div>
-
-    </div>
-
-    <!-- Jobs Section -->
-    <div class="jobs-section">
-      <div class="jobs-header" style="display:flex;align-items:center;justify-content:space-between;">
+      <article class="news-item">
         <div>
-          <div class="section-eyebrow" style="color:#FF8C00;margin-bottom:8px;">
-            <div class="dot" style="background:#FF4500;"></div>
-            UNS→N Job Trend Highlights — 2026
+          <div class="news-item-cat" style="color:#D94F00;">製造DX</div>
+          <div class="news-item-title">スマート製造ソフト市場、2034年に3兆円規模へ — 日本の工場DX革命が加速</div>
+          <div class="news-item-lead">AIとIoTで動く工場が増えています。2025年に8,400億円の市場が、2034年には3兆円になると予想されています（年成長率15.2%）。外国人エンジニアに大きなチャンスです。</div>
+          <div style="margin-top:6px;">
+            <span class="tag tag-amber">製造</span>&nbsp;
+            <span class="tag tag-slate">AI</span>&nbsp;
+            <span class="tag tag-slate">IoT</span>
           </div>
-          <h3 class="jobs-title">外国人タレント向けキャリアトレンド <span class="gradient-text">Top Jobs 2026</span></h3>
+          <div class="news-item-meta" style="margin-top:8px;">
+            <span class="news-item-source">IMARC Research</span>
+            <span class="top-story-meta-dot"></span>
+            <span>2026年6月</span>
+          </div>
+          <div class="lang-block" style="margin-top:10px;">
+            <div class="lang-tag"><span class="lang-tag-flag">🇧🇷</span> Português</div>
+            <p class="lang-text-pt">O mercado de software para manufatura inteligente no Japão deve crescer de US$ 8,4B (2025) para US$ 30B até 2034, CAGR de 15,18%. Fábricas japonesas aceleram adoção de IA, gêmeos digitais e IIoT — criando demanda por engenheiros bilíngues com expertise em automação.</p>
+          </div>
         </div>
-        <a href="#" class="btn-secondary" style="font-size:13px;padding:10px 20px;">
-          全件見る <i class="fas fa-arrow-right"></i>
+        <div class="news-item-num">01</div>
+      </article>
+
+      <article class="news-item">
+        <div>
+          <div class="news-item-cat" style="color:#1A56A0;">スタートアップ</div>
+          <div class="news-item-title">SusHi Tech Tokyo 2026：AI・ロボット・宇宙で日本スタートアップが世界へ</div>
+          <div class="news-item-lead">4月27〜29日に開催。テーマはAI・ロボット・レジリエンス・エンタメ。政府は5年で10兆円規模のスタートアップ投資計画を進行中。</div>
+          <div style="margin-top:6px;">
+            <span class="tag tag-blue">スタートアップ</span>&nbsp;
+            <span class="tag tag-slate">ロボット</span>&nbsp;
+            <span class="tag tag-slate">宇宙</span>
+          </div>
+          <div class="news-item-meta" style="margin-top:8px;">
+            <span class="news-item-source">TechCrunch / 東京都</span>
+            <span class="top-story-meta-dot"></span>
+            <span>2026年4月</span>
+          </div>
+          <div class="lang-block" style="margin-top:10px;">
+            <div class="lang-tag"><span class="lang-tag-flag">🇧🇷</span> Português</div>
+            <p class="lang-text-pt">SusHi Tech Tokyo 2026 (abr/27-29) reuniu 500+ startups globais em IA, Robótica, Resiliência e Entretenimento. O plano quinquenal do governo japonês visa ¥10 trilhões em investimento em startups, criando oportunidades para talentos bilíngues em gestão de inovação.</p>
+          </div>
+        </div>
+        <div class="news-item-num">02</div>
+      </article>
+
+      <article class="news-item">
+        <div>
+          <div class="news-item-cat" style="color:#D94F00;">労働法</div>
+          <div class="news-item-title">労働基準法 40年ぶりの大改正へ — 外国人労働者の権利も強化</div>
+          <div class="news-item-lead">AI・リモートワーク・ギグ経済への対応を目的とした大改正。残業規制・休暇義務・多言語説明義務化などが盛り込まれる見通しです。</div>
+          <div style="margin-top:6px;">
+            <span class="tag tag-red">要注目</span>&nbsp;
+            <span class="tag tag-slate">労働法</span>&nbsp;
+            <span class="tag tag-slate">外国人</span>
+          </div>
+          <div class="news-item-meta" style="margin-top:8px;">
+            <span class="news-item-source">Paul Hastings / 厚生労働省</span>
+            <span class="top-story-meta-dot"></span>
+            <span>2026年2月〜</span>
+          </div>
+          <div class="lang-block" style="margin-top:10px;">
+            <div class="lang-tag"><span class="lang-tag-flag">🇧🇷</span> Português</div>
+            <p class="lang-text-pt">O Japão prepara a primeira grande reforma da Lei de Normas do Trabalho em 40 anos. Mudanças incluem revisão de horas extras, novos direitos de descanso e obrigatoriedade de explicar regras em múltiplos idiomas para trabalhadores estrangeiros.</p>
+          </div>
+        </div>
+        <div class="news-item-num">03</div>
+      </article>
+
+      <article class="news-item">
+        <div>
+          <div class="news-item-cat" style="color:#1A56A0;">製造・自動化</div>
+          <div class="news-item-title">産業用ロボット・AIで工場が変わる：2026年の自動化5大トレンド</div>
+          <div class="news-item-lead">グローバル産業用自動化市場が2,210億ドル突破。協働ロボット（コボット）、デジタルツイン、AI予測保全が製造現場の標準になりつつあります。</div>
+          <div style="margin-top:6px;">
+            <span class="tag tag-amber">自動化</span>&nbsp;
+            <span class="tag tag-slate">コボット</span>&nbsp;
+            <span class="tag tag-slate">デジタルツイン</span>
+          </div>
+          <div class="news-item-meta" style="margin-top:8px;">
+            <span class="news-item-source">JR Automation / LinkedIn</span>
+            <span class="top-story-meta-dot"></span>
+            <span>2026年3月</span>
+          </div>
+          <div class="lang-block" style="margin-top:10px;">
+            <div class="lang-tag"><span class="lang-tag-flag">🇺🇸</span> English</div>
+            <p class="lang-text-en">Industrial automation market surpassed USD 221B in 2026. Key drivers: AI-driven collaborative robotics, digital twin adoption for predictive maintenance, and flexible automation adapting to demand fluctuations. Critical skill set for foreign engineers in Japan.</p>
+          </div>
+        </div>
+        <div class="news-item-num">04</div>
+      </article>
+
+    </div><!-- /news-list -->
+
+    <!-- ── MEDIA SOURCES: 全国紙・経済紙 ── -->
+    <div style="margin-top:40px;" id="sources">
+      <div class="section-head section-head-accent">
+        <span class="section-head-label">ニュースソース — 全国紙・経済紙</span>
+        <div class="section-head-line"></div>
+      </div>
+      <div class="source-grid source-grid-3 fade-in">
+
+        <a href="https://www.nikkei.com" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon" style="background:#FEF9C3;color:#78350F;font-size:10px;letter-spacing:-0.5px;font-weight:900;">日経</div>
+          <div class="source-info">
+            <div class="source-name">日本経済新聞</div>
+            <div class="source-lang">経済・ビジネス · JA</div>
+          </div>
+          <span class="source-arrow">↗</span>
+        </a>
+
+        <a href="https://asia.nikkei.com" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon" style="background:#EFF6FF;color:#1D4ED8;font-size:10px;letter-spacing:-0.5px;font-weight:900;">NAR</div>
+          <div class="source-info">
+            <div class="source-name">Nikkei Asia</div>
+            <div class="source-lang">経済・アジア · EN</div>
+          </div>
+          <span class="source-arrow">↗</span>
+        </a>
+
+        <a href="https://www.asahi.com" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon" style="background:#FEE2E2;color:#B91C1C;font-size:10px;font-weight:900;">朝日</div>
+          <div class="source-info">
+            <div class="source-name">朝日新聞</div>
+            <div class="source-lang">総合ニュース · JA</div>
+          </div>
+          <span class="source-arrow">↗</span>
+        </a>
+
+        <a href="https://www.yomiuri.co.jp" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon" style="background:#F3F4F6;color:#374151;font-size:10px;font-weight:900;">読売</div>
+          <div class="source-info">
+            <div class="source-name">読売新聞</div>
+            <div class="source-lang">総合ニュース · JA</div>
+          </div>
+          <span class="source-arrow">↗</span>
+        </a>
+
+        <a href="https://mainichi.jp" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon" style="background:#FEF3C7;color:#92400E;font-size:10px;font-weight:900;">毎日</div>
+          <div class="source-info">
+            <div class="source-name">毎日新聞</div>
+            <div class="source-lang">総合ニュース · JA</div>
+          </div>
+          <span class="source-arrow">↗</span>
+        </a>
+
+        <a href="https://www.sankei.com" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon" style="background:#F0FDF4;color:#166534;font-size:10px;font-weight:900;">産経</div>
+          <div class="source-info">
+            <div class="source-name">産経新聞</div>
+            <div class="source-lang">総合ニュース · JA</div>
+          </div>
+          <span class="source-arrow">↗</span>
+        </a>
+
+        <a href="https://www.japantimes.co.jp" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon" style="background:#EFF6FF;color:#1D4ED8;font-size:10px;font-weight:900;letter-spacing:-0.5px;">JT</div>
+          <div class="source-info">
+            <div class="source-name">The Japan Times</div>
+            <div class="source-lang">外国人向け · EN</div>
+          </div>
+          <span class="source-arrow">↗</span>
+        </a>
+
+        <a href="https://nhkworld.nhk.or.jp" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon" style="background:#F5F3FF;color:#5B21B6;font-size:10px;font-weight:900;">NHK</div>
+          <div class="source-info">
+            <div class="source-name">NHK World</div>
+            <div class="source-lang">多言語放送 · EN/PT</div>
+          </div>
+          <span class="source-arrow">↗</span>
+        </a>
+
+        <a href="https://www3.nhk.or.jp/news/easy/" target="_blank" rel="noopener" class="source-card">
+          <div class="source-icon" style="background:#FFF7ED;color:#C2410C;font-size:9px;font-weight:900;">やさしい</div>
+          <div class="source-info">
+            <div class="source-name">NHK やさしい日本語</div>
+            <div class="source-lang">易しい日本語 · JA-Easy</div>
+          </div>
+          <span class="source-arrow">↗</span>
+        </a>
+
+      </div>
+
+      <!-- ── 経済・業界紙 ── -->
+      <div style="margin-top:20px;">
+        <div style="font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">経済・産業・業界紙</div>
+        <div class="source-grid source-grid-3">
+
+          <a href="https://toyokeizai.net" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#FEF2F2;color:#991B1B;font-size:9px;font-weight:900;">東洋経</div>
+            <div class="source-info">
+              <div class="source-name">東洋経済オンライン</div>
+              <div class="source-lang">経済・企業 · JA</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://diamond.jp" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#FFF7ED;color:#C2410C;font-size:9px;font-weight:900;">ダイヤ</div>
+            <div class="source-info">
+              <div class="source-name">ダイヤモンド・オンライン</div>
+              <div class="source-lang">経営・マネー · JA</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://newspicks.com" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#F0FDF4;color:#166534;font-size:9px;font-weight:900;">NP</div>
+            <div class="source-info">
+              <div class="source-name">NewsPicks</div>
+              <div class="source-lang">ビジネス · JA/EN</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://techcrunch.com/tag/japan" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#F5F3FF;color:#5B21B6;font-size:9px;font-weight:900;">TC</div>
+            <div class="source-info">
+              <div class="source-name">TechCrunch Japan</div>
+              <div class="source-lang">スタートアップ · JA</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://jp.reuters.com" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#EFF6FF;color:#1E40AF;font-size:9px;font-weight:900;">Reuters</div>
+            <div class="source-info">
+              <div class="source-name">ロイター日本語版</div>
+              <div class="source-lang">国際経済 · JA</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://www.bloomberg.co.jp" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#F8FAFC;color:#0F172A;font-size:9px;font-weight:900;">BB</div>
+            <div class="source-info">
+              <div class="source-name">Bloomberg Japan</div>
+              <div class="source-lang">金融・マーケット · JA</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+        </div>
+      </div>
+
+      <!-- ── ブラジル・ポルトガル語メディア ── -->
+      <div style="margin-top:20px;">
+        <div style="font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">🇧🇷 ブラジル・ポルトガル語メディア</div>
+        <div class="source-grid">
+
+          <a href="https://www.folha.uol.com.br" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#EFF6FF;color:#1D4ED8;font-size:9px;font-weight:900;">Folha</div>
+            <div class="source-info">
+              <div class="source-name">Folha de S.Paulo</div>
+              <div class="source-lang">総合ニュース · PT</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://oglobo.globo.com" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#FEF2F2;color:#991B1B;font-size:9px;font-weight:900;">O Globo</div>
+            <div class="source-info">
+              <div class="source-name">O Globo</div>
+              <div class="source-lang">総合ニュース · PT</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://valor.globo.com" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#F0FDF4;color:#166534;font-size:9px;font-weight:900;">Valor</div>
+            <div class="source-info">
+              <div class="source-name">Valor Econômico</div>
+              <div class="source-lang">経済・金融 · PT</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://www.estadao.com.br" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#FFF7ED;color:#C2410C;font-size:9px;font-weight:900;">Estadão</div>
+            <div class="source-info">
+              <div class="source-name">O Estado de S. Paulo</div>
+              <div class="source-lang">総合ニュース · PT</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://www.infomoney.com.br" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#EFF6FF;color:#1E40AF;font-size:9px;font-weight:900;">IM</div>
+            <div class="source-info">
+              <div class="source-name">InfoMoney</div>
+              <div class="source-lang">投資・マーケット · PT</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://international.istoedinheiro.com.br" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#FEF9C3;color:#78350F;font-size:9px;font-weight:900;">IstoÉ</div>
+            <div class="source-info">
+              <div class="source-name">IstoÉ Dinheiro</div>
+              <div class="source-lang">経済週刊誌 · PT</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+        </div>
+      </div>
+    </div><!-- /sources -->
+
+    <!-- ── LIFE / ADMIN ── -->
+    <div style="margin-top:40px;" id="life">
+      <div class="section-head section-head-blue">
+        <span class="section-head-label">生活・行政・ビザ</span>
+        <span class="section-head-sub">Life &amp; Admin Essentials</span>
+        <div class="section-head-line"></div>
+      </div>
+
+      <div class="guide-card fade-in">
+        <div class="guide-card-head">
+          <div class="guide-card-icon" style="background:#FEE2E2;">🪪</div>
+          <div>
+            <div class="guide-badge badge-red">⚠ 6月14日施行</div>
+            <div class="guide-card-title">在留カード＋マイナンバー 統合カード発行開始</div>
+            <div class="guide-card-title-en">New Specified Residence Card — Launch June 14, 2026</div>
+          </div>
+        </div>
+        <div class="guide-card-body">
+          <p>在留カードとマイナンバーカードが1枚に統合されます。現行カードは有効期限まで使用可能。次回の更新・新規取得から統合カードに切替わります。</p>
+          <ul class="guide-list">
+            <li><span class="guide-list-dot" style="background:#10B981;"></span>現在のカードは有効期限まで継続利用OK</li>
+            <li><span class="guide-list-dot" style="background:#10B981;"></span>入管局1か所で両カードの手続きが完結</li>
+            <li><span class="guide-list-dot" style="background:#F59E0B;"></span>ICチップに保険・医療情報が連携（オプトアウト可）</li>
+            <li><span class="guide-list-dot" style="background:#10B981;"></span>雇用主への通知手続きも簡素化</li>
+          </ul>
+        </div>
+        <div class="guide-source">出典：法務省入管庁 / Fragomen (Mar 4, 2026) ·
+          <a href="https://www.fragomen.com/insights/japan-new-integrated-specified-residence-card-to-launch.html" target="_blank" style="color:var(--accent-sub);text-decoration:underline;">原文を読む ↗</a>
+        </div>
+      </div>
+
+      <div class="guide-card fade-in delay-1">
+        <div class="guide-card-head">
+          <div class="guide-card-icon" style="background:#FEF3C7;">⚖️</div>
+          <div>
+            <div class="guide-badge badge-orange">国会審議中</div>
+            <div class="guide-card-title">労働基準法 大改正（40年ぶり）</div>
+            <div class="guide-card-title-en">Major Labour Standards Act Reform — 2026</div>
+          </div>
+        </div>
+        <div class="guide-card-body">
+          <p>AI・リモートワーク・ギグ経済への対応を目的とした大改正が2026年審議入り。外国人労働者への就業規則の多言語説明義務化も検討中。</p>
+          <ul class="guide-list">
+            <li><span class="guide-list-dot" style="background:#F59E0B;"></span>残業代計算ルールの見直し（裁量労働拡大案）</li>
+            <li><span class="guide-list-dot" style="background:#10B981;"></span>年次有給休暇の取得義務強化（案：10日→14日）</li>
+            <li><span class="guide-list-dot" style="background:#10B981;"></span>外国人労働者への多言語説明義務化</li>
+            <li><span class="guide-list-dot" style="background:#F59E0B;"></span>技能実習制度→育成就労制度への完全移行（2027年めど）</li>
+          </ul>
+        </div>
+        <div class="guide-source">出典：Paul Hastings LLP (Feb 2026) / 厚生労働省 ·
+          <a href="https://www.paulhastings.com/insights/practice-area-articles/japan" target="_blank" style="color:var(--accent-sub);text-decoration:underline;">原文を読む ↗</a>
+        </div>
+      </div>
+
+      <div class="guide-card fade-in delay-2">
+        <div class="guide-card-head">
+          <div class="guide-card-icon" style="background:#D1FAE5;">🛂</div>
+          <div>
+            <div class="guide-badge badge-green">拡大中</div>
+            <div class="guide-card-title">特定技能ビザ（SSW）2026年最新動向</div>
+            <div class="guide-card-title-en">Specified Skilled Worker Visa — 2026 Updates</div>
+          </div>
+        </div>
+        <div class="guide-card-body">
+          <p>特定技能1号・2号の対象分野が拡大。2号は更新無制限・家族帯同可能で、永住への有力なルートになっています。ブラジル人向け試験センターも増設。</p>
+          <ul class="guide-list">
+            <li><span class="guide-list-dot" style="background:#10B981;"></span>1号：最長5年、16分野（製造・飲食・建設など）</li>
+            <li><span class="guide-list-dot" style="background:#10B981;"></span>2号：更新無制限＋家族帯同可（永住への道）</li>
+            <li><span class="guide-list-dot" style="background:#10B981;"></span>ポルトガル語対応試験センター：名古屋・浜松に増設</li>
+            <li><span class="guide-list-dot" style="background:#F59E0B;"></span>飲食分野の外国人枠が上限に接近（約46,000人 2月時点）</li>
+          </ul>
+        </div>
+        <div class="guide-source">出典：Global Law Experts (May 2026) / 出入国在留管理庁 ·
+          <a href="https://www.ssw.go.jp/en/" target="_blank" style="color:var(--accent-sub);text-decoration:underline;">公式サイト ↗</a>
+        </div>
+      </div>
+
+      <!-- 行政リンク集 -->
+      <div style="margin-top:20px;" id="municipality">
+        <div style="font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">🏛 主要行政窓口・公式サイト</div>
+        <div class="source-grid">
+
+          <a href="https://www.moj.go.jp/isa/index.html" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#EFF6FF;color:#1D4ED8;font-size:12px;">🛂</div>
+            <div class="source-info">
+              <div class="source-name">出入国在留管理庁</div>
+              <div class="source-lang">ビザ・在留 · JA/EN</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://www.mhlw.go.jp/english/" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#F0FDF4;color:#166534;font-size:12px;">🏥</div>
+            <div class="source-info">
+              <div class="source-name">厚生労働省</div>
+              <div class="source-lang">労働・医療・保険 · EN</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://www.nta.go.jp/english/" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#FEF3C7;color:#92400E;font-size:12px;">💴</div>
+            <div class="source-info">
+              <div class="source-name">国税庁（税務）</div>
+              <div class="source-lang">税金・確定申告 · EN</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://www.digital.go.jp/en/policies/mynumber/" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#F5F3FF;color:#5B21B6;font-size:12px;">🪪</div>
+            <div class="source-info">
+              <div class="source-name">デジタル庁（マイナ）</div>
+              <div class="source-lang">マイナンバー · EN</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://www.nenkin.go.jp/international/index.html" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#FEF2F2;color:#991B1B;font-size:12px;">👴</div>
+            <div class="source-info">
+              <div class="source-name">日本年金機構</div>
+              <div class="source-lang">年金・社会保険 · EN/PT</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+          <a href="https://www.hellowork.mhlw.go.jp" target="_blank" rel="noopener" class="source-card">
+            <div class="source-icon" style="background:#FFF7ED;color:#C2410C;font-size:12px;">💼</div>
+            <div class="source-info">
+              <div class="source-name">ハローワーク</div>
+              <div class="source-lang">雇用・求職 · JA</div>
+            </div>
+            <span class="source-arrow">↗</span>
+          </a>
+
+        </div>
+
+        <!-- 主要都市・自治体 -->
+        <div style="margin-top:16px;">
+          <div style="font-size:11px;font-weight:700;color:var(--ink-3);letter-spacing:1px;text-transform:uppercase;margin-bottom:10px;">🏙 主要都市・自治体（外国人向け窓口）</div>
+          <div class="source-grid source-grid-3">
+
+            <a href="https://www.tokyo-icc.jp" target="_blank" rel="noopener" class="source-card">
+              <div class="source-icon" style="background:#EFF6FF;color:#1E40AF;font-size:12px;">🗼</div>
+              <div class="source-info">
+                <div class="source-name">東京都国際交流委員会</div>
+                <div class="source-lang">東京 · JA/EN/PT</div>
+              </div>
+              <span class="source-arrow">↗</span>
+            </a>
+
+            <a href="https://www.city.hamamatsu.shizuoka.jp/foreign/" target="_blank" rel="noopener" class="source-card">
+              <div class="source-icon" style="background:#FEF3C7;color:#92400E;font-size:12px;">🏭</div>
+              <div class="source-info">
+                <div class="source-name">浜松市国際課</div>
+                <div class="source-lang">浜松 · JA/PT/EN</div>
+              </div>
+              <span class="source-arrow">↗</span>
+            </a>
+
+            <a href="https://www.city.toyohashi.lg.jp/foreigners" target="_blank" rel="noopener" class="source-card">
+              <div class="source-icon" style="background:#F0FDF4;color:#166534;font-size:12px;">🏘</div>
+              <div class="source-info">
+                <div class="source-name">豊橋市外国人支援</div>
+                <div class="source-lang">愛知 · JA/PT</div>
+              </div>
+              <span class="source-arrow">↗</span>
+            </a>
+
+            <a href="https://www.pref.aichi.jp/soshiki/tabunka/" target="_blank" rel="noopener" class="source-card">
+              <div class="source-icon" style="background:#FEF2F2;color:#991B1B;font-size:12px;">🚗</div>
+              <div class="source-info">
+                <div class="source-name">愛知県多文化共生推進</div>
+                <div class="source-lang">愛知 · JA/PT/EN</div>
+              </div>
+              <span class="source-arrow">↗</span>
+            </a>
+
+            <a href="https://www.pref.shizuoka.jp/kurashikankyo/tabunka/" target="_blank" rel="noopener" class="source-card">
+              <div class="source-icon" style="background:#F5F3FF;color:#5B21B6;font-size:12px;">🗻</div>
+              <div class="source-info">
+                <div class="source-name">静岡県多文化共生</div>
+                <div class="source-lang">静岡 · JA/PT</div>
+              </div>
+              <span class="source-arrow">↗</span>
+            </a>
+
+            <a href="https://www.city.nagoya.jp/en/category/828-0-0-0-0-0-0-0-0-0.html" target="_blank" rel="noopener" class="source-card">
+              <div class="source-icon" style="background:#FFF7ED;color:#C2410C;font-size:12px;">🏯</div>
+              <div class="source-info">
+                <div class="source-name">名古屋市国際課</div>
+                <div class="source-lang">名古屋 · EN/PT</div>
+              </div>
+              <span class="source-arrow">↗</span>
+            </a>
+
+          </div>
+        </div>
+      </div>
+    </div><!-- /life -->
+
+    <!-- ── GLOBAL FEED ── -->
+    <div style="margin-top:40px;" id="global">
+      <div class="section-head">
+        <span class="section-head-label">ブラジル・南米グローバルフィード</span>
+        <span class="section-head-sub">Global Feed</span>
+        <div class="section-head-line"></div>
+      </div>
+
+      <div class="global-item fade-in">
+        <div class="global-item-flag">
+          <span style="font-size:20px;">🇧🇷🇯🇵</span>
+          <span class="global-item-country">Brazil × Japan Trade</span>
+          <span class="top-story-meta-dot"></span>
+          <span style="font-size:11px;color:var(--ink-4);">Reuters / Nikkei Asia · 2026年5月26日</span>
+          <span class="tag tag-blue" style="margin-left:4px;">通商</span>
+        </div>
+        <div class="global-item-title">日本・メルコスール EPA交渉が正式スタート — ブラジル・アルゼンチン・ウルグアイ・パラグアイと協定交渉へ</div>
+        <div class="global-jp-summary">
+          <div class="global-jp-label">🇯🇵 日本語サマリー（職場・ビジネスで使える）</div>
+          <p class="global-jp-text">2026年5月26日、日本と南米の経済連合「メルコスール」が経済連携協定（EPA）の交渉を正式に開始しました。日本はブラジルからの石油・農産物の輸入増加を、ブラジルは日本製自動車・電機の関税引き下げを目指します。協定が締結されると日本とブラジルのビジネスがさらに活発になり、ポルトガル語を話せる人材の需要が日本の商社・エネルギー業界で高まると見られています。</p>
+        </div>
+        <div style="font-size:12px;color:var(--ink-2);line-height:1.6;">
+          <strong>EN:</strong> Japan formally launched EPA trade talks with Mercosur (May 26, 2026), seeking expanded oil and agricultural imports. For Japanese companies, Portuguese-speaking professionals become even more strategically valuable as a bridge in this growing bilateral relationship.
+        </div>
+        <div class="global-source" style="margin-top:8px;">
+          <a href="https://www.reuters.com/world/asia-pacific/japan-mercosur-start-epa-trade-talks-kyodo-says-2026-05-26/" target="_blank" style="color:var(--accent-sub);">Reuters原文 ↗</a>
+          &nbsp;·&nbsp;
+          <a href="https://asia.nikkei.com/economy/trade/japan-poised-to-start-mercosur-trade-talks-seeking-oil-more-car-exports" target="_blank" style="color:var(--accent-sub);">Nikkei Asia ↗</a>
+        </div>
+      </div>
+
+      <div class="global-item fade-in delay-1">
+        <div class="global-item-flag">
+          <span style="font-size:20px;">🇧🇷⚡</span>
+          <span class="global-item-country">Brazil Energy</span>
+          <span class="top-story-meta-dot"></span>
+          <span style="font-size:11px;color:var(--ink-4);">Kyodo News · 2026年5月18〜20日</span>
+          <span class="tag tag-amber" style="margin-left:4px;">エネルギー</span>
+        </div>
+        <div class="global-item-title">ブラジル外相「日本への石油輸出拡大の準備ができている」— エネルギー安保で日ブラジルが急接近</div>
+        <div class="global-jp-summary">
+          <div class="global-jp-label">🇯🇵 日本語サマリー（職場・ビジネスで使える）</div>
+          <p class="global-jp-text">2026年5月、日本とブラジルの外務大臣が会談し、ブラジルが日本への原油輸出を増やす意向を表明しました。日本はロシアへのエネルギー依存を減らす必要があり、ブラジルからの安定した石油供給を重視しています。また、経済安全保障・先端半導体・防衛分野での協力枠組みも合意されました。商社・エネルギー会社でポルトガル語専門職の採用意欲が高まっています。</p>
+        </div>
+        <div class="global-source" style="margin-top:8px;">
+          <a href="https://english.kyodonews.net/articles/-/76236" target="_blank" style="color:var(--accent-sub);">Kyodo News原文 ↗</a>
+        </div>
+      </div>
+
+      <div class="global-item fade-in delay-2">
+        <div class="global-item-flag">
+          <span style="font-size:20px;">🌎📈</span>
+          <span class="global-item-country">South America / EU-Mercosur</span>
+          <span class="top-story-meta-dot"></span>
+          <span style="font-size:11px;color:var(--ink-4);">EY / EU Trade · 2026年5月</span>
+          <span class="tag tag-green" style="margin-left:4px;">経済</span>
+        </div>
+        <div class="global-item-title">EU・メルコスール協定発効 — ブラジルの再生エネルギー・農業テクノロジー産業が世界市場を牽引</div>
+        <div class="global-jp-summary">
+          <div class="global-jp-label">🇯🇵 日本語サマリー（職場・ビジネスで使える）</div>
+          <p class="global-jp-text">2026年5月、EUとメルコスールの間の貿易協定が正式に発効しました。7億2,000万人規模の巨大市場が生まれ、関税の90%以上が撤廃されます。ブラジルは特に再生可能エネルギー（太陽光・バイオ燃料）と農業テクノロジー分野で急成長しており、日本企業が南米市場への参入を加速させています。両国間のビジネスを橋渡しできる人材の価値がさらに高まっています。</p>
+        </div>
+        <div class="global-source" style="margin-top:8px;">
+          <a href="https://policy.trade.ec.europa.eu/eu-trade-relationships-country-and-region/countries-and-regions/mercosur/eu-mercosur-agreement_en" target="_blank" style="color:var(--accent-sub);">EU Trade原文 ↗</a>
+        </div>
+      </div>
+
+    </div><!-- /global -->
+
+  </main>
+
+  <!-- ━━━━━━━━━━━━━━━ SIDEBAR ━━━━━━━━━━━━━━━ -->
+  <aside class="side-col">
+
+    <!-- Quick Access -->
+    <div class="side-section">
+      <div class="section-head" style="margin-bottom:14px;">
+        <span class="section-head-label" style="font-size:11px;">クイックアクセス</span>
+        <div class="section-head-line"></div>
+      </div>
+      <div class="quick-grid">
+        <a href="https://www.moj.go.jp/isa/index.html" target="_blank" rel="noopener" class="quick-btn">
+          <span class="quick-btn-icon">🛂</span>
+          <span class="quick-btn-label">入管庁</span>
+          <span class="quick-btn-sub">ビザ・在留</span>
+        </a>
+        <a href="https://www3.nhk.or.jp/news/easy/" target="_blank" rel="noopener" class="quick-btn">
+          <span class="quick-btn-icon">📺</span>
+          <span class="quick-btn-label">NHKやさしい</span>
+          <span class="quick-btn-sub">易しい日本語</span>
+        </a>
+        <a href="https://www.nta.go.jp/english/" target="_blank" rel="noopener" class="quick-btn">
+          <span class="quick-btn-icon">💴</span>
+          <span class="quick-btn-label">国税庁</span>
+          <span class="quick-btn-sub">税金・申告</span>
+        </a>
+        <a href="https://www.nenkin.go.jp/international/index.html" target="_blank" rel="noopener" class="quick-btn">
+          <span class="quick-btn-icon">👴</span>
+          <span class="quick-btn-label">年金機構</span>
+          <span class="quick-btn-sub">年金・保険</span>
+        </a>
+        <a href="https://www.ssw.go.jp/en/" target="_blank" rel="noopener" class="quick-btn">
+          <span class="quick-btn-icon">🛂</span>
+          <span class="quick-btn-label">特定技能SSW</span>
+          <span class="quick-btn-sub">就労ビザ</span>
+        </a>
+        <a href="https://nhkworld.nhk.or.jp/pt/" target="_blank" rel="noopener" class="quick-btn">
+          <span class="quick-btn-icon">🇧🇷</span>
+          <span class="quick-btn-label">NHK Brasil</span>
+          <span class="quick-btn-sub">Português</span>
         </a>
       </div>
-
-      <div class="jobs-grid" style="margin-top:24px;">
-
-        <!-- Job 1 -->
-        <div class="job-card">
-          <div class="job-icon-row">
-            <span class="job-icon">🤖</span>
-            <span class="job-growth"><i class="fas fa-arrow-up"></i> +42%</span>
-          </div>
-          <h4 class="job-title">Manufacturing DX Engineer / スマート工場エンジニア</h4>
-          <p class="job-subtitle">IoT・AIを活用した工場DX推進。ものづくり × テクノロジーの融合職種。外国語スキルが高評価。</p>
-          <div class="job-salary">¥5.5M – ¥9.0M / year</div>
-          <div class="job-skills">
-            <span class="skill-chip">Python</span>
-            <span class="skill-chip">PLC</span>
-            <span class="skill-chip">IoT</span>
-            <span class="skill-chip">SCADA</span>
-            <span class="skill-chip">日本語N3+</span>
-          </div>
-          <div class="progress-pill" style="margin-top:14px;"><div class="progress-fill" style="width:85%;"></div></div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px;">需要 / Demand: Very High</div>
-        </div>
-
-        <!-- Job 2 -->
-        <div class="job-card">
-          <div class="job-icon-row">
-            <span class="job-icon">🌐</span>
-            <span class="job-growth"><i class="fas fa-arrow-up"></i> +38%</span>
-          </div>
-          <h4 class="job-title">Global Business Developer / 海外事業開拓</h4>
-          <p class="job-subtitle">日本企業の海外展開・外資系企業の日本参入を担うブリッジ人材。ポルトガル語話者は特に優遇。</p>
-          <div class="job-salary">¥6.0M – ¥12.0M / year</div>
-          <div class="job-skills">
-            <span class="skill-chip">Português</span>
-            <span class="skill-chip">English</span>
-            <span class="skill-chip">日本語N2+</span>
-            <span class="skill-chip">M&A</span>
-            <span class="skill-chip">法人営業</span>
-          </div>
-          <div class="progress-pill" style="margin-top:14px;"><div class="progress-fill" style="width:78%;"></div></div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px;">需要 / Demand: High</div>
-        </div>
-
-        <!-- Job 3 -->
-        <div class="job-card">
-          <div class="job-icon-row">
-            <span class="job-icon">🏗️</span>
-            <span class="job-growth"><i class="fas fa-arrow-up"></i> +55%</span>
-          </div>
-          <h4 class="job-title">Construction Tech PM / 建設DXプロジェクトマネージャー</h4>
-          <p class="job-subtitle">BIM・ドローン・AIを活用した建設DX。人手不足が深刻な建設業界で外国人PMへの需要が急増。</p>
-          <div class="job-salary">¥5.0M – ¥8.5M / year</div>
-          <div class="job-skills">
-            <span class="skill-chip">BIM/CIM</span>
-            <span class="skill-chip">施工管理</span>
-            <span class="skill-chip">日本語N3+</span>
-            <span class="skill-chip">AutoCAD</span>
-            <span class="skill-chip">SSW 2号</span>
-          </div>
-          <div class="progress-pill" style="margin-top:14px;"><div class="progress-fill" style="width:92%;background:linear-gradient(90deg,#00C2CB,#0080FF);"></div></div>
-          <div style="font-size:10px;color:var(--muted);margin-top:4px;">需要 / Demand: Extremely High</div>
-        </div>
-
-      </div>
-
-      <!-- CTA Banner -->
-      <div style="
-        margin-top:40px;
-        background: linear-gradient(135deg, rgba(255,69,0,0.12), rgba(0,194,203,0.08), rgba(150,80,255,0.08));
-        border: 1px solid rgba(255,255,255,0.1);
-        border-radius: 20px;
-        padding: 40px 48px;
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 32px;
-        flex-wrap: wrap;
-      ">
-        <div>
-          <div style="font-size:11px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:#FF8C00;margin-bottom:10px;">Platform Vision — Beta Launch Q3 2026</div>
-          <h3 style="font-size:28px;font-weight:800;letter-spacing:-0.5px;margin-bottom:8px;">Ready to accelerate<br>your career in Japan?</h3>
-          <p style="font-size:14px;color:var(--muted);max-width:480px;line-height:1.6;">UNS→N（アンシーン）は、日本で活躍するグローバル人材のための次世代ビジネス・キャリアメディアです。ベータ版の参加登録を受け付けています。</p>
-        </div>
-        <div style="display:flex;flex-direction:column;gap:12px;min-width:220px;">
-          <a href="#" class="btn-primary" style="justify-content:center;">
-            <i class="fas fa-rocket"></i> Join Beta Waitlist
-          </a>
-          <a href="#" class="btn-secondary" style="justify-content:center;font-size:13px;">
-            <i class="fas fa-handshake"></i> Partner with Us
-          </a>
-          <div style="font-size:11px;color:var(--muted);text-align:center;">無料 · Gratuito · Free Beta</div>
-        </div>
-      </div>
-
     </div>
-  </div>
-</section>
 
-<!-- ═══════════════════════════════════════ FOOTER ═══════════════════════════════════════ -->
+    <!-- 今週注目ニュース -->
+    <div class="side-section">
+      <div class="section-head" style="margin-bottom:14px;">
+        <span class="section-head-label" style="font-size:11px;">今週の注目</span>
+        <div class="section-head-line"></div>
+      </div>
+      <div>
+        <div class="mini-news-item">
+          <div class="mini-news-num">1</div>
+          <div>
+            <div class="mini-news-title">特定在留カード6月14日発行開始 — 手続き変更点まとめ</div>
+            <div class="mini-news-src">入管庁 · 2026.06</div>
+          </div>
+        </div>
+        <div class="mini-news-item">
+          <div class="mini-news-num">2</div>
+          <div>
+            <div class="mini-news-title">メルコスールEPA交渉開始 — 商社・エネルギー業界に影響</div>
+            <div class="mini-news-src">Reuters · 2026.05</div>
+          </div>
+        </div>
+        <div class="mini-news-item">
+          <div class="mini-news-num">3</div>
+          <div>
+            <div class="mini-news-title">日本の産業用ロボット出荷台数、過去最高を更新</div>
+            <div class="mini-news-src">日本経済新聞 · 2026.06</div>
+          </div>
+        </div>
+        <div class="mini-news-item">
+          <div class="mini-news-num">4</div>
+          <div>
+            <div class="mini-news-title">労働基準法改正：外国人就労者への説明義務化へ</div>
+            <div class="mini-news-src">朝日新聞 · 2026.05</div>
+          </div>
+        </div>
+        <div class="mini-news-item">
+          <div class="mini-news-num">5</div>
+          <div>
+            <div class="mini-news-title">特定技能2号：対象12分野に拡大後の最新動向</div>
+            <div class="mini-news-src">Global Law Experts · 2026.05</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 求人トレンド -->
+    <div class="side-section">
+      <div class="section-head" style="margin-bottom:14px;">
+        <span class="section-head-label" style="font-size:11px;">求人トレンド 2026</span>
+        <div class="section-head-line"></div>
+      </div>
+      <div class="job-snippet">
+        <div class="job-snippet-title">製造DXエンジニア</div>
+        <div class="job-snippet-company">自動車・電機メーカー各社 / 愛知・静岡</div>
+        <div style="font-size:12px;color:var(--accent);font-weight:700;margin-bottom:6px;">¥5.5M – ¥9.0M</div>
+        <div class="job-snippet-tags">
+          <span class="job-tag job-tag-hot">需要急増 +42%</span>
+          <span class="job-tag">IoT</span>
+          <span class="job-tag">AI</span>
+          <span class="job-tag">日本語N3+</span>
+        </div>
+      </div>
+      <div class="job-snippet">
+        <div class="job-snippet-title">海外事業開拓（ポルトガル語）</div>
+        <div class="job-snippet-company">総合商社・エネルギー系 / 東京</div>
+        <div style="font-size:12px;color:var(--accent);font-weight:700;margin-bottom:6px;">¥6.0M – ¥12.0M</div>
+        <div class="job-snippet-tags">
+          <span class="job-tag job-tag-hot">需要急増 +38%</span>
+          <span class="job-tag">Português</span>
+          <span class="job-tag">日本語N2+</span>
+        </div>
+      </div>
+      <div class="job-snippet">
+        <div class="job-snippet-title">建設DXプロジェクトマネージャー</div>
+        <div class="job-snippet-company">ゼネコン・建設テック / 全国</div>
+        <div style="font-size:12px;color:var(--accent);font-weight:700;margin-bottom:6px;">¥5.0M – ¥8.5M</div>
+        <div class="job-snippet-tags">
+          <span class="job-tag job-tag-hot">最高需要 +55%</span>
+          <span class="job-tag">BIM</span>
+          <span class="job-tag">SSW2号</span>
+        </div>
+      </div>
+      <div style="font-size:10px;color:var(--ink-4);margin-top:8px;text-align:center;">求人データは今後のUNS→N Jobsで拡充予定</div>
+    </div>
+
+    <!-- 言語設定メモ -->
+    <div class="side-section">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px;">
+        <div style="font-size:11px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--ink-3);margin-bottom:10px;">🌐 言語切替について</div>
+        <p style="font-size:12px;color:var(--ink-2);line-height:1.65;">UNS→Nでは全ての記事を<strong>やさしい日本語・ポルトガル語・英語</strong>の3言語でお届けすることを目指しています。</p>
+        <div style="margin-top:10px;display:flex;gap:6px;flex-wrap:wrap;">
+          <span class="tag tag-slate">🇯🇵 やさしい日本語</span>
+          <span class="tag tag-slate">🇧🇷 Português</span>
+          <span class="tag tag-slate">🇺🇸 English</span>
+        </div>
+      </div>
+    </div>
+
+  </aside>
+
+</div><!-- /page-layout -->
+
+<!-- ═══════════════ FOOTER ═══════════════ -->
 <footer>
   <div class="footer-inner">
-    <div class="footer-top">
+    <div class="footer-grid">
       <div>
-        <a href="#" class="logo" style="margin-bottom:0;">
-          <div class="logo-icon" style="font-size:9px;letter-spacing:-0.5px;font-weight:900;">UN→N</div>
-          <div>
-            <div class="logo-text">UNS→N <span style="font-size:12px;font-weight:400;color:var(--muted);">アンシーン</span></div>
-            <div class="logo-sub">Global Talent Media Platform</div>
-          </div>
-        </a>
-        <p class="footer-brand-desc">UNS→N（アンシーン）— 日本のビジネス・製造現場で活躍する日系ブラジル人・外国人プロフェッショナルのための次世代メディアプラットフォーム。NewsPicks / PIVOT インスパイア。</p>
-        <div style="display:flex;gap:12px;margin-top:20px;">
-          <a href="#" style="width:34px;height:34px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.color='white';this.style.background='rgba(255,255,255,0.12)';" onmouseout="this.style.color='#6B7A99';this.style.background='rgba(255,255,255,0.06)';"><i class="fab fa-twitter"></i></a>
-          <a href="#" style="width:34px;height:34px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.color='white';this.style.background='rgba(255,255,255,0.12)';" onmouseout="this.style.color='#6B7A99';this.style.background='rgba(255,255,255,0.06)';"><i class="fab fa-linkedin"></i></a>
-          <a href="#" style="width:34px;height:34px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.color='white';this.style.background='rgba(255,255,255,0.12)';" onmouseout="this.style.color='#6B7A99';this.style.background='rgba(255,255,255,0.06)';"><i class="fab fa-instagram"></i></a>
-          <a href="#" style="width:34px;height:34px;background:rgba(255,255,255,0.06);border:1px solid var(--border);border-radius:8px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:14px;text-decoration:none;transition:all 0.2s;" onmouseover="this.style.color='white';this.style.background='rgba(255,255,255,0.12)';" onmouseout="this.style.color='#6B7A99';this.style.background='rgba(255,255,255,0.06)';"><i class="fab fa-youtube"></i></a>
+        <div class="footer-logo-mark">UNS→N</div>
+        <div style="font-size:11px;color:rgba(255,255,255,0.4);margin-bottom:10px;">アンシーン — Global Talent Media Platform</div>
+        <p class="footer-desc">日本で働く・暮らす日系ブラジル人・外国人プロフェッショナルのための次世代ビジネスメディア。ビジネス・行政・母国情報を3言語で届けます。</p>
+      </div>
+      <div>
+        <div class="footer-col-title">メディア</div>
+        <div class="footer-links">
+          <a href="https://www.nikkei.com" target="_blank" class="footer-link">日本経済新聞</a>
+          <a href="https://www.asahi.com" target="_blank" class="footer-link">朝日新聞</a>
+          <a href="https://www.japantimes.co.jp" target="_blank" class="footer-link">The Japan Times</a>
+          <a href="https://nhkworld.nhk.or.jp" target="_blank" class="footer-link">NHK World</a>
+          <a href="https://www.folha.uol.com.br" target="_blank" class="footer-link">Folha de S.Paulo</a>
         </div>
       </div>
-
       <div>
-        <div class="footer-col-title">Platform</div>
+        <div class="footer-col-title">行政・ビザ</div>
         <div class="footer-links">
-          <a href="#news" class="footer-link">Business News</a>
-          <a href="#admin" class="footer-link">Life in Japan</a>
-          <a href="#global" class="footer-link">Global Feed</a>
-          <a href="#academy" class="footer-link">UNSEEN Academy</a>
-          <a href="#" class="footer-link">Job Board</a>
+          <a href="https://www.moj.go.jp/isa/" target="_blank" class="footer-link">出入国在留管理庁</a>
+          <a href="https://www.mhlw.go.jp" target="_blank" class="footer-link">厚生労働省</a>
+          <a href="https://www.nta.go.jp" target="_blank" class="footer-link">国税庁</a>
+          <a href="https://www.ssw.go.jp/en/" target="_blank" class="footer-link">特定技能SSWポータル</a>
+          <a href="https://www.digital.go.jp" target="_blank" class="footer-link">デジタル庁</a>
         </div>
       </div>
-
       <div>
-        <div class="footer-col-title">Community</div>
+        <div class="footer-col-title">UNS→N</div>
         <div class="footer-links">
-          <a href="#" class="footer-link">Nikkei Brazilian Network</a>
-          <a href="#" class="footer-link">Global Talent Forum</a>
-          <a href="#" class="footer-link">Events & Meetups</a>
-          <a href="#" class="footer-link">Mentorship Program</a>
-          <a href="#" class="footer-link">Newsletter</a>
-        </div>
-      </div>
-
-      <div>
-        <div class="footer-col-title">Company</div>
-        <div class="footer-links">
-          <a href="#" class="footer-link">About UNS→N</a>
-          <a href="#" class="footer-link">Our Mission</a>
-          <a href="#" class="footer-link">Partner with Us</a>
-          <a href="#" class="footer-link">Privacy Policy</a>
-          <a href="#" class="footer-link">Terms of Use</a>
+          <a href="#" class="footer-link">サービス概要</a>
+          <a href="#" class="footer-link">コンセプト</a>
+          <a href="#" class="footer-link">パートナー募集</a>
+          <a href="#" class="footer-link">プライバシーポリシー</a>
+          <a href="#" class="footer-link">お問い合わせ</a>
         </div>
       </div>
     </div>
-
     <div class="footer-bottom">
-      <div>© 2026 UNS→N（アンシーン） — Concept Prototype. All rights reserved.</div>
-      <div style="display:flex;gap:16px;align-items:center;">
-        <span>🇧🇷 Comunidade Nikkei</span>
-        <span style="color:var(--border);">·</span>
-        <span>🇯🇵 在日外国人支援</span>
-        <span style="color:var(--border);">·</span>
-        <span>🌐 Global Talents Japan</span>
+      <div>© 2026 UNS→N（アンシーン） — Concept Prototype</div>
+      <div style="display:flex;gap:16px;">
+        <span>🇧🇷 Comunidade Nikkei no Japão</span>
+        <span style="opacity:0.3;">·</span>
+        <span>🇯🇵 日本で働く外国人を支援する</span>
       </div>
     </div>
   </div>
 </footer>
 
 <script>
-  // Language switcher (UI demo)
+  // Language switcher
   function setLang(lang) {
     document.querySelectorAll('.lang-btn').forEach(btn => btn.classList.remove('active'));
-    const labels = { pt: 'PT', en: 'EN', ja: 'やさしい' };
+    const map = { pt:'PT', en:'EN', ja:'やさしい' };
     document.querySelectorAll('.lang-btn').forEach(btn => {
-      if (btn.textContent.trim() === labels[lang]) btn.classList.add('active');
+      if (btn.textContent.trim() === map[lang]) btn.classList.add('active');
     });
-    // Show a toast notification
-    showToast(lang);
-  }
-
-  function showToast(lang) {
-    const messages = {
+    const msgs = {
       pt: '🇧🇷 Modo Português ativado!',
       en: '🇺🇸 English mode activated!',
       ja: '🇯🇵 やさしい日本語モードになりました！'
     };
-    const existing = document.querySelector('.toast');
-    if (existing) existing.remove();
-    const toast = document.createElement('div');
-    toast.className = 'toast';
-    toast.style.cssText = \`
-      position:fixed;bottom:32px;right:32px;z-index:999;
-      background:rgba(20,28,45,0.95);border:1px solid rgba(255,255,255,0.12);
-      color:white;padding:12px 20px;border-radius:10px;
-      font-size:13px;font-weight:600;
-      backdrop-filter:blur(20px);
-      box-shadow:0 8px 32px rgba(0,0,0,0.4);
-      animation: slideIn 0.3s ease;
-    \`;
-    const style = document.createElement('style');
-    style.textContent = '@keyframes slideIn { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }';
-    document.head.appendChild(style);
-    toast.textContent = messages[lang];
-    document.body.appendChild(toast);
-    setTimeout(() => { toast.style.opacity='0'; toast.style.transition='opacity 0.3s'; setTimeout(() => toast.remove(), 300); }, 2500);
+    showToast(msgs[lang]);
   }
 
-  // Smooth active nav highlight
-  const navLinks = document.querySelectorAll('.nav-link');
-  const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-      if (entry.isIntersecting) {
-        navLinks.forEach(l => l.style.color = '');
-        const id = entry.target.id;
-        const active = document.querySelector(\`.nav-link[href="#\${id}"]\`);
-        if (active) active.style.color = 'white';
+  function showToast(msg) {
+    const old = document.querySelector('.gn-toast');
+    if (old) old.remove();
+    const t = document.createElement('div');
+    t.className = 'gn-toast';
+    Object.assign(t.style, {
+      position:'fixed', bottom:'24px', right:'24px', zIndex:'999',
+      background:'#0D0D0D', color:'white',
+      padding:'10px 18px', borderRadius:'8px',
+      fontSize:'13px', fontWeight:'600',
+      boxShadow:'0 4px 20px rgba(0,0,0,0.15)',
+      animation:'fadeUp 0.25s ease'
+    });
+    t.textContent = msg;
+    document.body.appendChild(t);
+    setTimeout(() => { t.style.opacity = '0'; t.style.transition = 'opacity 0.3s'; setTimeout(() => t.remove(), 300); }, 2200);
+  }
+
+  // Nav category scroll + active
+  function scrollToSection(id) {
+    const el = document.getElementById(id);
+    if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    document.querySelectorAll('.nav-cat').forEach(c => c.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  // Intersection observer for nav highlight
+  const sections = document.querySelectorAll('#business, #life, #global, #sources, #municipality');
+  const cats = document.querySelectorAll('.nav-cat');
+  const sectionMap = { business:1, sources:3, life:2, global:3, municipality:4 };
+  new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const idx = sectionMap[e.target.id];
+        if (idx !== undefined) {
+          cats.forEach((c, i) => c.classList.toggle('active', i === idx));
+        }
       }
     });
-  }, { threshold: 0.3 });
-  document.querySelectorAll('#news, #admin, #global, #academy').forEach(s => observer.observe(s));
+  }, { threshold: 0.3 }).observe && sections.forEach(s =>
+    new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (e.isIntersecting) {
+          const idx = sectionMap[e.target.id];
+          if (idx !== undefined) cats.forEach((c,i) => c.classList.toggle('active', i === idx));
+        }
+      });
+    }, { threshold: 0.3 }).observe(s)
+  );
 </script>
 
 </body>
