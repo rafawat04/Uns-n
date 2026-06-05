@@ -4,6 +4,11 @@ import { serveStatic } from 'hono/cloudflare-workers'
 const app = new Hono()
 app.use('/static/*', serveStatic({ root: './' }))
 
+// favicon — inline SVG as data URI to avoid 404
+app.get('/favicon.ico', (c) => {
+  return new Response(null, { status: 204 })
+})
+
 app.get('/', (c) => {
   return c.html(`<!DOCTYPE html>
 <html lang="ja">
@@ -11,6 +16,7 @@ app.get('/', (c) => {
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>UNS→N（アンシーン）</title>
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%231a73e8'/><text x='16' y='23' text-anchor='middle' font-size='18' font-family='Arial' font-weight='bold' fill='white'>U</text></svg>"/>
   <link rel="preconnect" href="https://fonts.googleapis.com"/>
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+JP:wght@400;500;700&display=swap" rel="stylesheet"/>
