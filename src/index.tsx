@@ -757,6 +757,7 @@ img{display:block;max-width:100%}
   display:flex;gap:8px;align-items:flex-start;
   padding:10px 16px;border-bottom:1px solid var(--border-light);
   cursor:pointer;transition:background .15s;
+  color:inherit;text-decoration:none;
 }
 .mini-story:last-child{border-bottom:none}
 .mini-story:hover{background:var(--chip-bg)}
@@ -1491,44 +1492,14 @@ footer{
   <!-- 今週の注目 -->
   <div class="widget">
     <div class="widget-head"><span class="widget-head-icon">RANK</span> 今週の注目</div>
-    <div class="mini-story">
-      <div class="ms-num">1</div>
-      <div class="ms-body">
-        <div class="ms-source">入管庁 · 2026.06</div>
-        <div class="ms-title">特定在留カード6月14日発行 — 手続き変更点まとめ</div>
-        <div class="ms-time">2時間前</div>
-      </div>
-    </div>
-    <div class="mini-story">
-      <div class="ms-num">2</div>
-      <div class="ms-body">
-        <div class="ms-source">Reuters · 2026.05</div>
-        <div class="ms-title">メルコスールEPA交渉開始 — 商社・エネルギーに影響</div>
-        <div class="ms-time">1日前</div>
-      </div>
-    </div>
-    <div class="mini-story">
-      <div class="ms-num">3</div>
-      <div class="ms-body">
-        <div class="ms-source">日本経済新聞 · 2026.06</div>
-        <div class="ms-title">産業用ロボット出荷台数が過去最高を更新</div>
-        <div class="ms-time">2日前</div>
-      </div>
-    </div>
-    <div class="mini-story">
-      <div class="ms-num">4</div>
-      <div class="ms-body">
-        <div class="ms-source">朝日新聞 · 2026.05</div>
-        <div class="ms-title">労働基準法改正：外国人への説明義務化へ</div>
-        <div class="ms-time">3日前</div>
-      </div>
-    </div>
-    <div class="mini-story">
-      <div class="ms-num">5</div>
-      <div class="ms-body">
-        <div class="ms-source">Global Law Experts · 2026.05</div>
-        <div class="ms-title">特定技能2号 拡大後の最新動向と手続き</div>
-        <div class="ms-time">4日前</div>
+    <div id="weekly-highlight-list">
+      <div class="mini-story">
+        <div class="ms-num">1</div>
+        <div class="ms-body">
+          <div class="ms-source">UNS-N</div>
+          <div class="ms-title">Carregando noticias da semana...</div>
+          <div class="ms-time">...</div>
+        </div>
       </div>
     </div>
   </div>
@@ -1675,6 +1646,13 @@ function isToday(dateValue){
     date.getDate()===now.getDate();
 }
 
+function isWithinDays(dateValue, days){
+  const date=new Date(dateValue);
+  if(!date.getTime())return false;
+  const diff=Date.now()-date.getTime();
+  return diff>=0&&diff<=days*24*60*60*1000;
+}
+
 function categoryLabel(category){
   const labels={
     top:'TOP',
@@ -1751,6 +1729,18 @@ function feedCardHtml(item){
   '</article>';
 }
 
+function miniStoryHtml(item,index){
+  const href=item.url||('/section/'+encodeURIComponent(item.category||'top')+'?lang='+encodeURIComponent(currentLang));
+  return '<a class="mini-story" href="'+escapeHtml(href)+'" target="_blank" rel="noopener noreferrer">'+
+    '<div class="ms-num">'+escapeHtml(String(index+1))+'</div>'+
+    '<div class="ms-body">'+
+      '<div class="ms-source">'+escapeHtml(item.sourceName||'UNS-N')+' · '+escapeHtml(categoryLabel(item.category))+'</div>'+
+      '<div class="ms-title">'+escapeHtml(item.title)+'</div>'+
+      '<div class="ms-time">'+escapeHtml(timeAgo(item.publishedAt))+'</div>'+
+    '</div>'+
+  '</a>';
+}
+
 function featuredClusterHtml(item){
   const image=item.imageUrl?'<img src="'+escapeHtml(item.imageUrl)+'" alt=""/>':escapeHtml(item.imageIcon||'UN');
   const tags=(item.tags||[]).slice(0,3).map(function(tag){
@@ -1814,6 +1804,28 @@ async function loadLiveFeed(){
     target.innerHTML=items.map(feedCardHtml).join('');
   }catch(err){
     target.innerHTML='<div class="live-card"><div class="live-thumb">!</div><div><div class="live-source">UNS-N</div><div class="live-title">Nao foi possivel carregar o feed.</div></div></div>';
+  }
+}
+
+async function loadWeeklyHighlights(){
+  const target=document.getElementById('weekly-highlight-list');
+  if(!target)return;
+  target.innerHTML='<div class="mini-story"><div class="ms-num">1</div><div class="ms-body"><div class="ms-source">UNS-N</div><div class="ms-title">Carregando noticias da semana...</div><div class="ms-time">...</div></div></div>';
+  try{
+    const res=await fetch('/api/articles?lang='+encodeURIComponent(currentLang));
+    const payload=await res.json();
+    const all=(payload.data||[]).filter(function(item){return item.url;});
+    const week=all.filter(function(item){return isWithinDays(item.publishedAt,7);});
+    const items=(week.length?week:all).slice(0,5);
+    if(items.length===0){
+      const empty={pt:'Nenhuma noticia da semana ainda.',en:'No weekly highlights yet.',ja:'今週の注目記事はまだありません。'}[currentLang];
+      target.innerHTML='<div class="mini-story"><div class="ms-num">1</div><div class="ms-body"><div class="ms-source">UNS-N</div><div class="ms-title">'+escapeHtml(empty)+'</div><div class="ms-time">Admin</div></div></div>';
+      return;
+    }
+    target.innerHTML=items.map(miniStoryHtml).join('');
+  }catch(err){
+    const error={pt:'Nao foi possivel carregar a semana.',en:'Could not load weekly highlights.',ja:'週間ニュースを読み込めませんでした。'}[currentLang];
+    target.innerHTML='<div class="mini-story"><div class="ms-num">!</div><div class="ms-body"><div class="ms-source">UNS-N</div><div class="ms-title">'+escapeHtml(error)+'</div><div class="ms-time">--</div></div></div>';
   }
 }
 
@@ -1892,6 +1904,7 @@ function loadAllFeeds(){
   syncLangButtons();
   updateSectionLinks();
   loadBreakingTicker();
+  loadWeeklyHighlights();
   loadLiveFeed();
   loadFeaturedStories();
   loadSectionFeatured('business','business');

@@ -84,6 +84,22 @@ export const sources: NewsSource[] = [
     category: 'business'
   },
   {
+    id: 'meti',
+    name: 'METI',
+    language: 'multi',
+    url: 'https://www.meti.go.jp',
+    country: 'JP',
+    category: 'business'
+  },
+  {
+    id: 'zaikei',
+    name: '財経新聞',
+    language: 'ja',
+    url: 'https://www.zaikei.co.jp',
+    country: 'JP',
+    category: 'business'
+  },
+  {
     id: 'folha',
     name: 'Folha de S.Paulo',
     language: 'pt',
@@ -98,6 +114,30 @@ export const sources: NewsSource[] = [
     url: 'https://g1.globo.com',
     country: 'BR',
     category: 'global'
+  },
+  {
+    id: 'tecmundo',
+    name: 'TecMundo',
+    language: 'pt',
+    url: 'https://www.tecmundo.com.br',
+    country: 'BR',
+    category: 'business'
+  },
+  {
+    id: 'mhlw',
+    name: '厚生労働省',
+    language: 'ja',
+    url: 'https://www.mhlw.go.jp',
+    country: 'JP',
+    category: 'life'
+  },
+  {
+    id: 'japan-times',
+    name: 'The Japan Times',
+    language: 'en',
+    url: 'https://www.japantimes.co.jp',
+    country: 'JP',
+    category: 'life'
   },
   {
     id: 'immigration-services-agency',
@@ -118,6 +158,105 @@ export const feedSources: FeedSource[] = [
     homepageUrl: 'https://asia.nikkei.com',
     language: 'en',
     category: 'business',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'meti-english-latest',
+    sourceId: 'meti',
+    name: 'METI English',
+    url: 'https://www.meti.go.jp/ml_index_en_atom.xml',
+    homepageUrl: 'https://www.meti.go.jp/english/',
+    language: 'en',
+    category: 'business',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'zaikei-it',
+    sourceId: 'zaikei',
+    name: '財経新聞 IT・サイエンス',
+    url: 'https://www.zaikei.co.jp/rss/sections/it.xml',
+    homepageUrl: 'https://www.zaikei.co.jp/news/category/87.html',
+    language: 'ja',
+    category: 'business',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'zaikei-management',
+    sourceId: 'zaikei',
+    name: '財経新聞 経営・ビジネス',
+    url: 'https://www.zaikei.co.jp/rss/sections/management.xml',
+    homepageUrl: 'https://www.zaikei.co.jp/news/category/65.html',
+    language: 'ja',
+    category: 'business',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'g1-economia',
+    sourceId: 'g1',
+    name: 'g1 Economia',
+    url: 'https://g1.globo.com/rss/g1/economia',
+    homepageUrl: 'https://g1.globo.com/economia/',
+    language: 'pt',
+    category: 'business',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'tecmundo-latest',
+    sourceId: 'tecmundo',
+    name: 'TecMundo',
+    url: 'https://rss.tecmundo.com.br/feed',
+    homepageUrl: 'https://www.tecmundo.com.br',
+    language: 'pt',
+    category: 'business',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'nhk-japan-society',
+    sourceId: 'nhk-japan',
+    name: 'NHK News 社会',
+    url: 'https://www3.nhk.or.jp/rss/news/cat1.xml',
+    homepageUrl: 'https://www3.nhk.or.jp/news/cat01.html',
+    language: 'ja',
+    category: 'life',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'mhlw-latest',
+    sourceId: 'mhlw',
+    name: '厚生労働省 新着情報',
+    url: 'https://www.mhlw.go.jp/stf/news.rdf',
+    homepageUrl: 'https://www.mhlw.go.jp/stf/new-info/index.html',
+    language: 'ja',
+    category: 'life',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'japan-times-latest',
+    sourceId: 'japan-times',
+    name: 'The Japan Times',
+    url: 'https://www.japantimes.co.jp/feed/',
+    homepageUrl: 'https://www.japantimes.co.jp',
+    language: 'en',
+    category: 'life',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'g1-bemestar',
+    sourceId: 'g1',
+    name: 'g1 Bem Estar',
+    url: 'https://g1.globo.com/rss/g1/bemestar',
+    homepageUrl: 'https://g1.globo.com/bemestar/',
+    language: 'pt',
+    category: 'life',
     enabled: true,
     usage: 'rss-headlines'
   },

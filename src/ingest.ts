@@ -134,6 +134,8 @@ const getTag = (xml: string, tag: string) => {
   return match ? decoder(match[1]) : ''
 }
 
+const getAnyTag = (xml: string, tags: string[]) => tags.map((tag) => getTag(xml, tag)).find(Boolean) ?? ''
+
 const getAtomLink = (xml: string) => {
   const href = xml.match(/<link\s+[^>]*href=["']([^"']+)["'][^>]*>/i)
   return href ? decoder(href[1]) : ''
@@ -149,7 +151,10 @@ const getImageUrl = (block: string) => {
   if (media) return media
 
   const imageEnclosure = block.match(/<enclosure\s+[^>]*type=["']image\/[^"']+["'][^>]*url=["']([^"']+)["'][^>]*>/i)
-  return imageEnclosure ? decoder(imageEnclosure[1]) : ''
+  if (imageEnclosure) return decoder(imageEnclosure[1])
+
+  const embeddedImage = decoder(block).match(/<img\s+[^>]*src=["']([^"']+)["'][^>]*>/i)
+  return embeddedImage ? decoder(embeddedImage[1]) : ''
 }
 
 const getEnclosureUrl = (block: string) => getAttributeUrl(block, 'enclosure')
@@ -180,10 +185,10 @@ export const parseFeed = (xml: string): FeedItem[] => {
         decoder(getTag(block, 'link') || getAtomLink(block) || getTag(block, 'guid') || getEnclosureUrl(block))
       )
       const summary = truncateSnippet(
-        stripHtml(getTag(block, 'description') || getTag(block, 'summary') || getTag(block, 'content'))
+        stripHtml(getAnyTag(block, ['description', 'atom:subtitle', 'summary', 'content:encoded', 'content']))
       )
       const imageUrl = getImageUrl(block)
-      const date = getTag(block, 'pubDate') || getTag(block, 'published') || getTag(block, 'updated')
+      const date = getTag(block, 'pubDate') || getTag(block, 'published') || getTag(block, 'updated') || getTag(block, 'dc:date')
       const publishedAt = date ? new Date(date).toISOString() : new Date().toISOString()
 
       return { title, link, summary, imageUrl, publishedAt }
