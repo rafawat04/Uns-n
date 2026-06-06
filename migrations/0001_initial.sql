@@ -14,13 +14,10 @@ create table if not exists articles (
   image_icon text not null default 'UN',
   tags_json text not null default '[]',
   title_pt text not null,
-  title_en text not null,
   title_ja text not null,
   summary_pt text not null,
-  summary_en text not null,
   summary_ja text not null,
   body_pt text not null,
-  body_en text not null,
   body_ja text not null
 );
 
