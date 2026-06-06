@@ -84,7 +84,9 @@ const rowToArticle = (row: ArticleRow): Article => ({
 export const listStoredArticles = async (context: EnvWithDb) => {
   if (!hasDb(context)) return seedArticles
 
-  const rows = await context.env.DB!.prepare('select * from articles order by published_at desc limit 250').all<ArticleRow>()
+  const rows = await context.env.DB!.prepare('select * from articles order by published_at desc limit 250').all<ArticleRow>().catch(() => null)
+  if (!rows) return seedArticles
+
   const stored = (rows.results ?? []).map(rowToArticle)
   const storedUrls = new Set(stored.map((article) => article.url).filter(Boolean))
   const storedSlugs = new Set(stored.map((article) => article.slug))
@@ -98,7 +100,7 @@ export const findStoredArticle = async (context: EnvWithDb, slug: string) => {
     return seedArticles.find((article) => article.slug === slug) ?? null
   }
 
-  const row = await context.env.DB!.prepare('select * from articles where slug = ? limit 1').bind(slug).first<ArticleRow>()
+  const row = await context.env.DB!.prepare('select * from articles where slug = ? limit 1').bind(slug).first<ArticleRow>().catch(() => null)
   return row ? rowToArticle(row) : seedArticles.find((article) => article.slug === slug) ?? null
 }
 
@@ -110,7 +112,7 @@ export const saveArticle = async (context: EnvWithDb, article: Article) => {
     return
   }
 
-  await context.env.DB!.prepare(
+  const result = await context.env.DB!.prepare(
     `insert or ignore into articles (
       id, slug, category, source_id, source_name, url, image_url, published_at, fetched_at,
       original_language, needs_translation, importance, image_icon, tags_json,
@@ -143,4 +145,9 @@ export const saveArticle = async (context: EnvWithDb, article: Article) => {
       article.body.ja
     )
     .run()
+    .catch(() => null)
+
+  if (!result && !seedArticles.some((item) => item.slug === article.slug || item.url === article.url)) {
+    seedArticles.unshift(article)
+  }
 }
