@@ -116,7 +116,6 @@ app.get('/api/articles', async (c) => {
   const allArticles = await listStoredArticles(c)
 
   const filtered = allArticles
-    .filter((article) => !article.originalLanguage || article.originalLanguage === locale)
     .filter((article) => !category || article.category === category)
     .filter((article) => {
       if (!query) return true
@@ -165,7 +164,6 @@ app.get('/section/:category', async (c) => {
   const sectionLabel = categories.find((item) => item.id === category)?.label[locale] ?? category
 
   const filtered = allArticles
-    .filter((article) => !article.originalLanguage || article.originalLanguage === locale)
     .filter((article) => category === 'media' || article.category === category)
     .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
 
