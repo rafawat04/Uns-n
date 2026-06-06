@@ -1,16 +1,27 @@
 import { Hono } from 'hono'
 import { serveStatic } from 'hono/cloudflare-workers'
-import { getCurrentUser, login, logout, requireAuth, type SessionUser } from './auth'
+import {
+  getCurrentSiteUser,
+  getCurrentUser,
+  login,
+  loginSiteUser,
+  logout,
+  logoutSiteUser,
+  requireAuth,
+  type SessionUser
+} from './auth'
 import { categories, feedSources, sources, type Article, type Category, type Locale } from './data'
 import { fetchFeedXml, ingestEnabledFeeds, ingestFeed, parseFeed } from './ingest'
 import {
   renderCopyrightPage,
   renderAdminPage,
+  renderAdminLoginPage,
   renderLoginPage,
   renderPrivacyPage,
   renderPublisherPolicyPage,
   renderSectionPage,
-  renderTermsPage
+  renderTermsPage,
+  renderUserPage
 } from './pages'
 import { findStoredArticle, listStoredArticles, saveArticle, type D1Database } from './storage'
 
@@ -18,7 +29,9 @@ type AppEnv = {
   Bindings: {
     ADMIN_EMAIL?: string
     ADMIN_PASSWORD?: string
+    CRON_SECRET?: string
     SESSION_COOKIE_NAME?: string
+    USER_COOKIE_NAME?: string
     DB?: D1Database
   }
   Variables: {
@@ -28,6 +41,11 @@ type AppEnv = {
 
 const app = new Hono<AppEnv>()
 app.use('/static/*', serveStatic({ root: './' }))
+
+const runFeedImport = async (context: { env: AppEnv['Bindings'] }, limit = 6) => {
+  const existingArticles = await listStoredArticles(context)
+  return ingestEnabledFeeds(limit, existingArticles, (article) => saveArticle(context, article))
+}
 
 // favicon — inline SVG as data URI to avoid 404
 app.get('/favicon.ico', (c) => {
@@ -181,7 +199,18 @@ app.get('/section/:category', async (c) => {
 })
 
 app.get('/api/me', (c) => {
-  return c.json({ user: getCurrentUser(c) })
+  return c.json({ user: getCurrentSiteUser(c) ?? getCurrentUser(c) })
+})
+
+app.post('/api/user/login', async (c) => {
+  const payload = await c.req.json<{ email?: string; name?: string }>().catch(() => null)
+  const user = payload?.email ? loginSiteUser(c, payload.email, payload.name) : null
+
+  if (!user) {
+    return c.json({ error: 'Invalid email' }, 400)
+  }
+
+  return c.json({ user })
 })
 
 app.post('/api/auth/login', async (c) => {
@@ -197,7 +226,21 @@ app.post('/api/auth/login', async (c) => {
 
 app.post('/api/auth/logout', (c) => {
   logout(c)
+  logoutSiteUser(c)
   return c.json({ ok: true })
+})
+
+app.post('/api/cron/ingest', async (c) => {
+  const secret = c.env.CRON_SECRET
+  const providedSecret = c.req.header('x-cron-secret') ?? c.req.query('secret')
+
+  if (secret && providedSecret !== secret) {
+    return c.json({ error: 'Invalid cron secret' }, 401)
+  }
+
+  const limit = Math.min(Math.max(Number(c.req.query('limit') ?? 6) || 6, 1), 12)
+  const results = await runFeedImport(c, limit)
+  return c.json({ data: results })
 })
 
 app.post('/api/admin/articles', requireAuth, async (c) => {
@@ -282,16 +325,15 @@ app.post('/api/admin/feeds/:feedId/ingest', requireAuth, async (c) => {
 })
 
 app.post('/api/admin/ingest', requireAuth, async (c) => {
-  const existingArticles = await listStoredArticles(c)
-  const results = await ingestEnabledFeeds(12, existingArticles, (article) => saveArticle(c, article))
+  const results = await runFeedImport(c, 12)
   return c.json({ data: results })
 })
 
 app.get('/admin', async (c) => {
   const user = getCurrentUser(c)
 
-  if (!user) {
-    return c.redirect('/login')
+  if (!user || (user.role !== 'admin' && user.role !== 'editor')) {
+    return c.redirect('/admin/login')
   }
 
   const allArticles = await listStoredArticles(c)
@@ -301,20 +343,19 @@ app.get('/admin', async (c) => {
 app.post('/admin/ingest', async (c) => {
   const user = getCurrentUser(c)
 
-  if (!user) {
-    return c.redirect('/login')
+  if (!user || (user.role !== 'admin' && user.role !== 'editor')) {
+    return c.redirect('/admin/login')
   }
 
-  const existingArticles = await listStoredArticles(c)
-  const results = await ingestEnabledFeeds(12, existingArticles, (article) => saveArticle(c, article))
+  const results = await runFeedImport(c, 12)
   const allArticles = await listStoredArticles(c)
 
   return c.html(renderAdminPage(user, feedSources, results, allArticles.length))
 })
 
 app.get('/login', (c) => {
-  if (getCurrentUser(c)) {
-    return c.redirect('/admin')
+  if (getCurrentSiteUser(c)) {
+    return c.redirect('/me')
   }
 
   return c.html(renderLoginPage())
@@ -323,23 +364,57 @@ app.get('/login', (c) => {
 app.post('/login', async (c) => {
   const form = await c.req.formData()
   const email = String(form.get('email') ?? '')
+  const name = String(form.get('name') ?? '')
+  const user = loginSiteUser(c, email, name)
+
+  if (!user) {
+    return c.html(renderLoginPage('Informe um email valido.'), 401)
+  }
+
+  return c.redirect('/me')
+})
+
+app.get('/admin/login', (c) => {
+  const user = getCurrentUser(c)
+
+  if (user && (user.role === 'admin' || user.role === 'editor')) {
+    return c.redirect('/admin')
+  }
+
+  return c.html(renderAdminLoginPage())
+})
+
+app.post('/admin/login', async (c) => {
+  const form = await c.req.formData()
+  const email = String(form.get('email') ?? '')
   const password = String(form.get('password') ?? '')
   const user = login(c, email, password)
 
   if (!user) {
-    return c.html(renderLoginPage('Email ou senha invalidos.'), 401)
+    return c.html(renderAdminLoginPage('Email ou senha invalidos.'), 401)
   }
 
   return c.redirect('/admin')
 })
 
+app.get('/me', (c) => {
+  const user = getCurrentSiteUser(c)
+
+  if (!user) {
+    return c.redirect('/login')
+  }
+
+  return c.html(renderUserPage(user))
+})
+
 app.post('/logout', (c) => {
   logout(c)
+  logoutSiteUser(c)
   return c.redirect('/login')
 })
 
 app.get('/', (c) => {
-  const user = getCurrentUser(c)
+  const user = getCurrentSiteUser(c) ?? getCurrentUser(c)
 
   return c.html(`<!DOCTYPE html>
 <html lang="ja">
@@ -975,7 +1050,7 @@ footer{
       <button class="lang-btn" onclick="setLang('en')">EN</button>
       <button class="lang-btn" onclick="setLang('ja')">日本語</button>
     </div>
-    <a class="admin-nav-link" href="${user ? '/admin' : '/login'}">${user ? 'Admin' : 'Login'}</a>
+    <a class="admin-nav-link" href="${user ? (user.role === 'admin' || user.role === 'editor' ? '/admin' : '/me') : '/login'}">${user ? (user.role === 'admin' || user.role === 'editor' ? 'Admin' : 'Minha pagina') : 'Login'}</a>
   </div>
 </nav>
 
@@ -1974,4 +2049,9 @@ secIds.forEach(id=>{
 </html>`)
 })
 
-export default app
+export default {
+  fetch: app.fetch,
+  scheduled: (_controller: unknown, env: AppEnv['Bindings'], ctx: { waitUntil: (promise: Promise<unknown>) => void }) => {
+    ctx.waitUntil(runFeedImport({ env }, 6))
+  }
+}

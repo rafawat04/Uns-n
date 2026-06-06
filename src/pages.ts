@@ -55,12 +55,20 @@ const langName: Record<Locale, string> = {
   ja: '日本語'
 }
 
-export const renderLoginPage = (error?: string) => `<!DOCTYPE html>
+const loginShell = (params: {
+  title: string
+  subtitle: string
+  action: string
+  fields: string
+  button: string
+  error?: string
+  hint?: string
+}) => `<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8"/>
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Login | UNS-N</title>
+  <title>${escapeHtml(params.title)} | UNS-N</title>
   <style>
     *,*::before,*::after{box-sizing:border-box}
     body{margin:0;min-height:100vh;display:grid;place-items:center;background:#f4f6f8;color:#202124;font-family:Inter,Arial,sans-serif}
@@ -77,17 +85,86 @@ export const renderLoginPage = (error?: string) => `<!DOCTYPE html>
 </head>
 <body>
   <main class="login">
-    <h1>UNS-N Editor</h1>
-    <p>Entre para publicar e organizar noticias em portugues e japones.</p>
-    ${error ? `<div class="error">${error}</div>` : ''}
-    <form method="post" action="/login">
+    <h1>${escapeHtml(params.title)}</h1>
+    <p>${escapeHtml(params.subtitle)}</p>
+    ${params.error ? `<div class="error">${escapeHtml(params.error)}</div>` : ''}
+    <form method="post" action="${escapeHtml(params.action)}">
+      ${params.fields}
+      <button type="submit">${escapeHtml(params.button)}</button>
+    </form>
+    ${params.hint ? `<div class="hint">${escapeHtml(params.hint)}</div>` : ''}
+  </main>
+</body>
+</html>`
+
+export const renderLoginPage = (error?: string) =>
+  loginShell({
+    title: 'Entrar no UNS-N',
+    subtitle: 'Salve preferencias e acompanhe noticias para a sua rotina no Japao.',
+    action: '/login',
+    error,
+    button: 'Continuar',
+    hint: 'Protótipo: basta informar seu nome e email.',
+    fields: `
+      <label for="name">Nome</label>
+      <input id="name" name="name" type="text" autocomplete="name" required/>
+      <label for="email">Email</label>
+      <input id="email" name="email" type="email" autocomplete="email" required/>`
+  })
+
+export const renderAdminLoginPage = (error?: string) =>
+  loginShell({
+    title: 'UNS-N Editor',
+    subtitle: 'Area interna para operar fontes e acompanhar importacoes.',
+    action: '/admin/login',
+    error,
+    button: 'Entrar',
+    hint: 'Demo local: admin@unsn.local / admin123. Configure ADMIN_EMAIL e ADMIN_PASSWORD em producao.',
+    fields: `
       <label for="email">Email</label>
       <input id="email" name="email" type="email" autocomplete="username" required/>
       <label for="password">Senha</label>
-      <input id="password" name="password" type="password" autocomplete="current-password" required/>
-      <button type="submit">Entrar</button>
-    </form>
-    <div class="hint">Demo local: admin@unsn.local / admin123. Configure ADMIN_EMAIL e ADMIN_PASSWORD em producao.</div>
+      <input id="password" name="password" type="password" autocomplete="current-password" required/>`
+  })
+
+export const renderUserPage = (user: SessionUser) => `<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Minha pagina | UNS-N</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;background:#f4f6f8;color:#202124;font-family:Inter,Arial,sans-serif}
+    header{height:58px;background:#fff;border-bottom:1px solid #dfe3e8;display:flex;align-items:center;justify-content:space-between;padding:0 18px}
+    main{max-width:880px;margin:0 auto;padding:28px 16px 56px}
+    h1{font-size:26px;margin:0 0 6px}
+    p{color:#667085;line-height:1.55;margin:0}
+    .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-top:22px}
+    .card{background:#fff;border:1px solid #dfe3e8;border-radius:8px;padding:16px;min-height:118px}
+    .k{font-size:12px;color:#667085;font-weight:800;text-transform:uppercase;margin-bottom:8px}
+    .v{font-size:18px;font-weight:900}
+    a{color:#1a73e8;text-decoration:none;font-weight:800}
+    button{height:36px;border:0;border-radius:6px;background:#eef4ff;color:#1a73e8;font:inherit;font-weight:800;padding:0 12px;cursor:pointer}
+    @media(max-width:720px){.grid{grid-template-columns:1fr}}
+  </style>
+</head>
+<body>
+  <header>
+    <strong>UNS-N</strong>
+    <nav style="display:flex;gap:12px;align-items:center">
+      <a href="/">Noticias</a>
+      <form method="post" action="/logout"><button type="submit">Sair</button></form>
+    </nav>
+  </header>
+  <main>
+    <h1>Oi, ${escapeHtml(user.name)}</h1>
+    <p>Esta e uma primeira versao simples da pagina do leitor. Em breve ela pode ter temas salvos, fontes seguidas e historico de leitura.</p>
+    <div class="grid">
+      <section class="card"><div class="k">Conta</div><div class="v">${escapeHtml(user.email)}</div></section>
+      <section class="card"><div class="k">Idioma</div><div class="v">PT / JA / EN</div></section>
+      <section class="card"><div class="k">Status</div><div class="v">Leitor</div></section>
+    </div>
   </main>
 </body>
 </html>`
