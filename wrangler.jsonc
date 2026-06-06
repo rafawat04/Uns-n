@@ -5,6 +5,13 @@
   "pages_build_output_dir": "./dist",
   "compatibility_flags": [
     "nodejs_compat"
+  ],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "unsn-news",
+      "database_id": "502e5419-fac0-4579-91f0-631455c816af"
+    }
   ]
   // "vars": {
   //   "MY_VAR": "my-variable"
