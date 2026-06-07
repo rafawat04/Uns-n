@@ -219,12 +219,9 @@ export const renderAdminPage = (
   <main>
     <div class="bar">
       <div>
-        <h1>Importar noticias de hoje</h1>
-        <p>Logado como ${user.email}. Noticias importadas agora: ${articleCount}. Use RSS/metadata e mantenha sempre link para a fonte original.</p>
+        <h1>Atualizacao automatica</h1>
+        <p>Logado como ${user.email}. Noticias disponiveis agora: ${articleCount}. O sistema busca novos itens automaticamente pelos feeds RSS.</p>
       </div>
-      <form method="post" action="/admin/ingest">
-        <button type="submit">Importar todos os feeds</button>
-      </form>
     </div>
 
     <div class="grid">
@@ -249,7 +246,7 @@ export const renderAdminPage = (
         <h2>Ultima importacao</h2>
         ${
           results.length === 0
-            ? '<p>Clique em importar para buscar noticias atuais de Nikkei, NHK, Folha e g1.</p>'
+            ? '<p>A importacao roda automaticamente a cada 30 minutos em producao. Quando uma execucao terminar, os itens novos entram no site sem acao manual.</p>'
             : results
                 .map(
                   (result) => `<div class="result">
