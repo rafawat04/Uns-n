@@ -1042,7 +1042,7 @@ footer{
       <span class="search-icon">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
       </span>
-      <input class="search-input" type="search" placeholder="ニュース・情報を検索..." aria-label="検索"/>
+      <input class="search-input" type="search" placeholder="Buscar noticias e informacoes..." aria-label="Buscar noticias"/>
     </div>
 
     <div class="lang-sw">
@@ -1050,7 +1050,7 @@ footer{
       <button class="lang-btn" onclick="setLang('en')">EN</button>
       <button class="lang-btn" onclick="setLang('ja')">日本語</button>
     </div>
-    <a class="admin-nav-link" href="${user ? (user.role === 'admin' || user.role === 'editor' ? '/admin' : '/me') : '/login'}">${user ? (user.role === 'admin' || user.role === 'editor' ? 'Admin' : 'Minha pagina') : 'Login'}</a>
+    <a class="admin-nav-link" data-account-role="${user ? user.role : 'guest'}" href="${user ? (user.role === 'admin' || user.role === 'editor' ? '/admin' : '/me') : '/login'}">${user ? (user.role === 'admin' || user.role === 'editor' ? 'Admin' : 'Minha pagina') : 'Login'}</a>
   </div>
 </nav>
 
@@ -1059,36 +1059,36 @@ footer{
 ══════════════════════════════ -->
 <div class="topic-bar" role="navigation" aria-label="トピック">
   <div class="topic-bar-inner">
-    <button class="tab active" onclick="setTab(this,'top')">
+    <button class="tab active" data-tab-label="top" onclick="setTab(this,'top')">
       <svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
-      トップ
+      <span>Top</span>
     </button>
-    <button class="tab" onclick="setTab(this,'business')">
+    <button class="tab" data-tab-label="business" onclick="setTab(this,'business')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"/></svg>
-      ビジネス
+      <span>Negocios</span>
     </button>
-    <button class="tab" onclick="setTab(this,'life')">
+    <button class="tab" data-tab-label="life" onclick="setTab(this,'life')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-      生活・行政
+      <span>Vida e vistos</span>
     </button>
-    <button class="tab" onclick="setTab(this,'global')">
+    <button class="tab" data-tab-label="global" onclick="setTab(this,'global')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
-      ブラジル・南米
+      <span>Brasil e mundo</span>
     </button>
-    <button class="tab" onclick="setTab(this,'media')">
+    <button class="tab" data-tab-label="media" onclick="setTab(this,'media')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"/><path d="M18 14h-8M15 18h-5M10 6h8v4h-8z"/></svg>
-      メディア一覧
+      <span>Midias</span>
     </button>
-    <button class="tab" onclick="setTab(this,'admin')">
+    <button class="tab" data-tab-label="admin" onclick="setTab(this,'admin')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
-      自治体・行政
+      <span>Governo</span>
     </button>
   </div>
 </div>
 
 <!-- TICKER -->
 <div class="ticker" aria-live="polite">
-  <div class="ticker-label">速報</div>
+  <div class="ticker-label" data-ui-label="ticker">Agora</div>
   <div style="overflow:hidden;flex:1">
     <div class="ticker-track" id="breaking-ticker-track" aria-hidden="true">
       <span class="ticker-item">UNS-N · Carregando noticias de hoje...</span>
@@ -1740,6 +1740,75 @@ function categoryLabel(category){
   return labels[category]||'NEWS';
 }
 
+const uiCopy={
+  pt:{
+    search:'Buscar noticias e informacoes...',
+    searchLabel:'Buscar noticias',
+    ticker:'Agora',
+    account:{guest:'Login',user:'Minha pagina',admin:'Admin',editor:'Admin'},
+    tabs:{
+      top:'Top',
+      business:'Negocios',
+      life:'Vida e vistos',
+      global:'Brasil e mundo',
+      media:'Midias',
+      admin:'Governo'
+    }
+  },
+  en:{
+    search:'Search news and information...',
+    searchLabel:'Search news',
+    ticker:'Now',
+    account:{guest:'Login',user:'My page',admin:'Admin',editor:'Admin'},
+    tabs:{
+      top:'Top',
+      business:'Business',
+      life:'Life and visas',
+      global:'Brazil and world',
+      media:'Media',
+      admin:'Government'
+    }
+  },
+  ja:{
+    search:'ニュース・情報を検索...',
+    searchLabel:'ニュースを検索',
+    ticker:'速報',
+    account:{guest:'ログイン',user:'マイページ',admin:'管理',editor:'管理'},
+    tabs:{
+      top:'トップ',
+      business:'ビジネス',
+      life:'生活・ビザ',
+      global:'ブラジル・世界',
+      media:'メディア',
+      admin:'行政'
+    }
+  }
+};
+
+function syncTopBarCopy(){
+  const copy=uiCopy[currentLang]||uiCopy.pt;
+  const search=document.querySelector('.search-input');
+  if(search){
+    search.setAttribute('placeholder',copy.search);
+    search.setAttribute('aria-label',copy.searchLabel);
+  }
+
+  const ticker=document.querySelector('[data-ui-label="ticker"]');
+  if(ticker)ticker.textContent=copy.ticker;
+
+  document.querySelectorAll('[data-tab-label]').forEach(function(tab){
+    const key=tab.getAttribute('data-tab-label');
+    const label=tab.querySelector('span');
+    if(key&&label&&copy.tabs[key])label.textContent=copy.tabs[key];
+  });
+
+  const account=document.querySelector('.admin-nav-link');
+  if(account){
+    const role=account.getAttribute('data-account-role')||'guest';
+    account.textContent=copy.account[role]||copy.account.guest;
+  }
+}
+
 function breakingEmptyText(){
   return {
     pt:'UNS-N · Nenhuma noticia de hoje importada ainda',
@@ -1977,6 +2046,7 @@ function syncLangButtons(){
 
 function loadAllFeeds(){
   syncLangButtons();
+  syncTopBarCopy();
   updateSectionLinks();
   loadBreakingTicker();
   loadWeeklyHighlights();
@@ -2036,9 +2106,7 @@ secIds.forEach(id=>{
       if(e.isIntersecting){
         document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
         document.querySelectorAll('.tab').forEach(t=>{
-          if(t.textContent.trim().includes(
-            {business:'ビジネス',life:'生活',global:'ブラジル',media:'メディア',admin:'自治体'}[id]||''
-          ))t.classList.add('active');
+          if(t.getAttribute('data-tab-label')===id)t.classList.add('active');
         });
       }
     });
