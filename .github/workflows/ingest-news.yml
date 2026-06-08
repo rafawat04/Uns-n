@@ -11,9 +11,10 @@ jobs:
     steps:
       - name: Trigger news ingest
         env:
-          INGEST_URL: ${{ secrets.UNSN_INGEST_URL || 'https://uns-n.pages.dev/api/cron/ingest' }}
+          INGEST_URL: https://uns-n.pages.dev/api/cron/ingest?limit=3
           CRON_SECRET: ${{ secrets.UNSN_CRON_SECRET }}
         run: |
+          echo "Triggering $INGEST_URL"
           if [ -n "$CRON_SECRET" ]; then
             curl --fail --silent --show-error --request POST --header "x-cron-secret: $CRON_SECRET" "$INGEST_URL"
           else
