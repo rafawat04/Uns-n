@@ -6,11 +6,6 @@
   "compatibility_flags": [
     "nodejs_compat"
   ],
-  "triggers": {
-    "crons": [
-      "*/30 * * * *"
-    ]
-  },
   "d1_databases": [
     {
       "binding": "DB",

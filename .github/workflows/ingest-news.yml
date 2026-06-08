@@ -1,0 +1,26 @@
+name: Ingest news
+
+on:
+  schedule:
+    - cron: "*/30 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ingest:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger news ingest
+        env:
+          INGEST_URL: ${{ secrets.UNSN_INGEST_URL }}
+          CRON_SECRET: ${{ secrets.UNSN_CRON_SECRET }}
+        run: |
+          if [ -z "$INGEST_URL" ]; then
+            echo "Missing UNSN_INGEST_URL secret"
+            exit 1
+          fi
+
+          if [ -n "$CRON_SECRET" ]; then
+            curl --fail --silent --show-error --request POST --header "x-cron-secret: $CRON_SECRET" "$INGEST_URL"
+          else
+            curl --fail --silent --show-error --request POST "$INGEST_URL"
+          fi
