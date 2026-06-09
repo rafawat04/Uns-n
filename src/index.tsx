@@ -67,6 +67,20 @@ const normalizeCategory = (value: string | null): Category | undefined => {
   return value && allowed.has(value as Category) ? (value as Category) : undefined
 }
 
+const escapeHtmlText = (value: string) =>
+  value
+    .replace(/&/g, '&amp;')
+    .replace(/</g, '&lt;')
+    .replace(/>/g, '&gt;')
+    .replace(/"/g, '&quot;')
+    .replace(/'/g, '&#39;')
+
+const formatArticleDate = (value: string, locale: Locale) =>
+  new Intl.DateTimeFormat(locale === 'ja' ? 'ja-JP' : locale === 'en' ? 'en-US' : 'pt-BR', {
+    dateStyle: 'medium',
+    timeStyle: 'short'
+  }).format(new Date(value))
+
 const publicArticle = (article: Article, locale: Locale) => ({
   id: article.id,
   slug: article.slug,
@@ -174,6 +188,101 @@ app.get('/api/articles/:slug', async (c) => {
   }
 
   return c.json({ data: publicArticle(article, locale) })
+})
+
+app.get('/article/:slug', async (c) => {
+  const locale = normalizeLocale(c.req.query('lang') ?? null)
+  const article = await findStoredArticle(c, c.req.param('slug'))
+
+  if (!article) {
+    return c.html('<!DOCTYPE html><html><body><h1>Article not found</h1><p><a href="/">Back home</a></p></body></html>', 404)
+  }
+
+  const data = publicArticle(article, locale)
+  const langAttr = locale === 'ja' ? 'ja' : locale === 'en' ? 'en' : 'pt-BR'
+  const copy = {
+    pt: {
+      label: 'Resumo UNS-N',
+      source: 'Fonte',
+      original: 'Ler materia completa na fonte original',
+      back: 'Voltar para noticias',
+      note:
+        'Este e um resumo curto para descoberta. O texto completo deve ser lido no site original do publisher.'
+    },
+    en: {
+      label: 'UNS-N summary',
+      source: 'Source',
+      original: 'Read the full story at the original source',
+      back: 'Back to news',
+      note: 'This is a short discovery summary. Read the full article on the original publisher site.'
+    },
+    ja: {
+      label: 'UNS-N サマリー',
+      source: '出典',
+      original: '元の記事を読む',
+      back: 'ニュースへ戻る',
+      note: 'これは発見のための短い要約です。全文は配信元サイトでお読みください。'
+    }
+  }[locale]
+
+  return c.html(`<!DOCTYPE html>
+<html lang="${langAttr}">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>${escapeHtmlText(data.title)} | UNS-N</title>
+  <style>
+    *,*::before,*::after{box-sizing:border-box}
+    body{margin:0;background:#f4f6f8;color:#202124;font-family:Inter,'Noto Sans JP',Arial,sans-serif}
+    header{height:58px;background:#fff;border-bottom:1px solid #dfe3e8;display:flex;align-items:center;justify-content:space-between;padding:0 18px}
+    main{max-width:820px;margin:0 auto;padding:28px 16px 64px}
+    a{color:#1a73e8;text-decoration:none;font-weight:800}
+    .brand{font-weight:900}
+    .article{background:#fff;border:1px solid #dfe3e8;border-radius:8px;padding:24px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+    .source{font-size:12px;color:#667085;font-weight:800;text-transform:uppercase;margin-bottom:10px}
+    h1{font-size:30px;line-height:1.25;margin:0 0 12px;letter-spacing:0}
+    .meta{font-size:13px;color:#667085;margin-bottom:20px}
+    .image{width:100%;aspect-ratio:16/9;border-radius:8px;background:#eef0f3;display:grid;place-items:center;overflow:hidden;margin:18px 0;color:#9aa0a6;font-size:30px;font-weight:900}
+    .image img{width:100%;height:100%;object-fit:cover}
+    .label{font-size:12px;font-weight:900;color:#1a73e8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
+    .summary{font-size:17px;line-height:1.75;color:#202124;white-space:pre-line}
+    .note{margin-top:18px;padding:12px 14px;background:#f8f9fa;border-left:3px solid #1a73e8;color:#667085;line-height:1.55;font-size:13px}
+    .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
+    .primary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border-radius:6px;background:#1a73e8;color:#fff;padding:0 16px}
+    .secondary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border-radius:6px;background:#eef4ff;color:#1a73e8;padding:0 16px}
+    @media(max-width:640px){h1{font-size:24px}.article{padding:18px}}
+  </style>
+</head>
+<body>
+  <header>
+    <a class="brand" href="/?lang=${locale}">UNS→N</a>
+    <a href="/?lang=${locale}">${escapeHtmlText(copy.back)}</a>
+  </header>
+  <main>
+    <article class="article">
+      <div class="source">${escapeHtmlText(copy.source)} · ${escapeHtmlText(data.sourceName)}</div>
+      <h1>${escapeHtmlText(data.title)}</h1>
+      <div class="meta">${escapeHtmlText(formatArticleDate(data.publishedAt, locale))}</div>
+      <div class="image">${
+        data.imageUrl
+          ? `<img src="${escapeHtmlText(data.imageUrl)}" alt=""/>`
+          : escapeHtmlText(data.imageIcon || 'UN')
+      }</div>
+      <div class="label">${escapeHtmlText(copy.label)}</div>
+      <div class="summary">${escapeHtmlText(data.summary || data.body || data.title)}</div>
+      <div class="note">${escapeHtmlText(copy.note)}</div>
+      <div class="actions">
+        ${
+          data.url
+            ? `<a class="primary" href="${escapeHtmlText(data.url)}" target="_blank" rel="noopener noreferrer">${escapeHtmlText(copy.original)} ↗</a>`
+            : ''
+        }
+        <a class="secondary" href="/?lang=${locale}">${escapeHtmlText(copy.back)}</a>
+      </div>
+    </article>
+  </main>
+</body>
+</html>`)
 })
 
 app.get('/section/:category', async (c) => {
@@ -1948,11 +2057,14 @@ async function loadBreakingTicker(){
 function feedCardHtml(item){
   const image=item.imageUrl?'<img src="'+escapeHtml(item.imageUrl)+'" alt=""/>':escapeHtml(item.imageIcon||'UN');
   const summary=item.summary&&item.summary!==item.title?'<div class="live-summary">'+escapeHtml(item.summary)+'</div>':'';
-  const link=item.url
-    ? '<a class="original-link" href="'+escapeHtml(item.url)+'" target="_blank" rel="noopener noreferrer">Original ↗</a>'
+  const detailHref='/article/'+encodeURIComponent(item.slug)+'?lang='+encodeURIComponent(currentLang);
+  const cardHref=currentLang==='ja'?detailHref:(item.url||detailHref);
+  const actionLabel=currentLang==='ja'?'要約を読む →':'Original ↗';
+  const link=item.url||currentLang==='ja'
+    ? '<span class="original-link">'+escapeHtml(actionLabel)+'</span>'
     : '<span class="live-time">UNS-N</span>';
 
-  return '<article class="live-card">'+
+  return '<a class="live-card" href="'+escapeHtml(cardHref)+'"'+(currentLang==='ja'?'':' target="_blank" rel="noopener noreferrer"')+'>'+
     '<div class="live-thumb">'+image+'</div>'+
     '<div>'+
       '<div class="live-source">'+escapeHtml(item.sourceName)+'</div>'+
@@ -1963,12 +2075,13 @@ function feedCardHtml(item){
         link+
       '</div>'+
     '</div>'+
-  '</article>';
+  '</a>';
 }
 
 function miniStoryHtml(item,index){
-  const href=item.url||('/section/'+encodeURIComponent(item.category||'top')+'?lang='+encodeURIComponent(currentLang));
-  return '<a class="mini-story" href="'+escapeHtml(href)+'" target="_blank" rel="noopener noreferrer">'+
+  const detailHref='/article/'+encodeURIComponent(item.slug)+'?lang='+encodeURIComponent(currentLang);
+  const href=currentLang==='ja'?detailHref:(item.url||detailHref);
+  return '<a class="mini-story" href="'+escapeHtml(href)+'"'+(currentLang==='ja'?'':' target="_blank" rel="noopener noreferrer"')+'>'+
     '<div class="ms-num">'+escapeHtml(String(index+1))+'</div>'+
     '<div class="ms-body">'+
       '<div class="ms-source">'+escapeHtml(item.sourceName||'UNS-N')+' · '+escapeHtml(categoryLabel(item.category))+'</div>'+
@@ -1980,6 +2093,8 @@ function miniStoryHtml(item,index){
 
 function featuredClusterHtml(item){
   const image=item.imageUrl?'<img src="'+escapeHtml(item.imageUrl)+'" alt=""/>':escapeHtml(item.imageIcon||'UN');
+  const detailHref='/article/'+encodeURIComponent(item.slug)+'?lang='+encodeURIComponent(currentLang);
+  const href=currentLang==='ja'?detailHref:(item.url||'#');
   const tags=(item.tags||[]).slice(0,3).map(function(tag){
     return '<span class="chip chip-blue">'+escapeHtml(tag)+'</span>';
   }).join('');
@@ -1990,7 +2105,7 @@ function featuredClusterHtml(item){
       : 'UNS-N mostra titulo, resumo curto e link da fonte. Leia o texto completo no site original.';
 
   return '<div class="cluster">'+
-    '<a class="cluster-hero" href="'+escapeHtml(item.url||'#')+'" target="_blank" rel="noopener noreferrer">'+
+    '<a class="cluster-hero" href="'+escapeHtml(href)+'"'+(currentLang==='ja'?'':' target="_blank" rel="noopener noreferrer"')+'>'+
       '<div class="cluster-hero-text">'+
         '<div class="ch-source">'+
           '<span class="ch-source-dot" style="background:#1a73e8">'+escapeHtml((item.sourceName||'U').slice(0,1))+'</span>'+
@@ -2003,7 +2118,7 @@ function featuredClusterHtml(item){
           '<div class="lang-snip-label">'+(currentLang==='ja'?'出典リンク':'Fonte original')+'</div>'+
           escapeHtml(note)+
         '</div>'+
-        '<div class="ch-time">'+escapeHtml(timeAgo(item.publishedAt))+' · Original ↗</div>'+
+        '<div class="ch-time">'+escapeHtml(timeAgo(item.publishedAt))+' · '+escapeHtml(currentLang==='ja'?'要約を読む →':'Original ↗')+'</div>'+
       '</div>'+
       '<div class="cluster-hero-img">'+image+'</div>'+
     '</a>'+
