@@ -1112,14 +1112,14 @@ footer{
   <section class="live-feed-band" aria-live="polite">
     <div class="live-feed-head">
       <div>
-        <div class="live-feed-title">Live Feed · ニュースリンク</div>
-        <div class="live-feed-meta">Headlines, source attribution and original article links</div>
+        <div class="live-feed-title" data-ui-label="liveTitle">Feed ao vivo · links das noticias</div>
+        <div class="live-feed-meta" data-ui-label="liveMeta">Manchetes, fontes e links dos artigos originais</div>
       </div>
-      <button class="sec-more" onclick="loadLiveFeed()">Atualizar</button>
+      <button class="sec-more" data-ui-label="refresh" onclick="loadLiveFeed()">Atualizar</button>
     </div>
     <div class="live-feed-list" id="live-feed-list"></div>
     <div class="aggregator-note">
-      UNS→N mostra metadados e resumos curtos para descoberta. O artigo completo abre sempre no site original.
+      <span data-ui-label="aggregatorNote">UNS→N mostra metadados e resumos curtos para descoberta. O artigo completo abre sempre no site original.</span>
     </div>
   </section>
 
@@ -1127,8 +1127,8 @@ footer{
        TOP STORIES  CLUSTER
   ──────────────────────────────── -->
   <div class="sec-head">
-    <span class="sec-title">トップニュース</span>
-    <a class="sec-more" href="/section/top?lang=pt" data-section-more="top">すべて見る →</a>
+    <span class="sec-title" data-section-title="top">Top noticias</span>
+    <a class="sec-more" href="/section/top?lang=pt" data-section-more="top">Ver tudo →</a>
   </div>
   <div id="featured-clusters"></div>
   <div class="topic-feed-list" data-topic-feed="top"></div>
@@ -1137,8 +1137,8 @@ footer{
        BUSINESS & TECH  (card grid)
   ──────────────────────────────── -->
   <div class="sec-head" id="business" style="margin-top:8px">
-    <span class="sec-title">ビジネス・テクノロジー</span>
-    <a class="sec-more" href="/section/business?lang=pt" data-section-more="business">すべて見る →</a>
+    <span class="sec-title" data-section-title="business">Negocios e tecnologia</span>
+    <a class="sec-more" href="/section/business?lang=pt" data-section-more="business">Ver tudo →</a>
   </div>
   <div class="section-featured" data-section-featured="business"></div>
   <div class="topic-feed-list" data-topic-feed="business"></div>
@@ -1194,15 +1194,15 @@ footer{
        MEDIA SOURCE SECTION
   ──────────────────────────────── -->
   <div class="sec-head" id="media" style="margin-top:8px">
-    <span class="sec-title">メディアをフォロー</span>
-    <a class="sec-more" href="/section/media?lang=pt" data-section-more="media">一覧を見る →</a>
+    <span class="sec-title" data-section-title="media">Midias acompanhadas</span>
+    <a class="sec-more" href="/section/media?lang=pt" data-section-more="media">Ver lista →</a>
   </div>
   <div class="section-featured" data-section-featured="media"></div>
 
   <!-- 全国紙・経済紙 -->
   <div class="widget" style="margin-bottom:10px">
     <div class="widget-head">
-      <span class="widget-head-icon">MEDIA</span> 日本の主要紙・経済紙
+      <span class="widget-head-icon">MEDIA</span> <span data-widget-title="japanMedia">Principais jornais e economia do Japao</span>
     </div>
     <div style="padding:14px 16px 10px">
       <div class="source-pill-row">
@@ -1273,7 +1273,7 @@ footer{
   <!-- ブラジル・ポルトガル語メディア -->
   <div class="widget" style="margin-bottom:10px">
     <div class="widget-head">
-      <span class="widget-head-icon">PT</span> ブラジル・ポルトガル語メディア
+      <span class="widget-head-icon">PT</span> <span data-widget-title="ptMedia">Midias brasileiras e em portugues</span>
     </div>
     <div style="padding:14px 16px 10px">
       <div class="source-pill-row">
@@ -1309,8 +1309,8 @@ footer{
        GLOBAL FEED
   ──────────────────────────────── -->
   <div class="sec-head" id="global" style="margin-top:8px">
-    <span class="sec-title">ブラジル・南米 グローバルフィード</span>
-    <a class="sec-more" href="/section/global?lang=pt" data-section-more="global">すべて見る →</a>
+    <span class="sec-title" data-section-title="global">Brasil, America do Sul e mundo</span>
+    <a class="sec-more" href="/section/global?lang=pt" data-section-more="global">Ver tudo →</a>
   </div>
   <div class="section-featured" data-section-featured="global"></div>
   <div class="topic-feed-list" data-topic-feed="global"></div>
@@ -1363,8 +1363,8 @@ footer{
        ADMIN / VISA GUIDE
   ──────────────────────────────── -->
   <div class="sec-head" id="life" style="margin-top:8px">
-    <span class="sec-title">生活・行政・ビザ</span>
-    <a class="sec-more" href="/section/life?lang=pt" data-section-more="life">すべて見る →</a>
+    <span class="sec-title" data-section-title="life">Vida, governo e vistos</span>
+    <a class="sec-more" href="/section/life?lang=pt" data-section-more="life">Ver tudo →</a>
   </div>
   <div class="section-featured" data-section-featured="life"></div>
   <div class="topic-feed-list" data-topic-feed="life"></div>
@@ -1440,12 +1440,12 @@ footer{
        GOVERNMENT / MUNICIPALITY LINKS
   ──────────────────────────────── -->
   <div class="sec-head" id="admin" style="margin-top:8px">
-    <span class="sec-title">行政窓口・自治体</span>
-    <a class="sec-more" href="/section/admin?lang=pt" data-section-more="admin">すべて見る →</a>
+    <span class="sec-title" data-section-title="admin">Orgaos publicos e cidades</span>
+    <a class="sec-more" href="/section/admin?lang=pt" data-section-more="admin">Ver tudo →</a>
   </div>
 
   <div class="widget" style="margin-bottom:10px">
-    <div class="widget-head"><span class="widget-head-icon">GOV</span> 主要行政窓口（公式）</div>
+    <div class="widget-head"><span class="widget-head-icon">GOV</span> <span data-widget-title="govLinks">Principais orgaos publicos oficiais</span></div>
     <div style="padding:14px 16px 10px">
       <div class="source-pill-row">
         <a href="https://www.moj.go.jp/isa/" target="_blank" rel="noopener" class="source-pill">
@@ -1481,7 +1481,7 @@ footer{
   </div>
 
   <div class="widget" style="margin-bottom:16px">
-    <div class="widget-head"><span class="widget-head-icon">CITY</span> 主要都市・自治体（外国人向け窓口）</div>
+    <div class="widget-head"><span class="widget-head-icon">CITY</span> <span data-widget-title="cityLinks">Cidades e atendimento para estrangeiros</span></div>
     <div style="padding:14px 16px 10px">
       <div class="source-pill-row">
         <a href="https://www.tokyo-icc.jp" target="_blank" rel="noopener" class="source-pill">
@@ -1529,7 +1529,7 @@ footer{
 
   <!-- Quick Access -->
   <div class="widget">
-    <div class="widget-head"><span class="widget-head-icon">LINKS</span> クイックアクセス</div>
+    <div class="widget-head"><span class="widget-head-icon">LINKS</span> <span data-widget-title="quickLinks">Acesso rapido</span></div>
     <div class="ql-grid">
       <a href="https://www.moj.go.jp/isa/" target="_blank" rel="noopener" class="ql-item">
         <span class="ql-icon">ISA</span>
@@ -1566,7 +1566,7 @@ footer{
 
   <!-- 今週の注目 -->
   <div class="widget">
-    <div class="widget-head"><span class="widget-head-icon">RANK</span> 今週の注目</div>
+    <div class="widget-head"><span class="widget-head-icon">RANK</span> <span data-widget-title="weekly">Destaques da semana</span></div>
     <div id="weekly-highlight-list">
       <div class="mini-story">
         <div class="ms-num">1</div>
@@ -1581,7 +1581,7 @@ footer{
 
   <!-- 求人トレンド -->
   <div class="widget">
-    <div class="widget-head"><span class="widget-head-icon">JOBS</span> 求人トレンド 2026</div>
+    <div class="widget-head"><span class="widget-head-icon">JOBS</span> <span data-widget-title="jobs">Tendencias de trabalho 2026</span></div>
     <div style="padding:10px 16px">
       <div class="hcard" style="box-shadow:none;border:1px solid var(--border);margin-bottom:8px;border-radius:6px">
         <div class="hcard-img">DX</div>
@@ -1626,7 +1626,7 @@ footer{
 
   <!-- 言語設定 -->
   <div class="widget">
-    <div class="widget-head"><span class="widget-head-icon">LANG</span> 3言語対応</div>
+    <div class="widget-head"><span class="widget-head-icon">LANG</span> <span data-widget-title="languages">Suporte a 3 idiomas</span></div>
     <div class="lang-widget-body">
       <div style="font-size:12px;color:var(--text-2);line-height:1.65">
         UNS→Nは全記事を3言語でお届けすることを目指しています。
@@ -1745,6 +1745,12 @@ const uiCopy={
     search:'Buscar noticias e informacoes...',
     searchLabel:'Buscar noticias',
     ticker:'Agora',
+    liveTitle:'Feed ao vivo · links das noticias',
+    liveMeta:'Manchetes, fontes e links dos artigos originais',
+    refresh:'Atualizar',
+    aggregatorNote:'UNS→N mostra metadados e resumos curtos para descoberta. O artigo completo abre sempre no site original.',
+    seeAll:'Ver tudo →',
+    seeList:'Ver lista →',
     account:{guest:'Login',user:'Minha pagina',admin:'Admin',editor:'Admin'},
     tabs:{
       top:'Top',
@@ -1753,12 +1759,36 @@ const uiCopy={
       global:'Brasil e mundo',
       media:'Midias',
       admin:'Governo'
+    },
+    sections:{
+      top:'Top noticias',
+      business:'Negocios e tecnologia',
+      media:'Midias acompanhadas',
+      global:'Brasil, America do Sul e mundo',
+      life:'Vida, governo e vistos',
+      admin:'Orgaos publicos e cidades'
+    },
+    widgets:{
+      japanMedia:'Principais jornais e economia do Japao',
+      ptMedia:'Midias brasileiras e em portugues',
+      govLinks:'Principais orgaos publicos oficiais',
+      cityLinks:'Cidades e atendimento para estrangeiros',
+      quickLinks:'Acesso rapido',
+      weekly:'Destaques da semana',
+      jobs:'Tendencias de trabalho 2026',
+      languages:'Suporte a 3 idiomas'
     }
   },
   en:{
     search:'Search news and information...',
     searchLabel:'Search news',
     ticker:'Now',
+    liveTitle:'Live feed · news links',
+    liveMeta:'Headlines, source attribution and original article links',
+    refresh:'Refresh',
+    aggregatorNote:'UNS-N shows metadata and short summaries for discovery. The full article always opens on the original site.',
+    seeAll:'See all →',
+    seeList:'See list →',
     account:{guest:'Login',user:'My page',admin:'Admin',editor:'Admin'},
     tabs:{
       top:'Top',
@@ -1767,12 +1797,36 @@ const uiCopy={
       global:'Brazil and world',
       media:'Media',
       admin:'Government'
+    },
+    sections:{
+      top:'Top stories',
+      business:'Business and technology',
+      media:'Tracked media',
+      global:'Brazil, South America and world',
+      life:'Life, government and visas',
+      admin:'Public offices and cities'
+    },
+    widgets:{
+      japanMedia:'Major Japanese newspapers and business media',
+      ptMedia:'Brazilian and Portuguese-language media',
+      govLinks:'Main official public offices',
+      cityLinks:'Cities and services for foreign residents',
+      quickLinks:'Quick access',
+      weekly:'This week',
+      jobs:'Job trends 2026',
+      languages:'3-language support'
     }
   },
   ja:{
     search:'ニュース・情報を検索...',
     searchLabel:'ニュースを検索',
     ticker:'速報',
+    liveTitle:'ライブフィード・ニュースリンク',
+    liveMeta:'見出し、出典、元記事リンクを表示します',
+    refresh:'更新',
+    aggregatorNote:'UNS→Nは発見のためのメタデータと短い要約を表示します。全文は必ず元サイトで開きます。',
+    seeAll:'すべて見る →',
+    seeList:'一覧を見る →',
     account:{guest:'ログイン',user:'マイページ',admin:'管理',editor:'管理'},
     tabs:{
       top:'トップ',
@@ -1781,6 +1835,24 @@ const uiCopy={
       global:'ブラジル・世界',
       media:'メディア',
       admin:'行政'
+    },
+    sections:{
+      top:'トップニュース',
+      business:'ビジネス・テクノロジー',
+      media:'メディアをフォロー',
+      global:'ブラジル・南米 グローバルフィード',
+      life:'生活・行政・ビザ',
+      admin:'行政窓口・自治体'
+    },
+    widgets:{
+      japanMedia:'日本の主要紙・経済紙',
+      ptMedia:'ブラジル・ポルトガル語メディア',
+      govLinks:'主要行政窓口（公式）',
+      cityLinks:'主要都市・自治体（外国人向け窓口）',
+      quickLinks:'クイックアクセス',
+      weekly:'今週の注目',
+      jobs:'求人トレンド 2026',
+      languages:'3言語対応'
     }
   }
 };
@@ -1796,11 +1868,32 @@ function syncTopBarCopy(){
   const ticker=document.querySelector('[data-ui-label="ticker"]');
   if(ticker)ticker.textContent=copy.ticker;
 
+  document.querySelectorAll('[data-ui-label]').forEach(function(label){
+    const key=label.getAttribute('data-ui-label');
+    if(key&&copy[key])label.textContent=copy[key];
+  });
+
   document.querySelectorAll('[data-tab-label]').forEach(function(tab){
     const key=tab.getAttribute('data-tab-label');
     const label=tab.querySelector('span');
     if(key&&label&&copy.tabs[key])label.textContent=copy.tabs[key];
   });
+
+  document.querySelectorAll('[data-section-title]').forEach(function(label){
+    const key=label.getAttribute('data-section-title');
+    if(key&&copy.sections[key])label.textContent=copy.sections[key];
+  });
+
+  document.querySelectorAll('[data-section-more]').forEach(function(link){
+    const category=link.getAttribute('data-section-more');
+    link.textContent=(category==='media'?copy.seeList:copy.seeAll);
+  });
+
+  document.querySelectorAll('[data-widget-title]').forEach(function(label){
+    const key=label.getAttribute('data-widget-title');
+    if(key&&copy.widgets[key])label.textContent=copy.widgets[key];
+  });
+
 
   const account=document.querySelector('.admin-nav-link');
   if(account){
