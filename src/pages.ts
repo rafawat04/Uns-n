@@ -293,16 +293,15 @@ export const renderSectionPage = (
   const articleRows = articles
     .map((article) => {
       const detailUrl = `/article/${encodeURIComponent(article.slug)}?lang=${locale}`
-      const storyUrl = locale === 'ja' ? detailUrl : article.url ?? detailUrl
       const image = article.imageUrl
         ? `<img src="${escapeHtml(article.imageUrl)}" alt="" loading="lazy"/>`
         : `<div class="fallback">${escapeHtml(article.imageIcon)}</div>`
 
       return `<article class="story">
-        <a class="thumb" href="${escapeHtml(storyUrl)}" ${locale === 'ja' ? '' : 'target="_blank" rel="noopener"'}>${image}</a>
+        <a class="thumb" href="${escapeHtml(detailUrl)}">${image}</a>
         <div>
           <div class="meta">${escapeHtml(article.sourceName)} · ${escapeHtml(formatDate(article.publishedAt, locale))}</div>
-          <h2><a href="${escapeHtml(storyUrl)}" ${locale === 'ja' ? '' : 'target="_blank" rel="noopener"'}>${escapeHtml(article.title[locale])}</a></h2>
+          <h2><a href="${escapeHtml(detailUrl)}">${escapeHtml(article.title[locale])}</a></h2>
           <p>${escapeHtml(article.summary[locale])}</p>
           ${
             article.url

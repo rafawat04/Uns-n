@@ -2058,13 +2058,10 @@ function feedCardHtml(item){
   const image=item.imageUrl?'<img src="'+escapeHtml(item.imageUrl)+'" alt=""/>':escapeHtml(item.imageIcon||'UN');
   const summary=item.summary&&item.summary!==item.title?'<div class="live-summary">'+escapeHtml(item.summary)+'</div>':'';
   const detailHref='/article/'+encodeURIComponent(item.slug)+'?lang='+encodeURIComponent(currentLang);
-  const cardHref=currentLang==='ja'?detailHref:(item.url||detailHref);
-  const actionLabel=currentLang==='ja'?'要約を読む →':'Original ↗';
-  const link=item.url||currentLang==='ja'
-    ? '<span class="original-link">'+escapeHtml(actionLabel)+'</span>'
-    : '<span class="live-time">UNS-N</span>';
+  const actionLabel={pt:'Resumo UNS-N →',en:'UNS-N summary →',ja:'要約を読む →'}[currentLang];
+  const link='<span class="original-link">'+escapeHtml(actionLabel)+'</span>';
 
-  return '<a class="live-card" href="'+escapeHtml(cardHref)+'"'+(currentLang==='ja'?'':' target="_blank" rel="noopener noreferrer"')+'>'+
+  return '<a class="live-card" href="'+escapeHtml(detailHref)+'">'+
     '<div class="live-thumb">'+image+'</div>'+
     '<div>'+
       '<div class="live-source">'+escapeHtml(item.sourceName)+'</div>'+
@@ -2080,8 +2077,7 @@ function feedCardHtml(item){
 
 function miniStoryHtml(item,index){
   const detailHref='/article/'+encodeURIComponent(item.slug)+'?lang='+encodeURIComponent(currentLang);
-  const href=currentLang==='ja'?detailHref:(item.url||detailHref);
-  return '<a class="mini-story" href="'+escapeHtml(href)+'"'+(currentLang==='ja'?'':' target="_blank" rel="noopener noreferrer"')+'>'+
+  return '<a class="mini-story" href="'+escapeHtml(detailHref)+'">'+
     '<div class="ms-num">'+escapeHtml(String(index+1))+'</div>'+
     '<div class="ms-body">'+
       '<div class="ms-source">'+escapeHtml(item.sourceName||'UNS-N')+' · '+escapeHtml(categoryLabel(item.category))+'</div>'+
@@ -2094,7 +2090,7 @@ function miniStoryHtml(item,index){
 function featuredClusterHtml(item){
   const image=item.imageUrl?'<img src="'+escapeHtml(item.imageUrl)+'" alt=""/>':escapeHtml(item.imageIcon||'UN');
   const detailHref='/article/'+encodeURIComponent(item.slug)+'?lang='+encodeURIComponent(currentLang);
-  const href=currentLang==='ja'?detailHref:(item.url||'#');
+  const actionLabel={pt:'Resumo UNS-N →',en:'UNS-N summary →',ja:'要約を読む →'}[currentLang];
   const tags=(item.tags||[]).slice(0,3).map(function(tag){
     return '<span class="chip chip-blue">'+escapeHtml(tag)+'</span>';
   }).join('');
@@ -2105,7 +2101,7 @@ function featuredClusterHtml(item){
       : 'UNS-N mostra titulo, resumo curto e link da fonte. Leia o texto completo no site original.';
 
   return '<div class="cluster">'+
-    '<a class="cluster-hero" href="'+escapeHtml(href)+'"'+(currentLang==='ja'?'':' target="_blank" rel="noopener noreferrer"')+'>'+
+    '<a class="cluster-hero" href="'+escapeHtml(detailHref)+'">'+
       '<div class="cluster-hero-text">'+
         '<div class="ch-source">'+
           '<span class="ch-source-dot" style="background:#1a73e8">'+escapeHtml((item.sourceName||'U').slice(0,1))+'</span>'+
@@ -2118,7 +2114,7 @@ function featuredClusterHtml(item){
           '<div class="lang-snip-label">'+(currentLang==='ja'?'出典リンク':'Fonte original')+'</div>'+
           escapeHtml(note)+
         '</div>'+
-        '<div class="ch-time">'+escapeHtml(timeAgo(item.publishedAt))+' · '+escapeHtml(currentLang==='ja'?'要約を読む →':'Original ↗')+'</div>'+
+        '<div class="ch-time">'+escapeHtml(timeAgo(item.publishedAt))+' · '+escapeHtml(actionLabel)+'</div>'+
       '</div>'+
       '<div class="cluster-hero-img">'+image+'</div>'+
     '</a>'+
