@@ -1810,7 +1810,18 @@ function escapeHtml(value){
   });
 }
 
-function timeAgo(dateValue){
+function displayTimeValue(item){
+  if(!item)return '';
+  const published=new Date(item.publishedAt).getTime();
+  const fetched=new Date(item.fetchedAt).getTime();
+  if(fetched&&published&&Date.now()-published>24*60*60*1000&&Date.now()-fetched<24*60*60*1000){
+    return item.fetchedAt;
+  }
+  return item.publishedAt;
+}
+
+function timeAgo(value){
+  const dateValue=typeof value==='object'?displayTimeValue(value):value;
   const time=new Date(dateValue).getTime();
   if(!time)return '';
   const diff=Math.max(0,Date.now()-time);
@@ -2068,7 +2079,7 @@ function feedCardHtml(item){
       '<div class="live-title">'+escapeHtml(item.title)+'</div>'+
       summary+
       '<div class="live-actions">'+
-        '<span class="live-time">'+escapeHtml(timeAgo(item.publishedAt))+'</span>'+
+        '<span class="live-time">'+escapeHtml(timeAgo(item))+'</span>'+
         link+
       '</div>'+
     '</div>'+
@@ -2082,7 +2093,7 @@ function miniStoryHtml(item,index){
     '<div class="ms-body">'+
       '<div class="ms-source">'+escapeHtml(item.sourceName||'UNS-N')+' · '+escapeHtml(categoryLabel(item.category))+'</div>'+
       '<div class="ms-title">'+escapeHtml(item.title)+'</div>'+
-      '<div class="ms-time">'+escapeHtml(timeAgo(item.publishedAt))+'</div>'+
+      '<div class="ms-time">'+escapeHtml(timeAgo(item))+'</div>'+
     '</div>'+
   '</a>';
 }
@@ -2114,7 +2125,7 @@ function featuredClusterHtml(item){
           '<div class="lang-snip-label">'+(currentLang==='ja'?'出典リンク':'Fonte original')+'</div>'+
           escapeHtml(note)+
         '</div>'+
-        '<div class="ch-time">'+escapeHtml(timeAgo(item.publishedAt))+' · '+escapeHtml(actionLabel)+'</div>'+
+        '<div class="ch-time">'+escapeHtml(timeAgo(item))+' · '+escapeHtml(actionLabel)+'</div>'+
       '</div>'+
       '<div class="cluster-hero-img">'+image+'</div>'+
     '</a>'+
