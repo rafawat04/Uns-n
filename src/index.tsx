@@ -1317,7 +1317,7 @@ footer{
       <div class="source-pill-row">
         <a href="https://www.nikkei.com" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#d4a017">日</span>
-          日本経済新聞
+          <span data-media-source="nikkeiJapan">日本経済新聞</span>
         </a>
         <a href="https://asia.nikkei.com" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#1a73e8">N</span>
@@ -1325,19 +1325,19 @@ footer{
         </a>
         <a href="https://www.asahi.com" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#d93025">朝</span>
-          朝日新聞
+          <span data-media-source="asahi">朝日新聞</span>
         </a>
         <a href="https://www.yomiuri.co.jp" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#374151">読</span>
-          読売新聞
+          <span data-media-source="yomiuri">読売新聞</span>
         </a>
         <a href="https://mainichi.jp" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#b45309">毎</span>
-          毎日新聞
+          <span data-media-source="mainichi">毎日新聞</span>
         </a>
         <a href="https://www.sankei.com" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#166534">産</span>
-          産経新聞
+          <span data-media-source="sankei">産経新聞</span>
         </a>
         <a href="https://www.japantimes.co.jp" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#1d4ed8">JT</span>
@@ -1349,15 +1349,15 @@ footer{
         </a>
         <a href="https://www3.nhk.or.jp/news/easy/" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#c2410c">や</span>
-          NHK やさしい日本語
+          <span data-media-source="nhkEasy">NHK やさしい日本語</span>
         </a>
         <a href="https://toyokeizai.net" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#991b1b">東</span>
-          東洋経済オンライン
+          <span data-media-source="toyokeizai">東洋経済オンライン</span>
         </a>
         <a href="https://diamond.jp" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#c2410c">ダ</span>
-          ダイヤモンド・オンライン
+          <span data-media-source="diamond">ダイヤモンド・オンライン</span>
         </a>
         <a href="https://newspicks.com" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#166534">NP</span>
@@ -1369,7 +1369,7 @@ footer{
         </a>
         <a href="https://jp.reuters.com" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#1e40af">R</span>
-          ロイター日本語版
+          <span data-media-source="reutersJapan">ロイター日本語版</span>
         </a>
         <a href="https://www.bloomberg.co.jp" target="_blank" rel="noopener" class="source-pill">
           <span class="source-pill-icon" style="background:#0f172a">BB</span>
@@ -1642,33 +1642,33 @@ footer{
     <div class="ql-grid">
       <a href="https://www.moj.go.jp/isa/" target="_blank" rel="noopener" class="ql-item">
         <span class="ql-icon">ISA</span>
-        <span class="ql-label">入管庁</span>
-        <span class="ql-sub">ビザ・在留</span>
+        <span class="ql-label" data-quick-label="immigration">入管庁</span>
+        <span class="ql-sub" data-quick-sub="immigration">ビザ・在留</span>
       </a>
       <a href="https://www3.nhk.or.jp/news/easy/" target="_blank" rel="noopener" class="ql-item">
         <span class="ql-icon">NHK</span>
-        <span class="ql-label">NHK やさしい</span>
-        <span class="ql-sub">易しい日本語</span>
+        <span class="ql-label" data-quick-label="nhkEasy">NHK やさしい</span>
+        <span class="ql-sub" data-quick-sub="nhkEasy">易しい日本語</span>
       </a>
       <a href="https://www.nta.go.jp/english/" target="_blank" rel="noopener" class="ql-item">
         <span class="ql-icon">TAX</span>
-        <span class="ql-label">国税庁</span>
-        <span class="ql-sub">税金・申告</span>
+        <span class="ql-label" data-quick-label="tax">国税庁</span>
+        <span class="ql-sub" data-quick-sub="tax">税金・申告</span>
       </a>
       <a href="https://www.nenkin.go.jp/international/" target="_blank" rel="noopener" class="ql-item">
         <span class="ql-icon">PEN</span>
-        <span class="ql-label">年金機構</span>
-        <span class="ql-sub">年金・保険</span>
+        <span class="ql-label" data-quick-label="pension">年金機構</span>
+        <span class="ql-sub" data-quick-sub="pension">年金・保険</span>
       </a>
       <a href="https://www.ssw.go.jp/en/" target="_blank" rel="noopener" class="ql-item">
         <span class="ql-icon">SSW</span>
-        <span class="ql-label">特定技能SSW</span>
-        <span class="ql-sub">就労ビザ</span>
+        <span class="ql-label" data-quick-label="ssw">特定技能SSW</span>
+        <span class="ql-sub" data-quick-sub="ssw">就労ビザ</span>
       </a>
       <a href="https://nhkworld.nhk.or.jp/pt/" target="_blank" rel="noopener" class="ql-item">
         <span class="ql-icon">PT</span>
-        <span class="ql-label">NHK Brasil</span>
-        <span class="ql-sub">Português</span>
+        <span class="ql-label" data-quick-label="nhkPt">NHK Brasil</span>
+        <span class="ql-sub" data-quick-sub="nhkPt">Português</span>
       </a>
     </div>
   </div>
@@ -1889,14 +1889,33 @@ const uiCopy={
       admin:'Orgaos publicos e cidades'
     },
     widgets:{
-      japanMedia:'Principais jornais e economia do Japao',
-      ptMedia:'Midias brasileiras e em portugues',
-      govLinks:'Principais orgaos publicos oficiais',
+      japanMedia:'Principais jornais e mídia econômica do Japão',
+      ptMedia:'Mídias brasileiras e em português',
+      govLinks:'Principais órgãos públicos oficiais',
       cityLinks:'Cidades e atendimento para estrangeiros',
-      quickLinks:'Acesso rapido',
+      quickLinks:'Acesso rápido',
       weekly:'Destaques da semana',
-      jobs:'Tendencias de trabalho 2026',
+      jobs:'Tendências de trabalho 2026',
       languages:'Suporte a 3 idiomas'
+    },
+    mediaSources:{
+      nikkeiJapan:'Nikkei, jornal econômico do Japão',
+      asahi:'Asahi Shimbun',
+      yomiuri:'Yomiuri Shimbun',
+      mainichi:'Mainichi Shimbun',
+      sankei:'Sankei Shimbun',
+      nhkEasy:'NHK em japonês fácil',
+      toyokeizai:'Toyo Keizai Online',
+      diamond:'Diamond Online',
+      reutersJapan:'Reuters Japão'
+    },
+    quickAccess:{
+      immigration:{label:'Agência de Imigração',sub:'Visto e residência'},
+      nhkEasy:{label:'NHK fácil',sub:'Japonês simples'},
+      tax:{label:'Agência de Impostos',sub:'Impostos e declaração'},
+      pension:{label:'Serviço de Pensão',sub:'Pensão e seguro'},
+      ssw:{label:'Tokutei Ginou SSW',sub:'Visto de trabalho'},
+      nhkPt:{label:'NHK Brasil',sub:'Português'}
     }
   },
   en:{
@@ -1935,6 +1954,25 @@ const uiCopy={
       weekly:'This week',
       jobs:'Job trends 2026',
       languages:'3-language support'
+    },
+    mediaSources:{
+      nikkeiJapan:'The Nikkei',
+      asahi:'The Asahi Shimbun',
+      yomiuri:'The Yomiuri Shimbun',
+      mainichi:'The Mainichi',
+      sankei:'The Sankei Shimbun',
+      nhkEasy:'NHK Easy Japanese',
+      toyokeizai:'Toyo Keizai Online',
+      diamond:'Diamond Online',
+      reutersJapan:'Reuters Japan'
+    },
+    quickAccess:{
+      immigration:{label:'Immigration Agency',sub:'Visas and residence'},
+      nhkEasy:{label:'NHK Easy',sub:'Easy Japanese'},
+      tax:{label:'Tax Agency',sub:'Taxes and filing'},
+      pension:{label:'Pension Service',sub:'Pension and insurance'},
+      ssw:{label:'Specified Skilled Worker',sub:'Work visa'},
+      nhkPt:{label:'NHK Portuguese',sub:'Portuguese'}
     }
   },
   ja:{
@@ -1973,6 +2011,25 @@ const uiCopy={
       weekly:'今週の注目',
       jobs:'求人トレンド 2026',
       languages:'3言語対応'
+    },
+    mediaSources:{
+      nikkeiJapan:'日本経済新聞',
+      asahi:'朝日新聞',
+      yomiuri:'読売新聞',
+      mainichi:'毎日新聞',
+      sankei:'産経新聞',
+      nhkEasy:'NHK やさしい日本語',
+      toyokeizai:'東洋経済オンライン',
+      diamond:'ダイヤモンド・オンライン',
+      reutersJapan:'ロイター日本語版'
+    },
+    quickAccess:{
+      immigration:{label:'入管庁',sub:'ビザ・在留'},
+      nhkEasy:{label:'NHK やさしい',sub:'易しい日本語'},
+      tax:{label:'国税庁',sub:'税金・申告'},
+      pension:{label:'年金機構',sub:'年金・保険'},
+      ssw:{label:'特定技能SSW',sub:'就労ビザ'},
+      nhkPt:{label:'NHK Brasil',sub:'Português'}
     }
   }
 };
@@ -2014,6 +2071,20 @@ function syncTopBarCopy(){
     if(key&&copy.widgets[key])label.textContent=copy.widgets[key];
   });
 
+  document.querySelectorAll('[data-media-source]').forEach(function(label){
+    const key=label.getAttribute('data-media-source');
+    if(key&&copy.mediaSources[key])label.textContent=copy.mediaSources[key];
+  });
+
+  document.querySelectorAll('[data-quick-label]').forEach(function(label){
+    const key=label.getAttribute('data-quick-label');
+    if(key&&copy.quickAccess[key])label.textContent=copy.quickAccess[key].label;
+  });
+
+  document.querySelectorAll('[data-quick-sub]').forEach(function(label){
+    const key=label.getAttribute('data-quick-sub');
+    if(key&&copy.quickAccess[key])label.textContent=copy.quickAccess[key].sub;
+  });
 
   const account=document.querySelector('.admin-nav-link');
   if(account){
