@@ -235,27 +235,35 @@ app.get('/article/:slug', async (c) => {
     *,*::before,*::after{box-sizing:border-box}
     body{margin:0;background:#f4f6f8;color:#202124;font-family:Inter,'Noto Sans JP',Arial,sans-serif}
     header{height:58px;background:#fff;border-bottom:1px solid #dfe3e8;display:flex;align-items:center;justify-content:space-between;padding:0 18px}
-    main{max-width:820px;margin:0 auto;padding:28px 16px 64px}
+    main{max-width:960px;margin:0 auto;padding:32px 16px 72px}
     a{color:#1a73e8;text-decoration:none;font-weight:800}
-    .brand{font-weight:900}
-    .article{background:#fff;border:1px solid #dfe3e8;border-radius:8px;padding:24px;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+    .logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .logo-text{font-size:17px;font-weight:700;letter-spacing:0;color:#202124}
+    .logo-text span{color:#1a73e8}
+    .logo-kana{font-size:10px;color:#9aa0a6;font-weight:500;letter-spacing:.5px}
+    .article{background:#fff;border:1px solid #dfe3e8;border-radius:8px;padding:32px;box-shadow:0 2px 10px rgba(0,0,0,.06)}
     .source{font-size:12px;color:#667085;font-weight:800;text-transform:uppercase;margin-bottom:10px}
-    h1{font-size:30px;line-height:1.25;margin:0 0 12px;letter-spacing:0}
+    h1{font-size:38px;line-height:1.18;margin:0 0 14px;letter-spacing:0}
     .meta{font-size:13px;color:#667085;margin-bottom:20px}
-    .image{width:100%;aspect-ratio:16/9;border-radius:8px;background:#eef0f3;display:grid;place-items:center;overflow:hidden;margin:18px 0;color:#9aa0a6;font-size:30px;font-weight:900}
+    .image{width:100%;aspect-ratio:16/9;border-radius:8px;background:#eef0f3;display:grid;place-items:center;overflow:hidden;margin:22px 0;color:#9aa0a6;font-size:34px;font-weight:900}
     .image img{width:100%;height:100%;object-fit:cover}
     .label{font-size:12px;font-weight:900;color:#1a73e8;text-transform:uppercase;letter-spacing:.4px;margin-bottom:8px}
-    .summary{font-size:17px;line-height:1.75;color:#202124;white-space:pre-line}
-    .note{margin-top:18px;padding:12px 14px;background:#f8f9fa;border-left:3px solid #1a73e8;color:#667085;line-height:1.55;font-size:13px}
+    .summary{font-size:19px;line-height:1.78;color:#202124;white-space:pre-line}
+    .note{margin-top:22px;padding:14px 16px;background:#f8f9fa;border-left:3px solid #1a73e8;color:#667085;line-height:1.6;font-size:13px}
     .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
     .primary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border-radius:6px;background:#1a73e8;color:#fff;padding:0 16px}
     .secondary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border-radius:6px;background:#eef4ff;color:#1a73e8;padding:0 16px}
-    @media(max-width:640px){h1{font-size:24px}.article{padding:18px}}
+    @media(max-width:640px){main{padding:20px 12px 48px}h1{font-size:26px}.article{padding:20px}.summary{font-size:16px}.logo-kana{display:none}}
   </style>
 </head>
 <body>
   <header>
-    <a class="brand" href="/?lang=${locale}">UNS→N</a>
+    <a class="logo" href="/?lang=${locale}">
+      <div>
+        <div class="logo-text">UNS<span>→</span>N</div>
+        <div class="logo-kana">アンシーン</div>
+      </div>
+    </a>
     <a href="/?lang=${locale}">${escapeHtmlText(copy.back)}</a>
   </header>
   <main>
