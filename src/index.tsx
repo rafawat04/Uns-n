@@ -1061,7 +1061,69 @@ img{display:block;max-width:100%}
 }
 .live-feed-title{font-size:13px;font-weight:800;color:var(--text);letter-spacing:.2px}
 .live-feed-meta{font-size:11px;color:var(--text-3)}
-.live-feed-list{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:1px;background:var(--border-light)}
+.live-feed-list{background:#fff}
+.live-carousel{
+  background:#fff;
+}
+.live-carousel-link{
+  display:block;
+  min-height:0;
+  color:inherit;
+  cursor:pointer;
+}
+.live-carousel-link:focus-visible{
+  outline:3px solid rgba(26,115,232,.35);
+  outline-offset:-3px;
+}
+.live-carousel-media{
+  position:relative;
+  height:460px;
+  background:var(--chip-bg);
+  overflow:hidden;
+}
+.live-carousel-media img{
+  width:100%;height:100%;object-fit:cover;
+}
+.live-carousel-fallback{
+  width:100%;height:100%;
+  display:grid;place-items:center;
+  font-size:56px;font-weight:900;color:var(--text-3);
+  background:linear-gradient(135deg,#eef2f7,#fff);
+}
+.live-carousel-dots{
+  position:absolute;left:50%;bottom:16px;transform:translateX(-50%);
+  display:flex;align-items:center;justify-content:center;gap:8px;
+  padding:7px 10px;border-radius:999px;
+  background:rgba(32,33,36,.72);backdrop-filter:blur(8px);
+}
+.live-dot{
+  width:9px;height:9px;border-radius:999px;background:rgba(255,255,255,.55);
+  border:1px solid rgba(255,255,255,.3);
+}
+.live-dot.active{width:24px;background:#fff}
+.live-carousel-body{
+  padding:24px 28px 26px;
+}
+.live-carousel-source{
+  font-size:11px;font-weight:900;color:var(--blue);
+  text-transform:uppercase;margin-bottom:12px;
+}
+.live-carousel-title{
+  font-size:30px;font-weight:850;line-height:1.18;
+  letter-spacing:0;margin-bottom:14px;color:var(--text);
+}
+.live-carousel-summary{
+  font-size:15px;line-height:1.65;color:var(--text-2);
+  display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;
+}
+.live-carousel-actions{
+  display:flex;align-items:center;justify-content:space-between;gap:12px;
+  margin-top:22px;border-top:1px solid var(--border-light);padding-top:14px;
+}
+.live-carousel-empty{
+  min-height:260px;display:grid;place-items:center;text-align:center;
+  padding:24px;color:var(--text-2);
+}
 .topic-feed-list{
   display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;
   margin:0 0 16px;
@@ -1121,6 +1183,8 @@ footer{
 @media(max-width:960px){
   .page{grid-template-columns:1fr}
   .card-grid-3{grid-template-columns:1fr 1fr}
+  .live-carousel-media{height:380px}
+  .live-carousel-body{padding:22px}
   .cluster-hero{grid-template-columns:1fr}
   .cluster-hero-img{display:none}
 }
@@ -1128,7 +1192,11 @@ footer{
   .top-nav-inner{gap:8px}
   .search-wrap{display:none}
   .card-grid-2,.card-grid-3{grid-template-columns:1fr}
-  .live-feed-list,.topic-feed-list{grid-template-columns:1fr}
+  .topic-feed-list{grid-template-columns:1fr}
+  .live-carousel-media{height:260px}
+  .live-carousel-title{font-size:22px}
+  .live-carousel-summary{-webkit-line-clamp:3}
+  .live-carousel-actions{align-items:flex-start;flex-direction:column}
   .footer-row{flex-direction:column;gap:20px}
 }
   </style>
@@ -1688,48 +1756,47 @@ footer{
     </div>
   </div>
 
-  <!-- 求人トレンド -->
+  <!-- Jobs for foreign residents -->
   <div class="widget">
     <div class="widget-head"><span class="widget-head-icon">JOBS</span> <span data-widget-title="jobs">Tendencias de trabalho 2026</span></div>
     <div style="padding:10px 16px">
-      <div class="hcard" style="box-shadow:none;border:1px solid var(--border);margin-bottom:8px;border-radius:6px">
-        <div class="hcard-img">DX</div>
+      <a href="https://www.hellowork.mhlw.go.jp/kensaku/GECA110010.do?action=initDisp&screenId=GECA110010" target="_blank" rel="noopener" class="hcard" style="box-shadow:none;border:1px solid var(--border);margin-bottom:8px;border-radius:6px">
+        <div class="hcard-img">HW</div>
         <div class="hcard-body">
-          <div class="hcard-source" style="color:var(--red);font-weight:700">需要急増 +42%</div>
-          <div class="hcard-title">製造DXエンジニア</div>
-          <div style="font-size:11px;color:#137333;font-weight:700">¥5.5M – ¥9.0M</div>
+          <div class="hcard-source" style="color:var(--red);font-weight:700" data-job-source="helloWorkSearch">Hello Work</div>
+          <div class="hcard-title" data-job-title="helloWorkSearch">求人検索（外国人向け）</div>
+          <div style="font-size:11px;color:#137333;font-weight:700" data-job-desc="helloWorkSearch">公式求人検索で地域・職種から探す</div>
           <div style="display:flex;gap:3px;margin-top:3px;flex-wrap:wrap">
-            <span class="chip" style="font-size:9px;padding:1px 6px">IoT</span>
-            <span class="chip" style="font-size:9px;padding:1px 6px">AI</span>
-            <span class="chip" style="font-size:9px;padding:1px 6px">日本語N3+</span>
+            <span class="chip" style="font-size:9px;padding:1px 6px">Official</span>
+            <span class="chip" style="font-size:9px;padding:1px 6px">Search</span>
           </div>
         </div>
-      </div>
-      <div class="hcard" style="box-shadow:none;border:1px solid var(--border);margin-bottom:8px;border-radius:6px">
-        <div class="hcard-img">PT</div>
+      </a>
+      <a href="https://www.mhlw.go.jp/stf/seisakunitsuite/bunya/koyou_roudou/koyou/gaikokujin/index.html" target="_blank" rel="noopener" class="hcard" style="box-shadow:none;border:1px solid var(--border);margin-bottom:8px;border-radius:6px">
+        <div class="hcard-img">MHLW</div>
         <div class="hcard-body">
-          <div class="hcard-source" style="color:var(--red);font-weight:700">需要急増 +38%</div>
-          <div class="hcard-title">海外事業開拓（PT語）</div>
-          <div style="font-size:11px;color:#137333;font-weight:700">¥6.0M – ¥12.0M</div>
+          <div class="hcard-source" style="color:var(--red);font-weight:700" data-job-source="foreignSupport">MHLW</div>
+          <div class="hcard-title" data-job-title="foreignSupport">外国人雇用・就労サポート</div>
+          <div style="font-size:11px;color:#137333;font-weight:700" data-job-desc="foreignSupport">制度、相談窓口、働くための情報</div>
           <div style="display:flex;gap:3px;margin-top:3px;flex-wrap:wrap">
-            <span class="chip" style="font-size:9px;padding:1px 6px">Português</span>
-            <span class="chip" style="font-size:9px;padding:1px 6px">商社</span>
+            <span class="chip" style="font-size:9px;padding:1px 6px">Gov</span>
+            <span class="chip" style="font-size:9px;padding:1px 6px">Support</span>
           </div>
         </div>
-      </div>
-      <div class="hcard" style="box-shadow:none;border:1px solid var(--border);border-radius:6px">
-        <div class="hcard-img">PM</div>
+      </a>
+      <a href="https://www.ssw.go.jp/en/" target="_blank" rel="noopener" class="hcard" style="box-shadow:none;border:1px solid var(--border);border-radius:6px">
+        <div class="hcard-img">SSW</div>
         <div class="hcard-body">
-          <div class="hcard-source" style="color:var(--red);font-weight:700">最高需要 +55%</div>
-          <div class="hcard-title">建設DX PM</div>
-          <div style="font-size:11px;color:#137333;font-weight:700">¥5.0M – ¥8.5M</div>
+          <div class="hcard-source" style="color:var(--red);font-weight:700" data-job-source="sswJobs">Specified Skilled Worker</div>
+          <div class="hcard-title" data-job-title="sswJobs">特定技能の仕事と制度</div>
+          <div style="font-size:11px;color:#137333;font-weight:700" data-job-desc="sswJobs">分野、在留資格、働き方を確認</div>
           <div style="display:flex;gap:3px;margin-top:3px;flex-wrap:wrap">
-            <span class="chip" style="font-size:9px;padding:1px 6px">BIM</span>
+            <span class="chip" style="font-size:9px;padding:1px 6px">Visa</span>
             <span class="chip" style="font-size:9px;padding:1px 6px">SSW2号</span>
           </div>
         </div>
-      </div>
-      <div style="font-size:10px;color:var(--text-3);text-align:center;margin-top:8px">求人データは今後のUNS→N Jobsで拡充予定</div>
+      </a>
+      <div style="font-size:10px;color:var(--text-3);text-align:center;margin-top:8px" data-job-note>公式サイトで最新情報を確認してください</div>
     </div>
   </div>
 
@@ -1916,6 +1983,24 @@ const uiCopy={
       pension:{label:'Serviço de Pensão',sub:'Pensão e seguro'},
       ssw:{label:'Tokutei Ginou SSW',sub:'Visto de trabalho'},
       nhkPt:{label:'NHK Brasil',sub:'Português'}
+    },
+    jobLinks:{
+      helloWorkSearch:{
+        source:'Hello Work oficial',
+        title:'Busca de vagas para residentes estrangeiros',
+        desc:'Procure por região, tipo de trabalho e condições'
+      },
+      foreignSupport:{
+        source:'MHLW',
+        title:'Apoio ao emprego de estrangeiros',
+        desc:'Regras, consultas e informações para trabalhar no Japão'
+      },
+      sswJobs:{
+        source:'Tokutei Ginou',
+        title:'Trabalhos e visto SSW',
+        desc:'Confira áreas, status de residência e formas de trabalho'
+      },
+      note:'Mostramos links oficiais. Confira os detalhes e candidate-se no site original.'
     }
   },
   en:{
@@ -1973,6 +2058,24 @@ const uiCopy={
       pension:{label:'Pension Service',sub:'Pension and insurance'},
       ssw:{label:'Specified Skilled Worker',sub:'Work visa'},
       nhkPt:{label:'NHK Portuguese',sub:'Portuguese'}
+    },
+    jobLinks:{
+      helloWorkSearch:{
+        source:'Official Hello Work',
+        title:'Job search for foreign residents',
+        desc:'Search by area, job type and working conditions'
+      },
+      foreignSupport:{
+        source:'MHLW',
+        title:'Foreign worker employment support',
+        desc:'Rules, consultation desks and work information in Japan'
+      },
+      sswJobs:{
+        source:'Specified Skilled Worker',
+        title:'SSW jobs and visa system',
+        desc:'Check sectors, residence status and work pathways'
+      },
+      note:'We show official links. Check details and apply on the original site.'
     }
   },
   ja:{
@@ -2030,6 +2133,24 @@ const uiCopy={
       pension:{label:'年金機構',sub:'年金・保険'},
       ssw:{label:'特定技能SSW',sub:'就労ビザ'},
       nhkPt:{label:'NHK Brasil',sub:'Português'}
+    },
+    jobLinks:{
+      helloWorkSearch:{
+        source:'ハローワーク公式',
+        title:'外国人向け求人検索',
+        desc:'地域、職種、労働条件から求人を探す'
+      },
+      foreignSupport:{
+        source:'厚生労働省',
+        title:'外国人雇用・就労サポート',
+        desc:'制度、相談窓口、日本で働くための情報'
+      },
+      sswJobs:{
+        source:'特定技能',
+        title:'特定技能の仕事と制度',
+        desc:'分野、在留資格、働き方を確認'
+      },
+      note:'公式サイトへのリンクです。詳細と応募は元サイトで確認してください。'
     }
   }
 };
@@ -2085,6 +2206,24 @@ function syncTopBarCopy(){
     const key=label.getAttribute('data-quick-sub');
     if(key&&copy.quickAccess[key])label.textContent=copy.quickAccess[key].sub;
   });
+
+  document.querySelectorAll('[data-job-source]').forEach(function(label){
+    const key=label.getAttribute('data-job-source');
+    if(key&&copy.jobLinks[key])label.textContent=copy.jobLinks[key].source;
+  });
+
+  document.querySelectorAll('[data-job-title]').forEach(function(label){
+    const key=label.getAttribute('data-job-title');
+    if(key&&copy.jobLinks[key])label.textContent=copy.jobLinks[key].title;
+  });
+
+  document.querySelectorAll('[data-job-desc]').forEach(function(label){
+    const key=label.getAttribute('data-job-desc');
+    if(key&&copy.jobLinks[key])label.textContent=copy.jobLinks[key].desc;
+  });
+
+  const jobNote=document.querySelector('[data-job-note]');
+  if(jobNote)jobNote.textContent=copy.jobLinks.note;
 
   const account=document.querySelector('.admin-nav-link');
   if(account){
@@ -2157,6 +2296,53 @@ function feedCardHtml(item){
   '</a>';
 }
 
+let liveFeedItems=[];
+let liveFeedIndex=0;
+
+function liveCarouselHtml(){
+  const item=liveFeedItems[liveFeedIndex];
+  if(!item)return '';
+  const image=item.imageUrl
+    ? '<img src="'+escapeHtml(item.imageUrl)+'" alt=""/>'
+    : '<div class="live-carousel-fallback">'+escapeHtml(item.imageIcon||'UN')+'</div>';
+  const detailHref='/article/'+encodeURIComponent(item.slug)+'?lang='+encodeURIComponent(currentLang);
+  const actionLabel={pt:'Resumo UNS-N →',en:'UNS-N summary →',ja:'要約を読む →'}[currentLang];
+  const dots=liveFeedItems.map(function(_entry,index){
+    const active=index===liveFeedIndex?' active':'';
+    const label={pt:'Mostrar noticia ',en:'Show story ',ja:'記事を表示 '}[currentLang]+String(index+1);
+    return '<button class="live-dot'+active+'" type="button" aria-label="'+escapeHtml(label)+'" onclick="setLiveSlide('+index+')"></button>';
+  }).join('');
+
+  return '<div class="live-carousel">'+
+    '<div class="live-carousel-link" role="link" tabindex="0" data-live-href="'+escapeHtml(detailHref)+'" onclick="window.location.href=this.dataset.liveHref" onkeydown="if(event.key===&quot;Enter&quot;)window.location.href=this.dataset.liveHref">'+
+      '<div class="live-carousel-media">'+
+        image+
+        '<div class="live-carousel-dots" onclick="event.stopPropagation()">'+dots+'</div>'+
+      '</div>'+
+      '<div class="live-carousel-body">'+
+        '<div class="live-carousel-source">'+escapeHtml(item.sourceName)+' · '+escapeHtml(categoryLabel(item.category))+'</div>'+
+        '<div class="live-carousel-title">'+escapeHtml(item.title)+'</div>'+
+        '<div class="live-carousel-summary">'+escapeHtml(item.summary||item.title)+'</div>'+
+        '<div class="live-carousel-actions">'+
+          '<span class="live-time">'+escapeHtml(timeAgo(item))+'</span>'+
+          '<span class="original-link">'+escapeHtml(actionLabel)+'</span>'+
+        '</div>'+
+      '</div>'+
+    '</div>'+
+  '</div>';
+}
+
+function renderLiveFeedCarousel(){
+  const target=document.getElementById('live-feed-list');
+  if(target)target.innerHTML=liveCarouselHtml();
+}
+
+function setLiveSlide(index){
+  if(!liveFeedItems.length)return;
+  liveFeedIndex=Math.max(0,Math.min(index,liveFeedItems.length-1));
+  renderLiveFeedCarousel();
+}
+
 function miniStoryHtml(item,index){
   const detailHref='/article/'+encodeURIComponent(item.slug)+'?lang='+encodeURIComponent(currentLang);
   return '<a class="mini-story" href="'+escapeHtml(detailHref)+'">'+
@@ -2222,18 +2408,22 @@ function emptyFeedHtml(category){
 async function loadLiveFeed(){
   const target=document.getElementById('live-feed-list');
   if(!target)return;
-  target.innerHTML='<div class="live-card"><div class="live-thumb">...</div><div><div class="live-source">UNS-N</div><div class="live-title">Carregando noticias...</div></div></div>';
+  target.innerHTML='<div class="live-carousel-empty"><div><div class="live-source">UNS-N</div><div class="live-title">Carregando noticias...</div></div></div>';
   try{
     const res=await fetch('/api/articles?lang='+encodeURIComponent(currentLang));
     const payload=await res.json();
-    const items=(payload.data||[]).filter(function(item){return item.url;}).slice(0,4);
+    const all=(payload.data||[]).filter(function(item){return item.url;});
+    const withImages=all.filter(function(item){return item.imageUrl;});
+    const items=(withImages.length?withImages:all).slice(0,6);
     if(items.length===0){
-      target.innerHTML='<div class="live-card"><div class="live-thumb">UN</div><div><div class="live-source">UNS-N</div><div class="live-title">Nenhuma noticia importada ainda.</div><div class="live-summary">Use a rota protegida /api/admin/ingest para importar feeds RSS configurados.</div></div></div>';
+      target.innerHTML='<div class="live-carousel-empty"><div><div class="live-source">UNS-N</div><div class="live-title">Nenhuma noticia importada ainda.</div><div class="live-summary">Use a rota protegida /api/admin/ingest para importar feeds RSS configurados.</div></div></div>';
       return;
     }
-    target.innerHTML=items.map(feedCardHtml).join('');
+    liveFeedItems=items;
+    liveFeedIndex=0;
+    renderLiveFeedCarousel();
   }catch(err){
-    target.innerHTML='<div class="live-card"><div class="live-thumb">!</div><div><div class="live-source">UNS-N</div><div class="live-title">Nao foi possivel carregar o feed.</div></div></div>';
+    target.innerHTML='<div class="live-carousel-empty"><div><div class="live-source">UNS-N</div><div class="live-title">Nao foi possivel carregar o feed.</div></div></div>';
   }
 }
 
