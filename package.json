@@ -6,6 +6,8 @@
     "build": "vite build",
     "preview": "wrangler pages dev",
     "deploy": "npm run build && wrangler pages deploy",
+    "ingest:local": "node scripts/local-ingest.mjs",
+    "ingest:local:watch": "node scripts/local-ingest.mjs --watch",
     "cf-typegen": "wrangler types --env-interface CloudflareBindings"
   },
   "dependencies": {

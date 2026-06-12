@@ -83,6 +83,13 @@ const isWithinRecentNewsWindow = (value: string) => {
   return Date.now() - publishedAt <= 3 * 24 * 60 * 60 * 1000
 }
 
+const sortArticlesImageFirst = <T extends { imageUrl?: string | null; publishedAt: string }>(items: T[]) =>
+  items.slice().sort((a, b) => {
+    const imagePriority = Number(Boolean(b.imageUrl)) - Number(Boolean(a.imageUrl))
+    if (imagePriority !== 0) return imagePriority
+    return Date.parse(b.publishedAt) - Date.parse(a.publishedAt)
+  })
+
 const escapeHtmlText = (value: string) =>
   value
     .replace(/&/g, '&amp;')
@@ -539,7 +546,7 @@ app.get('/section/:category', async (c) => {
       category,
       title: sectionLabel,
       locale,
-      articles: filtered,
+      articles: sortArticlesImageFirst(filtered),
       sources
     })
   )
@@ -878,12 +885,13 @@ img{display:block;max-width:100%}
   flex-shrink:0;margin-left:auto;
 }
 .lang-btn{
-  padding:4px 12px;border-radius:16px;
-  font-size:11px;font-weight:600;
+  width:32px;height:28px;border-radius:16px;
+  display:inline-flex;align-items:center;justify-content:center;
+  font-size:18px;line-height:1;
   color:var(--text-2);transition:all .15s;
 }
-.lang-btn.active{background:#fff;color:var(--blue);box-shadow:0 1px 3px rgba(0,0,0,.15)}
-.lang-btn:hover:not(.active){background:var(--chip-hover);color:var(--text)}
+.lang-btn.active{background:#fff;box-shadow:0 1px 3px rgba(0,0,0,.15)}
+.lang-btn:hover:not(.active){background:var(--chip-hover)}
 .admin-nav-link{
   height:30px;padding:0 12px;border-radius:16px;
   display:inline-flex;align-items:center;justify-content:center;
@@ -1461,9 +1469,9 @@ footer{
     </div>
 
     <div class="lang-sw">
-      <button class="lang-btn active" onclick="setLang('pt')">PT</button>
-      <button class="lang-btn" onclick="setLang('en')">EN</button>
-      <button class="lang-btn" onclick="setLang('ja')">日本語</button>
+      <button class="lang-btn active" data-lang="pt" onclick="setLang('pt')" aria-label="Português" title="Português">🇧🇷</button>
+      <button class="lang-btn" data-lang="en" onclick="setLang('en')" aria-label="English" title="English">🇺🇸</button>
+      <button class="lang-btn" data-lang="ja" onclick="setLang('ja')" aria-label="日本語" title="日本語">🇯🇵</button>
     </div>
     <a class="admin-nav-link" data-account-role="${user ? user.role : 'guest'}" href="${user ? (user.role === 'admin' || user.role === 'editor' ? '/admin' : '/me') : '/login'}">${user ? (user.role === 'admin' || user.role === 'editor' ? 'Admin' : 'Minha pagina') : 'Login'}</a>
   </div>
@@ -2572,6 +2580,12 @@ function tickerItemsHtml(items){
   }).join('');
 }
 
+function imageFirst(items){
+  return items.slice().sort(function(a,b){
+    return Number(Boolean(b.imageUrl))-Number(Boolean(a.imageUrl));
+  });
+}
+
 async function loadBreakingTicker(){
   const target=document.getElementById('breaking-ticker-track');
   if(!target)return;
@@ -2580,7 +2594,7 @@ async function loadBreakingTicker(){
     const payload=await res.json();
     const all=(payload.data||[]).filter(function(item){return item.url;});
     const todays=all.filter(function(item){return isToday(item.publishedAt);});
-    const items=(todays.length?todays:all).slice(0,8);
+    const items=imageFirst(todays.length?todays:all).slice(0,8);
     target.innerHTML=tickerItemsHtml(items);
   }catch(err){
     const fallback={
@@ -2731,8 +2745,7 @@ async function loadLiveFeed(){
     const res=await fetch('/api/articles?lang='+encodeURIComponent(currentLang));
     const payload=await res.json();
     const all=(payload.data||[]).filter(function(item){return item.url;});
-    const withImages=all.filter(function(item){return item.imageUrl;});
-    const items=(withImages.length?withImages:all).slice(0,6);
+    const items=imageFirst(all).slice(0,6);
     if(items.length===0){
       target.innerHTML='<div class="live-carousel-empty"><div><div class="live-source">UNS-N</div><div class="live-title">Nenhuma noticia importada ainda.</div><div class="live-summary">Use a rota protegida /api/admin/ingest para importar feeds RSS configurados.</div></div></div>';
       return;
@@ -2754,7 +2767,7 @@ async function loadWeeklyHighlights(){
     const payload=await res.json();
     const all=(payload.data||[]).filter(function(item){return item.url;});
     const week=all.filter(function(item){return isWithinDays(item.publishedAt,7);});
-    const items=(week.length?week:all).slice(0,5);
+    const items=imageFirst(week.length?week:all).slice(0,5);
     if(items.length===0){
       const empty={pt:'Nenhuma noticia da semana ainda.',en:'No weekly highlights yet.',ja:'今週の注目記事はまだありません。'}[currentLang];
       target.innerHTML='<div class="mini-story"><div class="ms-num">1</div><div class="ms-body"><div class="ms-source">UNS-N</div><div class="ms-title">'+escapeHtml(empty)+'</div><div class="ms-time">Admin</div></div></div>';
@@ -2774,7 +2787,7 @@ async function loadFeaturedStories(){
   try{
     const res=await fetch('/api/articles?lang='+encodeURIComponent(currentLang));
     const payload=await res.json();
-    const items=(payload.data||[]).filter(function(item){return item.url;}).slice(0,2);
+    const items=imageFirst((payload.data||[]).filter(function(item){return item.url;})).slice(0,2);
     if(items.length===0){
       target.innerHTML='<div class="cluster"><div class="cluster-hero"><div class="cluster-hero-text"><div class="ch-source">UNS-N</div><div class="ch-title">Nenhuma noticia importada ainda.</div><div class="ch-lead">Entre no Admin e importe os feeds para preencher os destaques automaticamente.</div></div><div class="cluster-hero-img">UN</div></div></div>';
       return;
@@ -2795,7 +2808,7 @@ async function loadSectionFeatured(section, category){
       : '/api/articles?lang='+encodeURIComponent(currentLang);
     const res=await fetch(url);
     const payload=await res.json();
-    const item=(payload.data||[]).filter(function(article){return article.url;})[0];
+    const item=imageFirst((payload.data||[]).filter(function(article){return article.url;}))[0];
     if(!item){
       const title={pt:'Ainda nao ha noticias nesta secao.',en:'No stories in this section yet.',ja:'このセクションの記事はまだありません。'}[currentLang];
       const lead={pt:'Importe feeds em portugues no Admin para preencher este destaque.',en:'Import English feeds in Admin to fill this featured card.',ja:'Adminでこの言語のフィードをインポートすると、ここに大きなカードが表示されます。'}[currentLang];
@@ -2815,7 +2828,7 @@ async function loadTopicFeed(category){
   try{
     const res=await fetch('/api/articles?lang='+encodeURIComponent(currentLang)+'&category='+encodeURIComponent(category));
     const payload=await res.json();
-    const items=(payload.data||[]).slice(0,4);
+    const items=imageFirst(payload.data||[]).slice(0,4);
     target.innerHTML=items.length?items.map(feedCardHtml).join(''):emptyFeedHtml(category);
   }catch(err){
     target.innerHTML='<div class="live-card"><div class="live-thumb">!</div><div><div class="live-source">UNS-N</div><div class="live-title">Nao foi possivel carregar esta categoria.</div></div></div>';
@@ -2832,9 +2845,8 @@ function updateSectionLinks(){
 
 function syncLangButtons(){
   document.querySelectorAll('.lang-btn').forEach(b=>b.classList.remove('active'));
-  const map={pt:'PT',en:'EN',ja:'日本語'};
   document.querySelectorAll('.lang-btn').forEach(b=>{
-    if(b.textContent.trim()===map[currentLang])b.classList.add('active');
+    if(b.getAttribute('data-lang')===currentLang)b.classList.add('active');
   });
 }
 
