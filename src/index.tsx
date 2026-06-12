@@ -23,7 +23,16 @@ import {
   renderTermsPage,
   renderUserPage
 } from './pages'
-import { findStoredArticle, listStoredArticles, saveArticle, type D1Database } from './storage'
+import {
+  addArticleComment,
+  findStoredArticle,
+  getArticleEngagement,
+  listStoredArticles,
+  saveArticle,
+  toggleArticleLike,
+  type ArticleComment,
+  type D1Database
+} from './storage'
 
 type AppEnv = {
   Bindings: {
@@ -122,6 +131,13 @@ const publicArticle = (article: Article, locale: Locale) => ({
   }
 })
 
+const publicComment = (comment: ArticleComment) => ({
+  id: comment.id,
+  userName: comment.userName,
+  body: comment.body,
+  createdAt: comment.createdAt
+})
+
 app.get('/api/health', (c) => {
   return c.json({
     ok: true,
@@ -197,6 +213,69 @@ app.get('/api/articles/:slug', async (c) => {
   return c.json({ data: publicArticle(article, locale) })
 })
 
+app.get('/api/articles/:slug/engagement', async (c) => {
+  const article = await findStoredArticle(c, c.req.param('slug'))
+
+  if (!article) {
+    return c.json({ error: 'Article not found' }, 404)
+  }
+
+  const user = getCurrentSiteUser(c) ?? getCurrentUser(c)
+  const engagement = await getArticleEngagement(c, article.slug, user?.id)
+
+  return c.json({
+    data: {
+      likes: engagement.likes,
+      comments: engagement.comments.map(publicComment),
+      user: user ? { id: user.id, name: user.name, role: user.role } : null
+    }
+  })
+})
+
+app.post('/api/articles/:slug/like', async (c) => {
+  const article = await findStoredArticle(c, c.req.param('slug'))
+  const user = getCurrentSiteUser(c) ?? getCurrentUser(c)
+
+  if (!article) {
+    return c.json({ error: 'Article not found' }, 404)
+  }
+
+  if (!user) {
+    return c.json({ error: 'Login required' }, 401)
+  }
+
+  const likes = await toggleArticleLike(c, article.slug, user.id)
+  return c.json({ data: { likes } })
+})
+
+app.post('/api/articles/:slug/comments', async (c) => {
+  const article = await findStoredArticle(c, c.req.param('slug'))
+  const user = getCurrentSiteUser(c) ?? getCurrentUser(c)
+  const payload = await c.req.json<{ body?: string }>().catch(() => null)
+  const body = String(payload?.body ?? '').trim().replace(/\s+/g, ' ')
+
+  if (!article) {
+    return c.json({ error: 'Article not found' }, 404)
+  }
+
+  if (!user) {
+    return c.json({ error: 'Login required' }, 401)
+  }
+
+  if (body.length < 2 || body.length > 800) {
+    return c.json({ error: 'Comment must be between 2 and 800 characters' }, 400)
+  }
+
+  const comment = await addArticleComment(c, {
+    articleSlug: article.slug,
+    userId: user.id,
+    userName: user.name,
+    body
+  })
+
+  return c.json({ data: publicComment(comment) }, 201)
+})
+
 app.get('/article/:slug', async (c) => {
   const locale = normalizeLocale(c.req.query('lang') ?? null)
   const article = await findStoredArticle(c, c.req.param('slug'))
@@ -206,6 +285,7 @@ app.get('/article/:slug', async (c) => {
   }
 
   const data = publicArticle(article, locale)
+  const user = getCurrentSiteUser(c) ?? getCurrentUser(c)
   const langAttr = locale === 'ja' ? 'ja' : locale === 'en' ? 'en' : 'pt-BR'
   const copy = {
     pt: {
@@ -213,6 +293,14 @@ app.get('/article/:slug', async (c) => {
       source: 'Fonte',
       original: 'Ler materia completa na fonte original',
       back: 'Voltar para noticias',
+      like: 'Curtir',
+      liked: 'Curtido',
+      comments: 'Comentarios',
+      commentPlaceholder: 'Escreva um comentario curto...',
+      submitComment: 'Publicar comentario',
+      loginPrompt: 'Entre para curtir e comentar.',
+      login: 'Login',
+      noComments: 'Ainda nao ha comentarios.',
       note:
         'Este e um resumo curto para descoberta. O texto completo deve ser lido no site original do publisher.'
     },
@@ -221,6 +309,14 @@ app.get('/article/:slug', async (c) => {
       source: 'Source',
       original: 'Read the full story at the original source',
       back: 'Back to news',
+      like: 'Like',
+      liked: 'Liked',
+      comments: 'Comments',
+      commentPlaceholder: 'Write a short comment...',
+      submitComment: 'Post comment',
+      loginPrompt: 'Log in to like and comment.',
+      login: 'Login',
+      noComments: 'No comments yet.',
       note: 'This is a short discovery summary. Read the full article on the original publisher site.'
     },
     ja: {
@@ -228,6 +324,14 @@ app.get('/article/:slug', async (c) => {
       source: '出典',
       original: '元の記事を読む',
       back: 'ニュースへ戻る',
+      like: 'いいね',
+      liked: 'いいね済み',
+      comments: 'コメント',
+      commentPlaceholder: '短いコメントを書く...',
+      submitComment: 'コメントを投稿',
+      loginPrompt: 'いいね・コメントにはログインしてください。',
+      login: 'ログイン',
+      noComments: 'まだコメントはありません。',
       note: 'これは発見のための短い要約です。全文は配信元サイトでお読みください。'
     }
   }[locale]
@@ -260,6 +364,21 @@ app.get('/article/:slug', async (c) => {
     .actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:22px}
     .primary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border-radius:6px;background:#1a73e8;color:#fff;padding:0 16px}
     .secondary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;border-radius:6px;background:#eef4ff;color:#1a73e8;padding:0 16px}
+    .engagement{margin-top:26px;border-top:1px solid #dfe3e8;padding-top:22px}
+    .engagement-head{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;margin-bottom:18px}
+    .like-btn{min-height:42px;border:1px solid #dfe3e8;border-radius:999px;background:#fff;color:#1a73e8;padding:0 16px;font:inherit;font-weight:900;cursor:pointer}
+    .like-btn.active{background:#e8f0fe;border-color:#1a73e8}
+    .comments-title{font-size:18px;font-weight:900;margin:0}
+    .comment-form{display:grid;gap:10px;margin-bottom:18px}
+    .comment-form textarea{width:100%;min-height:96px;resize:vertical;border:1px solid #ccd3da;border-radius:8px;padding:12px;font:inherit;line-height:1.5}
+    .comment-form textarea:focus{outline:3px solid rgba(26,115,232,.16);border-color:#1a73e8}
+    .comment-form button{justify-self:start;min-height:42px;border-radius:6px;background:#1a73e8;color:#fff;border:0;padding:0 16px;font:inherit;font-weight:900;cursor:pointer}
+    .login-note{background:#f8f9fa;border:1px solid #dfe3e8;border-radius:8px;padding:14px;margin-bottom:18px;color:#667085}
+    .comment-list{display:grid;gap:10px}
+    .comment{background:#f8f9fa;border:1px solid #e7ebef;border-radius:8px;padding:12px 14px}
+    .comment-meta{font-size:12px;color:#667085;font-weight:900;margin-bottom:6px}
+    .comment-body{font-size:14px;line-height:1.55;color:#202124;white-space:pre-line}
+    .empty-comments{color:#667085;font-size:14px}
     @media(max-width:640px){main{padding:20px 12px 48px}h1{font-size:26px}.article{padding:20px}.summary{font-size:16px}.logo-kana{display:none}}
   </style>
 </head>
@@ -294,8 +413,111 @@ app.get('/article/:slug', async (c) => {
         }
         <a class="secondary" href="/?lang=${locale}">${escapeHtmlText(copy.back)}</a>
       </div>
+      <section class="engagement">
+        <div class="engagement-head">
+          <button class="like-btn" id="like-button" type="button">♡ ${escapeHtmlText(copy.like)} <span id="like-count">0</span></button>
+          <h2 class="comments-title">${escapeHtmlText(copy.comments)}</h2>
+        </div>
+        ${
+          user
+            ? `<form class="comment-form" id="comment-form">
+                <textarea id="comment-body" maxlength="800" placeholder="${escapeHtmlText(copy.commentPlaceholder)}"></textarea>
+                <button type="submit">${escapeHtmlText(copy.submitComment)}</button>
+              </form>`
+            : `<div class="login-note">${escapeHtmlText(copy.loginPrompt)} <a href="/login">${escapeHtmlText(copy.login)}</a></div>`
+        }
+        <div class="comment-list" id="comment-list">
+          <div class="empty-comments">${escapeHtmlText(copy.noComments)}</div>
+        </div>
+      </section>
     </article>
   </main>
+  <script>
+    const articleSlug=${JSON.stringify(article.slug)};
+    const engagementCopy=${JSON.stringify({
+      like: copy.like,
+      liked: copy.liked,
+      noComments: copy.noComments
+    })};
+
+    function escapeClientHtml(value){
+      return String(value||'').replace(/[&<>"']/g,function(ch){
+        return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[ch];
+      });
+    }
+
+    function commentDate(value){
+      try{
+        return new Intl.DateTimeFormat(document.documentElement.lang||'en',{dateStyle:'medium',timeStyle:'short'}).format(new Date(value));
+      }catch(_err){
+        return value;
+      }
+    }
+
+    function renderComments(comments){
+      const target=document.getElementById('comment-list');
+      if(!target)return;
+      if(!comments||comments.length===0){
+        target.innerHTML='<div class="empty-comments">'+escapeClientHtml(engagementCopy.noComments)+'</div>';
+        return;
+      }
+      target.innerHTML=comments.map(function(comment){
+        return '<div class="comment">'+
+          '<div class="comment-meta">'+escapeClientHtml(comment.userName)+' · '+escapeClientHtml(commentDate(comment.createdAt))+'</div>'+
+          '<div class="comment-body">'+escapeClientHtml(comment.body)+'</div>'+
+        '</div>';
+      }).join('');
+    }
+
+    function renderLike(likes){
+      const button=document.getElementById('like-button');
+      const count=document.getElementById('like-count');
+      if(!button||!count)return;
+      button.classList.toggle('active',Boolean(likes&&likes.liked));
+      count.textContent=String(likes&&typeof likes.count==='number'?likes.count:0);
+      button.firstChild.nodeValue=(likes&&likes.liked?'♥ '+engagementCopy.liked+' ':'♡ '+engagementCopy.like+' ');
+    }
+
+    async function loadEngagement(){
+      const res=await fetch('/api/articles/'+encodeURIComponent(articleSlug)+'/engagement');
+      if(!res.ok)return;
+      const payload=await res.json();
+      renderLike(payload.data.likes);
+      renderComments(payload.data.comments);
+    }
+
+    document.getElementById('like-button')?.addEventListener('click',async function(){
+      const res=await fetch('/api/articles/'+encodeURIComponent(articleSlug)+'/like',{method:'POST'});
+      if(res.status===401){
+        window.location.href='/login';
+        return;
+      }
+      if(!res.ok)return;
+      const payload=await res.json();
+      renderLike(payload.data.likes);
+    });
+
+    document.getElementById('comment-form')?.addEventListener('submit',async function(event){
+      event.preventDefault();
+      const textarea=document.getElementById('comment-body');
+      const body=textarea&&'value' in textarea?textarea.value.trim():'';
+      if(body.length<2)return;
+      const res=await fetch('/api/articles/'+encodeURIComponent(articleSlug)+'/comments',{
+        method:'POST',
+        headers:{'content-type':'application/json'},
+        body:JSON.stringify({body})
+      });
+      if(res.status===401){
+        window.location.href='/login';
+        return;
+      }
+      if(!res.ok)return;
+      if(textarea&&'value' in textarea)textarea.value='';
+      await loadEngagement();
+    });
+
+    loadEngagement();
+  </script>
 </body>
 </html>`)
 })
