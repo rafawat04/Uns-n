@@ -26,9 +26,9 @@ const sourceDot = (sourceName: string) =>
     .toUpperCase() || 'UN'
 
 const sectionEmptyCopy: Record<Locale, string> = {
-  pt: 'Ainda nao ha noticias importadas nesta secao para este idioma.',
-  en: 'There are no imported stories in this section for this language yet.',
-  ja: 'この言語のニュースはこのセクションにまだありません。'
+  pt: 'Ainda nao ha noticias dos ultimos 3 dias nesta secao para este idioma.',
+  en: 'There are no stories from the last 3 days in this section for this language.',
+  ja: 'この言語・セクションには直近3日間のニュースがありません。'
 }
 
 const sectionBackCopy: Record<Locale, string> = {
@@ -47,6 +47,12 @@ const mediaCopy: Record<Locale, string> = {
   pt: 'Fontes acompanhadas',
   en: 'Tracked sources',
   ja: 'フォロー中のメディア'
+}
+
+const recentWindowCopy: Record<Locale, string> = {
+  pt: 'hoje e ultimos 2 dias',
+  en: 'today and the previous 2 days',
+  ja: '今日と過去2日間'
 }
 
 const langName: Record<Locale, string> = {
@@ -376,7 +382,7 @@ export const renderSectionPage = (
   <main>
     <a class="back" href="/?lang=${locale}"><- ${sectionBackCopy[locale]}</a>
     <h1>${escapeHtml(title)}</h1>
-    <p class="sub">${articles.length} stories · ${langName[locale]}</p>
+    <p class="sub">${articles.length} stories · ${recentWindowCopy[locale]} · ${langName[locale]}</p>
     ${
       category === 'media'
         ? `<h2 class="source-title">${mediaCopy[locale]}</h2><div class="sources">${sourceRows}</div>`

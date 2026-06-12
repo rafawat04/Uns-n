@@ -67,6 +67,13 @@ const normalizeCategory = (value: string | null): Category | undefined => {
   return value && allowed.has(value as Category) ? (value as Category) : undefined
 }
 
+const isWithinRecentNewsWindow = (value: string) => {
+  const publishedAt = Date.parse(value)
+  if (!publishedAt) return false
+
+  return Date.now() - publishedAt <= 3 * 24 * 60 * 60 * 1000
+}
+
 const escapeHtmlText = (value: string) =>
   value
     .replace(/&/g, '&amp;')
@@ -302,6 +309,7 @@ app.get('/section/:category', async (c) => {
   const filtered = allArticles
     .filter((article) => !article.originalLanguage || article.originalLanguage === locale)
     .filter((article) => category === 'media' || article.category === category)
+    .filter((article) => isWithinRecentNewsWindow(article.publishedAt))
     .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
 
   return c.html(
@@ -1626,7 +1634,6 @@ footer{
   ──────────────────────────────── -->
   <div class="sec-head" id="admin" style="margin-top:8px">
     <span class="sec-title" data-section-title="admin">Orgaos publicos e cidades</span>
-    <a class="sec-more" href="/section/admin?lang=pt" data-section-more="admin">Ver tudo →</a>
   </div>
 
   <div class="widget" style="margin-bottom:10px">
@@ -1835,34 +1842,34 @@ footer{
     <div class="footer-row">
       <div style="max-width:260px">
         <div class="footer-logo">UNS<span>→</span>N <span style="font-size:11px;color:var(--text-3);font-weight:400">アンシーン</span></div>
-        <p class="footer-desc">日本で働く・暮らす日系ブラジル人・外国人プロフェッショナルのための次世代ビジネスメディア。3言語で届けます。</p>
+        <p class="footer-desc" data-footer-text="description">日本で働く・暮らす日系ブラジル人・外国人プロフェッショナルのための次世代ビジネスメディア。3言語で届けます。</p>
       </div>
       <div>
-        <div class="footer-col-title">主要メディア</div>
+        <div class="footer-col-title" data-footer-title="media">主要メディア</div>
         <div class="footer-links">
-          <a href="https://www.nikkei.com" target="_blank" class="footer-link">日本経済新聞</a>
-          <a href="https://www.asahi.com" target="_blank" class="footer-link">朝日新聞</a>
+          <a href="https://www.nikkei.com" target="_blank" class="footer-link" data-footer-link="nikkei">日本経済新聞</a>
+          <a href="https://www.asahi.com" target="_blank" class="footer-link" data-footer-link="asahi">朝日新聞</a>
           <a href="https://www.japantimes.co.jp" target="_blank" class="footer-link">The Japan Times</a>
           <a href="https://nhkworld.nhk.or.jp" target="_blank" class="footer-link">NHK World</a>
           <a href="https://www.folha.uol.com.br" target="_blank" class="footer-link">Folha de S.Paulo</a>
         </div>
       </div>
       <div>
-        <div class="footer-col-title">行政・ビザ</div>
+        <div class="footer-col-title" data-footer-title="gov">行政・ビザ</div>
         <div class="footer-links">
-          <a href="https://www.moj.go.jp/isa/" target="_blank" class="footer-link">出入国在留管理庁</a>
-          <a href="https://www.mhlw.go.jp" target="_blank" class="footer-link">厚生労働省</a>
-          <a href="https://www.nta.go.jp" target="_blank" class="footer-link">国税庁</a>
-          <a href="https://www.ssw.go.jp/en/" target="_blank" class="footer-link">特定技能SSWポータル</a>
+          <a href="https://www.moj.go.jp/isa/" target="_blank" class="footer-link" data-footer-link="immigration">出入国在留管理庁</a>
+          <a href="https://www.mhlw.go.jp" target="_blank" class="footer-link" data-footer-link="mhlw">厚生労働省</a>
+          <a href="https://www.nta.go.jp" target="_blank" class="footer-link" data-footer-link="tax">国税庁</a>
+          <a href="https://www.ssw.go.jp/en/" target="_blank" class="footer-link" data-footer-link="ssw">特定技能SSWポータル</a>
         </div>
       </div>
       <div>
         <div class="footer-col-title">UNS→N</div>
         <div class="footer-links">
-          <a href="#" class="footer-link">サービス概要</a>
-          <a href="#" class="footer-link">パートナー募集</a>
-          <a href="/privacy" class="footer-link">プライバシーポリシー</a>
-          <a href="/terms" class="footer-link">利用規約</a>
+          <a href="#" class="footer-link" data-footer-link="about">サービス概要</a>
+          <a href="#" class="footer-link" data-footer-link="partners">パートナー募集</a>
+          <a href="/privacy" class="footer-link" data-footer-link="privacy">プライバシーポリシー</a>
+          <a href="/terms" class="footer-link" data-footer-link="terms">利用規約</a>
           <a href="/copyright" class="footer-link">Copyright / Removal</a>
           <a href="/publishers" class="footer-link">Publisher Policy</a>
         </div>
@@ -1870,7 +1877,7 @@ footer{
     </div>
     <div class="footer-bottom">
       <span>© 2026 UNS→N（アンシーン） — Concept Prototype</span>
-      <span>Nikkei Brasileiro no Japão · 在日外国人コミュニティ</span>
+      <span data-footer-text="community">Nikkei Brasileiro no Japão · 在日外国人コミュニティ</span>
     </div>
   </div>
 </footer>
@@ -2009,6 +2016,28 @@ const uiCopy={
         desc:'Confira áreas, status de residência e formas de trabalho'
       },
       note:'Mostramos links oficiais. Confira os detalhes e candidate-se no site original.'
+    },
+    footer:{
+      text:{
+        description:'Mídia de negócios e vida no Japão para nikkeis brasileiros e profissionais estrangeiros. Conteúdo em 3 idiomas.',
+        community:'Nikkeis brasileiros no Japão · Comunidade estrangeira residente'
+      },
+      titles:{
+        media:'Mídia principal',
+        gov:'Governo e vistos'
+      },
+      links:{
+        nikkei:'Nikkei, jornal econômico do Japão',
+        asahi:'Asahi Shimbun',
+        immigration:'Agência de Imigração',
+        mhlw:'Ministério da Saúde, Trabalho e Bem-Estar',
+        tax:'Agência Nacional de Impostos',
+        ssw:'Portal Tokutei Ginou SSW',
+        about:'Sobre o serviço',
+        partners:'Parcerias',
+        privacy:'Política de privacidade',
+        terms:'Termos de uso'
+      }
     }
   },
   en:{
@@ -2084,6 +2113,28 @@ const uiCopy={
         desc:'Check sectors, residence status and work pathways'
       },
       note:'We show official links. Check details and apply on the original site.'
+    },
+    footer:{
+      text:{
+        description:'A next-generation business and life-in-Japan media site for Brazilian Nikkei and foreign professionals. Delivered in 3 languages.',
+        community:'Brazilian Nikkei in Japan · Foreign resident community'
+      },
+      titles:{
+        media:'Main media',
+        gov:'Government and visas'
+      },
+      links:{
+        nikkei:'The Nikkei',
+        asahi:'The Asahi Shimbun',
+        immigration:'Immigration Services Agency',
+        mhlw:'Ministry of Health, Labour and Welfare',
+        tax:'National Tax Agency',
+        ssw:'Specified Skilled Worker portal',
+        about:'Service overview',
+        partners:'Partnerships',
+        privacy:'Privacy policy',
+        terms:'Terms of use'
+      }
     }
   },
   ja:{
@@ -2159,6 +2210,28 @@ const uiCopy={
         desc:'分野、在留資格、働き方を確認'
       },
       note:'公式サイトへのリンクです。詳細と応募は元サイトで確認してください。'
+    },
+    footer:{
+      text:{
+        description:'日本で働く・暮らす日系ブラジル人・外国人プロフェッショナルのための次世代ビジネスメディア。3言語で届けます。',
+        community:'Nikkei Brasileiro no Japão · 在日外国人コミュニティ'
+      },
+      titles:{
+        media:'主要メディア',
+        gov:'行政・ビザ'
+      },
+      links:{
+        nikkei:'日本経済新聞',
+        asahi:'朝日新聞',
+        immigration:'出入国在留管理庁',
+        mhlw:'厚生労働省',
+        tax:'国税庁',
+        ssw:'特定技能SSWポータル',
+        about:'サービス概要',
+        partners:'パートナー募集',
+        privacy:'プライバシーポリシー',
+        terms:'利用規約'
+      }
     }
   }
 };
@@ -2232,6 +2305,21 @@ function syncTopBarCopy(){
 
   const jobNote=document.querySelector('[data-job-note]');
   if(jobNote)jobNote.textContent=copy.jobLinks.note;
+
+  document.querySelectorAll('[data-footer-text]').forEach(function(label){
+    const key=label.getAttribute('data-footer-text');
+    if(key&&copy.footer.text[key])label.textContent=copy.footer.text[key];
+  });
+
+  document.querySelectorAll('[data-footer-title]').forEach(function(label){
+    const key=label.getAttribute('data-footer-title');
+    if(key&&copy.footer.titles[key])label.textContent=copy.footer.titles[key];
+  });
+
+  document.querySelectorAll('[data-footer-link]').forEach(function(label){
+    const key=label.getAttribute('data-footer-link');
+    if(key&&copy.footer.links[key])label.textContent=copy.footer.links[key];
+  });
 
   const account=document.querySelector('.admin-nav-link');
   if(account){
