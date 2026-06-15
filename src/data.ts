@@ -76,12 +76,52 @@ export const sources: NewsSource[] = [
     category: 'top'
   },
   {
+    id: 'asahi',
+    name: '朝日新聞',
+    language: 'ja',
+    url: 'https://www.asahi.com',
+    country: 'JP',
+    category: 'top'
+  },
+  {
+    id: 'mainichi',
+    name: '毎日新聞',
+    language: 'ja',
+    url: 'https://mainichi.jp',
+    country: 'JP',
+    category: 'top'
+  },
+  {
     id: 'nikkei',
     name: 'Nikkei Asia',
     language: 'en',
     url: 'https://asia.nikkei.com',
     country: 'JP',
     category: 'business'
+  },
+  {
+    id: 'nytimes',
+    name: 'The New York Times',
+    language: 'en',
+    url: 'https://www.nytimes.com',
+    country: 'GLOBAL',
+    category: 'top'
+  },
+  {
+    id: 'guardian',
+    name: 'The Guardian',
+    language: 'en',
+    url: 'https://www.theguardian.com',
+    country: 'GLOBAL',
+    category: 'top'
+  },
+  {
+    id: 'bbc',
+    name: 'BBC News',
+    language: 'en',
+    url: 'https://www.bbc.com/news',
+    country: 'GLOBAL',
+    category: 'top'
   },
   {
     id: 'meti',
@@ -162,6 +202,94 @@ export const feedSources: FeedSource[] = [
     usage: 'rss-headlines'
   },
   {
+    id: 'nytimes-home',
+    sourceId: 'nytimes',
+    name: 'The New York Times Top Stories',
+    url: 'https://rss.nytimes.com/services/xml/rss/nyt/HomePage.xml',
+    homepageUrl: 'https://www.nytimes.com',
+    language: 'en',
+    category: 'top',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'nytimes-world',
+    sourceId: 'nytimes',
+    name: 'The New York Times World',
+    url: 'https://rss.nytimes.com/services/xml/rss/nyt/World.xml',
+    homepageUrl: 'https://www.nytimes.com/section/world',
+    language: 'en',
+    category: 'top',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'nytimes-technology',
+    sourceId: 'nytimes',
+    name: 'The New York Times Technology',
+    url: 'https://rss.nytimes.com/services/xml/rss/nyt/Technology.xml',
+    homepageUrl: 'https://www.nytimes.com/section/technology',
+    language: 'en',
+    category: 'business',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'guardian-world',
+    sourceId: 'guardian',
+    name: 'The Guardian World',
+    url: 'https://www.theguardian.com/world/rss',
+    homepageUrl: 'https://www.theguardian.com/world',
+    language: 'en',
+    category: 'top',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'guardian-technology',
+    sourceId: 'guardian',
+    name: 'The Guardian Technology',
+    url: 'https://www.theguardian.com/technology/rss',
+    homepageUrl: 'https://www.theguardian.com/technology',
+    language: 'en',
+    category: 'business',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'bbc-news',
+    sourceId: 'bbc',
+    name: 'BBC News',
+    url: 'https://feeds.bbci.co.uk/news/rss.xml',
+    homepageUrl: 'https://www.bbc.com/news',
+    language: 'en',
+    category: 'top',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'bbc-world',
+    sourceId: 'bbc',
+    name: 'BBC World',
+    url: 'https://feeds.bbci.co.uk/news/world/rss.xml',
+    homepageUrl: 'https://www.bbc.com/news/world',
+    language: 'en',
+    category: 'top',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'bbc-technology',
+    sourceId: 'bbc',
+    name: 'BBC Technology',
+    url: 'https://feeds.bbci.co.uk/news/technology/rss.xml',
+    homepageUrl: 'https://www.bbc.com/news/technology',
+    language: 'en',
+    category: 'business',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
     id: 'meti-english-latest',
     sourceId: 'meti',
     name: 'METI English',
@@ -191,6 +319,28 @@ export const feedSources: FeedSource[] = [
     homepageUrl: 'https://www.zaikei.co.jp/news/category/65.html',
     language: 'ja',
     category: 'business',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'asahi-headlines',
+    sourceId: 'asahi',
+    name: '朝日新聞 ニュース',
+    url: 'https://www.asahi.com/rss/asahi/newsheadlines.rdf',
+    homepageUrl: 'https://www.asahi.com',
+    language: 'ja',
+    category: 'top',
+    enabled: true,
+    usage: 'rss-headlines'
+  },
+  {
+    id: 'mainichi-flash',
+    sourceId: 'mainichi',
+    name: '毎日新聞 ニュース速報',
+    url: 'https://mainichi.jp/rss/etc/mainichi-flash.rss',
+    homepageUrl: 'https://mainichi.jp',
+    language: 'ja',
+    category: 'top',
     enabled: true,
     usage: 'rss-headlines'
   },
