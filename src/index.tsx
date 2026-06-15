@@ -177,7 +177,7 @@ app.get('/api/articles', async (c) => {
   const query = (c.req.query('q') ?? '').trim().toLowerCase()
   const allArticles = await listStoredArticles(c)
 
-  const filtered = allArticles
+  let filtered = allArticles
     .filter((article) => !article.originalLanguage || article.originalLanguage === locale)
     .filter((article) => !category || article.category === category)
     .filter((article) => {
@@ -197,6 +197,12 @@ app.get('/api/articles', async (c) => {
       return searchable.includes(query)
     })
     .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
+
+  if (category === 'top' && filtered.length === 0 && !query) {
+    filtered = allArticles
+      .filter((article) => !article.originalLanguage || article.originalLanguage === locale)
+      .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
+  }
 
   return c.json({
     data: filtered.map((article) => publicArticle(article, locale)),
@@ -535,18 +541,19 @@ app.get('/section/:category', async (c) => {
   const allArticles = await listStoredArticles(c)
   const sectionLabel = categories.find((item) => item.id === category)?.label[locale] ?? category
 
-  const filtered = allArticles
+  const languageArticles = allArticles
     .filter((article) => !article.originalLanguage || article.originalLanguage === locale)
-    .filter((article) => category === 'media' || article.category === category)
     .filter((article) => isWithinRecentNewsWindow(article.publishedAt))
     .sort((a, b) => Date.parse(b.publishedAt) - Date.parse(a.publishedAt))
+  const filtered = languageArticles.filter((article) => category === 'media' || article.category === category)
+  const sectionArticles = category === 'top' && filtered.length === 0 ? languageArticles : filtered
 
   return c.html(
     renderSectionPage({
       category,
       title: sectionLabel,
       locale,
-      articles: sortArticlesImageFirst(filtered),
+      articles: sortArticlesImageFirst(sectionArticles),
       sources
     })
   )
