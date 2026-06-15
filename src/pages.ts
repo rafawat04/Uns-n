@@ -61,6 +61,12 @@ const langName: Record<Locale, string> = {
   ja: '日本語'
 }
 
+const langFlag: Record<Locale, string> = {
+  pt: '🇧🇷',
+  en: '🇺🇸',
+  ja: '🇯🇵'
+}
+
 const loginShell = (params: {
   title: string
   subtitle: string
@@ -299,9 +305,10 @@ export const renderSectionPage = (
   const articleRows = articles
     .map((article) => {
       const detailUrl = `/article/${encodeURIComponent(article.slug)}?lang=${locale}`
+      const fallback = `<div class="fallback">${escapeHtml(article.imageIcon)}</div>`
       const image = article.imageUrl
-        ? `<img src="${escapeHtml(article.imageUrl)}" alt="" loading="lazy"/>`
-        : `<div class="fallback">${escapeHtml(article.imageIcon)}</div>`
+        ? `<img src="${escapeHtml(article.imageUrl)}" alt="" loading="lazy" onerror="this.outerHTML='${escapeHtml(fallback)}'"/>`
+        : fallback
 
       return `<article class="story">
         <a class="thumb" href="${escapeHtml(detailUrl)}">${image}</a>
@@ -331,10 +338,13 @@ export const renderSectionPage = (
     a{color:inherit;text-decoration:none}
     header{position:sticky;top:0;z-index:5;background:#fff;border-bottom:1px solid #dfe3e8}
     .bar{max-width:1100px;margin:0 auto;height:60px;padding:0 18px;display:flex;align-items:center;justify-content:space-between;gap:14px}
-    .brand{font-weight:900;letter-spacing:.02em}
+    .logo{display:flex;align-items:center;gap:8px;flex-shrink:0}
+    .logo-text{font-size:17px;font-weight:700;letter-spacing:0;color:#202124}
+    .logo-text span{color:#1a73e8}
+    .logo-kana{font-size:10px;color:#9aa0a6;font-weight:500;letter-spacing:.5px}
     .langs{display:flex;gap:6px;align-items:center}
-    .langs a{height:34px;min-width:44px;border:1px solid #dfe3e8;border-radius:6px;display:grid;place-items:center;font-size:12px;font-weight:900;background:#fff}
-    .langs a.active{background:#1a73e8;color:#fff;border-color:#1a73e8}
+    .langs a{width:34px;height:32px;border:1px solid #dfe3e8;border-radius:16px;display:grid;place-items:center;font-size:18px;background:#fff}
+    .langs a.active{box-shadow:0 1px 3px rgba(0,0,0,.16);border-color:#b9d5ff;background:#eef4ff}
     main{max-width:1100px;margin:0 auto;padding:28px 18px 64px}
     .back{display:inline-flex;margin-bottom:18px;color:#1a73e8;font-size:13px;font-weight:900}
     h1{font-size:32px;line-height:1.15;margin:0 0 8px}
@@ -362,18 +372,26 @@ export const renderSectionPage = (
       .story{grid-template-columns:1fr}
       .thumb{aspect-ratio:16/9}
       h2{font-size:18px}
+      .logo-kana{display:none}
     }
   </style>
 </head>
 <body>
   <header>
     <div class="bar">
-      <a class="brand" href="/">UNS-N</a>
+      <a class="logo" href="/?lang=${locale}" aria-label="UNS-N">
+        <div>
+          <div class="logo-text">UNS<span>→</span>N</div>
+          <div class="logo-kana">アンシーン</div>
+        </div>
+      </a>
       <nav class="langs" aria-label="Language">
         ${languageLinks
           .map(
             (lang) =>
-              `<a class="${lang === locale ? 'active' : ''}" href="/section/${category}?lang=${lang}">${langName[lang]}</a>`
+              `<a class="${lang === locale ? 'active' : ''}" href="/section/${category}?lang=${lang}" aria-label="${escapeHtml(
+                langName[lang]
+              )}" title="${escapeHtml(langName[lang])}">${langFlag[lang]}</a>`
           )
           .join('')}
       </nav>
