@@ -173,7 +173,13 @@ export const findStoredArticle = async (context: EnvWithDb, slug: string) => {
 
 export const saveArticle = async (context: EnvWithDb, article: Article) => {
   if (!hasDb(context)) {
-    if (!seedArticles.some((item) => item.slug === article.slug || item.url === article.url)) {
+    const existing = seedArticles.find((item) => item.slug === article.slug || item.url === article.url)
+
+    if (existing) {
+      if (!existing.imageUrl && article.imageUrl) {
+        existing.imageUrl = article.imageUrl
+      }
+    } else {
       seedArticles.unshift(article)
     }
     return
@@ -216,6 +222,17 @@ export const saveArticle = async (context: EnvWithDb, article: Article) => {
 
   if (!result && !seedArticles.some((item) => item.slug === article.slug || item.url === article.url)) {
     seedArticles.unshift(article)
+  }
+
+  if (article.imageUrl) {
+    await context.env.DB!.prepare(
+      `update articles
+      set image_url = ?
+      where (slug = ? or url = ?) and (image_url is null or image_url = '')`
+    )
+      .bind(article.imageUrl, article.slug, article.url ?? null)
+      .run()
+      .catch(() => null)
   }
 }
 

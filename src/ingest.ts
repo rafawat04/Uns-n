@@ -218,16 +218,13 @@ export const ingestFeed = async (
     result.fetched = items.length
 
     for (const item of items) {
-      if (existingArticles.some((article) => article.url === item.link || article.slug === slugify(item.title))) {
-        result.skipped += 1
-        continue
-      }
-
+      const slug = slugify(item.title)
+      const existingArticle = existingArticles.find((article) => article.url === item.link || article.slug === slug)
       const summary = item.summary || item.title
-      const imageUrl = item.imageUrl || (await fetchArticleImageUrl(item.link))
+      const imageUrl = item.imageUrl || (!existingArticle?.imageUrl ? await fetchArticleImageUrl(item.link) : '')
       const article: Article = {
         id: `feed-${crypto.randomUUID()}`,
-        slug: slugify(item.title),
+        slug,
         category: feed.category,
         sourceId: feed.sourceId,
         sourceName: source?.name ?? feed.name,
@@ -255,6 +252,15 @@ export const ingestFeed = async (
           en: contentForLocale(summary, feed.language, 'en'),
           ja: contentForLocale(summary, feed.language, 'ja')
         }
+      }
+
+      if (existingArticle) {
+        if (!existingArticle.imageUrl && imageUrl) {
+          await saveArticle(article)
+          existingArticle.imageUrl = imageUrl
+        }
+        result.skipped += 1
+        continue
       }
 
       await saveArticle(article)
