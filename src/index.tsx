@@ -1494,7 +1494,7 @@ footer{
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
       <span>Vida e vistos</span>
     </button>
-    <button class="tab" data-tab-label="global" onclick="setTab(this,'global')">
+    <button class="tab" data-tab-label="global" data-pt-only onclick="setTab(this,'global')">
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/></svg>
       <span>Brasil e mundo</span>
     </button>
@@ -1731,56 +1731,58 @@ footer{
   <!-- ────────────────────────────
        GLOBAL FEED
   ──────────────────────────────── -->
-  <div class="sec-head" id="global" style="margin-top:8px">
-    <span class="sec-title" data-section-title="global">Brasil, America do Sul e mundo</span>
-    <a class="sec-more" href="/section/global?lang=pt" data-section-more="global">Ver tudo →</a>
-  </div>
-  <div class="section-featured" data-section-featured="global"></div>
-  <div class="topic-feed-list" data-topic-feed="global"></div>
+  <section id="global" data-pt-only>
+    <div class="sec-head" style="margin-top:8px">
+      <span class="sec-title" data-section-title="global">Brasil, America do Sul e mundo</span>
+      <a class="sec-more" href="/section/global?lang=pt" data-section-more="global">Ver tudo →</a>
+    </div>
+    <div class="section-featured" data-section-featured="global"></div>
+    <div class="topic-feed-list" data-topic-feed="global"></div>
 
-  <div class="cluster prototype-static">
-    <div class="cluster-hero">
-      <div class="cluster-hero-text">
-        <div class="ch-source">
-          <span class="ch-source-dot" style="background:#166534">R</span>
-          Reuters / Nikkei Asia
+    <div class="cluster prototype-static">
+      <div class="cluster-hero">
+        <div class="cluster-hero-text">
+          <div class="ch-source">
+            <span class="ch-source-dot" style="background:#166534">R</span>
+            Reuters / Nikkei Asia
+          </div>
+          <div class="ch-title">日本・メルコスールEPA交渉が正式スタート — 日ブラジル経済が新章へ</div>
+          <div class="ch-lead">2026年5月26日、日本とメルコスール（ブラジル・アルゼンチン等）が経済連携協定の交渉を開始。ポルトガル語人材の価値が商社・エネルギー業界で急上昇。</div>
+          <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
+            <span class="chip chip-green">通商</span>
+            <span class="chip">EPA</span>
+            <span class="chip chip-blue">Brazil</span>
+          </div>
+          <div class="lang-snip">
+            <div class="lang-snip-label">日本語サマリー（職場で使える）</div>
+            日本とブラジルを含む南米4か国（メルコスール）が経済連携協定の交渉を開始しました。日本はブラジルから石油・農産物の輸入増加を、ブラジルは日本製自動車の関税引き下げを目指します。ポルトガル語が話せる専門家の価値が日本の商社・エネルギー業界でさらに高まります。
+          </div>
+          <div class="ch-time">2026年5月26日 · Reuters</div>
         </div>
-        <div class="ch-title">日本・メルコスールEPA交渉が正式スタート — 日ブラジル経済が新章へ</div>
-        <div class="ch-lead">2026年5月26日、日本とメルコスール（ブラジル・アルゼンチン等）が経済連携協定の交渉を開始。ポルトガル語人材の価値が商社・エネルギー業界で急上昇。</div>
-        <div style="display:flex;gap:6px;margin-top:8px;flex-wrap:wrap">
-          <span class="chip chip-green">通商</span>
-          <span class="chip">EPA</span>
-          <span class="chip chip-blue">Brazil</span>
-        </div>
-        <div class="lang-snip">
-          <div class="lang-snip-label">日本語サマリー（職場で使える）</div>
-          日本とブラジルを含む南米4か国（メルコスール）が経済連携協定の交渉を開始しました。日本はブラジルから石油・農産物の輸入増加を、ブラジルは日本製自動車の関税引き下げを目指します。ポルトガル語が話せる専門家の価値が日本の商社・エネルギー業界でさらに高まります。
-        </div>
-        <div class="ch-time">2026年5月26日 · Reuters</div>
+        <div class="cluster-hero-img">BR-JP</div>
       </div>
-      <div class="cluster-hero-img">BR-JP</div>
-    </div>
-    <div class="cluster-related">
-      <div class="cluster-rel-item">
-        <div class="cri-text">
-          <div class="cri-source">Kyodo News · May 18, 2026</div>
-          <div class="cri-title">ブラジル外相「日本への石油輸出拡大の準備ができている」エネルギー安保で急接近</div>
+      <div class="cluster-related">
+        <div class="cluster-rel-item">
+          <div class="cri-text">
+            <div class="cri-source">Kyodo News · May 18, 2026</div>
+            <div class="cri-title">ブラジル外相「日本への石油輸出拡大の準備ができている」エネルギー安保で急接近</div>
+          </div>
+          <div class="cri-img">EN</div>
         </div>
-        <div class="cri-img">EN</div>
-      </div>
-      <div class="cluster-rel-item">
-        <div class="cri-text">
-          <div class="cri-source">EU Trade / EY · May 2026</div>
-          <div class="cri-title">EU・メルコスール協定発効 — ブラジルの再生エネルギー産業が急成長</div>
+        <div class="cluster-rel-item">
+          <div class="cri-text">
+            <div class="cri-source">EU Trade / EY · May 2026</div>
+            <div class="cri-title">EU・メルコスール協定発効 — ブラジルの再生エネルギー産業が急成長</div>
+          </div>
+          <div class="cri-img">ESG</div>
         </div>
-        <div class="cri-img">ESG</div>
+      </div>
+      <div class="cluster-more">
+        関連記事をもっと見る（4件）
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
       </div>
     </div>
-    <div class="cluster-more">
-      関連記事をもっと見る（4件）
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="m9 18 6-6-6-6"/></svg>
-    </div>
-  </div>
+  </section>
 
   <!-- ────────────────────────────
        ADMIN / VISA GUIDE
@@ -2170,6 +2172,21 @@ function categoryLabel(category){
     admin:'GOV'
   };
   return labels[category]||'NEWS';
+}
+
+function syncLanguageVisibility(){
+  const showPortugueseOnly=currentLang==='pt';
+  document.querySelectorAll('[data-pt-only]').forEach(function(el){
+    el.hidden=!showPortugueseOnly;
+  });
+  if(!showPortugueseOnly){
+    const globalTab=document.querySelector('[data-tab-label="global"]');
+    if(globalTab&&globalTab.classList.contains('active')){
+      globalTab.classList.remove('active');
+      const topTab=document.querySelector('[data-tab-label="top"]');
+      if(topTab)topTab.classList.add('active');
+    }
+  }
 }
 
 const uiCopy={
@@ -2852,6 +2869,7 @@ function syncLangButtons(){
 
 function loadAllFeeds(){
   syncLangButtons();
+  syncLanguageVisibility();
   syncTopBarCopy();
   updateSectionLinks();
   loadBreakingTicker();
@@ -2859,10 +2877,10 @@ function loadAllFeeds(){
   loadLiveFeed();
   loadFeaturedStories();
   loadSectionFeatured('business','business');
-  loadSectionFeatured('global','global');
+  if(currentLang==='pt')loadSectionFeatured('global','global');
   loadSectionFeatured('life','life');
   loadSectionFeatured('media',null);
-  ['top','business','global','life'].forEach(loadTopicFeed);
+  (currentLang==='pt'?['top','business','global','life']:['top','business','life']).forEach(loadTopicFeed);
 }
 loadAllFeeds();
 
